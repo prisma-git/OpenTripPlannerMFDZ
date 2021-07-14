@@ -43,4 +43,4 @@ jobs:
           name: mfdz/opentripplanner
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_AUTH}}
-          tags: "otp2-latest,otp2-${{ github.sha }}"
+          tags: "latest,${{ github.sha }}"
