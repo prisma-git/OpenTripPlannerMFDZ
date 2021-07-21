@@ -1,6 +1,10 @@
 /* This file is based on code copied from project OneBusAway, see the LICENSE file for further information. */
 package org.opentripplanner.model;
 
+import java.time.OffsetDateTime;
+import org.opentripplanner.api.common.Crypto;
+import org.opentripplanner.api.resource.EncryptedRedirect;
+
 public final class Route extends TransitEntity {
 
     private static final long serialVersionUID = 1L;
@@ -104,6 +108,10 @@ public final class Route extends TransitEntity {
     }
 
     public String getUrl() {
+        if(url != null) {
+            String cipherText = Crypto.encryptWithExpiry(url, OffsetDateTime.now().plusMinutes(15));
+            return EncryptedRedirect.REDIRECT_PREFIX + cipherText;
+        }
         return url;
     }
 
