@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.opentripplanner.api.resource.BikeRental;
+import org.opentripplanner.api.resource.EncryptedRedirect;
 import org.opentripplanner.api.resource.ExternalGeocoderResource;
 import org.opentripplanner.api.resource.GraphInspectorTileResource;
 import org.opentripplanner.api.resource.PlannerResource;
@@ -46,6 +47,7 @@ public class APIEndpoints {
         add(Routers.class);
         add(PlannerResource.class);
         add(IndexAPI.class);
+        add(EncryptedRedirect.class);
 
         // Add feature enabled APIs, these can be enabled by default, some is not.
         // See the OTPFeature enum for details.
