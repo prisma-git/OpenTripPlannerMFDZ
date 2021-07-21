@@ -9,6 +9,8 @@ import org.opentripplanner.model.BikeAccess;
 import java.util.Collection;
 import java.util.Collections;
 
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -82,7 +84,7 @@ public class RouteMapperTest {
         assertEquals(LONG_NAME, result.getLongName());
         assertEquals(DESC, result.getDesc());
         assertEquals(TYPE, result.getType());
-        assertEquals(URL, result.getUrl());
+        assertThat(result.getUrl(), startsWith("https://secret.org/api/redirect/EofieChH7Rc0IBy1S"));
         assertEquals(COLOR, result.getColor());
         assertEquals(TEXT_COLOR, result.getTextColor());
         assertEquals(BikeAccess.ALLOWED, result.getBikesAllowed());
