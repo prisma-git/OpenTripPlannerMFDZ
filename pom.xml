@@ -219,6 +219,10 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M5</version>
                 <configuration>
+                    <environmentVariables>
+                        <ENCRYPTION_SECRET_KEY>very secret key</ENCRYPTION_SECRET_KEY>
+                        <API_URL>https://secret.org/api/</API_URL>
+                    </environmentVariables>
                     <!-- we have to fork the JVM during tests so that the argLine is passed along -->
                     <forkCount>3</forkCount>
                     <!-- enable the restricted reflection under Java 11 so that the ObjectDiffer works -->
