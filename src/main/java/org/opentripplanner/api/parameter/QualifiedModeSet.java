@@ -1,11 +1,6 @@
 package org.opentripplanner.api.parameter;
 
 import com.beust.jcommander.internal.Sets;
-
-import org.opentripplanner.model.TransitMode;
-import org.opentripplanner.routing.api.request.RequestModes;
-import org.opentripplanner.routing.api.request.StreetMode;
-
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -13,12 +8,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import org.opentripplanner.model.TransitMode;
+import org.opentripplanner.routing.api.request.RequestModes;
+import org.opentripplanner.routing.api.request.StreetMode;
 
 /**
  * A set of qualified modes. The original intent was to allow a sequence of mode sets, but the shift to "long distance
- * mode" routing means that it will make more sense to specify access, egress, and transit modes in separate parameters. 
+ * mode" routing means that it will make more sense to specify access, egress, and transit modes in separate parameters.
  * So now this only contains one mode set rather than a sequence of them.
- *  
+ *
  * This class and QualifiedMode are clearly somewhat inefficient and allow nonsensical combinations like
  * renting and parking a subway. They are not intended for use in routing. Rather, they simply parse the
  * language of mode specifications that may be given in the mode query parameter. They are then converted
@@ -26,7 +24,7 @@ import java.util.stream.Collectors;
  */
 public class QualifiedModeSet implements Serializable {
     private static final long serialVersionUID = 1L;
-    
+
     public Set<QualifiedMode> qModes = Sets.newHashSet();
 
     public QualifiedModeSet(String s) {
@@ -99,9 +97,7 @@ public class QualifiedModeSet implements Serializable {
             List<QualifiedMode> filteredModesWithoutWalk = filteredModes.stream()
                     .filter(Predicate.not(m -> m.mode == ApiRequestMode.WALK))
                     .collect(Collectors.toList());
-            if (filteredModesWithoutWalk.size() > 1) {
-                throw new IllegalStateException("Multiple non-walk modes provided " + filteredModesWithoutWalk);
-            } else if (filteredModesWithoutWalk.isEmpty()) {
+            if (filteredModesWithoutWalk.isEmpty()) {
                 requestMode = filteredModes.get(0);
             } else {
                 requestMode = filteredModesWithoutWalk.get(0);
@@ -175,6 +171,23 @@ public class QualifiedModeSet implements Serializable {
             }
         }
 
+        var bikeQualifiers = qModes.stream()
+                .filter(m -> m.mode == ApiRequestMode.BICYCLE)
+                .flatMap(m -> m.qualifiers.stream())
+                .collect(Collectors.toSet());
+
+        if (bikeQualifiers.containsAll(Set.of(Qualifier.PARK, Qualifier.RENT))) {
+            accessMode = StreetMode.BIKE_TO_PARK;
+            transferMode = StreetMode.WALK;
+            egressMode = StreetMode.BIKE_RENTAL;
+            if (transitModes.isEmpty()) {
+                directMode = StreetMode.BIKE_TO_PARK;
+            }
+            else {
+                directMode = StreetMode.BIKE;
+            }
+        }
+
         // These modes are set last in order to take precedence over other modes
         for (QualifiedMode qMode : qModes) {
             if (qMode.mode.equals(ApiRequestMode.FLEX)) {
@@ -196,7 +209,7 @@ public class QualifiedModeSet implements Serializable {
             transitModes
         );
     }
-    
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (QualifiedMode qm : qModes) {

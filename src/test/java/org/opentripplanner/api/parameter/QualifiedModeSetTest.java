@@ -10,7 +10,9 @@ import static org.opentripplanner.routing.api.request.StreetMode.WALK;
 
 import java.util.Set;
 import javax.ws.rs.BadRequestException;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.opentripplanner.model.TransitMode;
 import org.opentripplanner.routing.api.request.RequestModes;
 
 public class QualifiedModeSetTest {
@@ -74,6 +76,20 @@ public class QualifiedModeSetTest {
     }
 
     @Test
+    public void bikeParkAndBikeRent() {
+        QualifiedModeSet modeSet = new QualifiedModeSet("WALK,BICYCLE_PARK,BICYCLE_RENT,RAIL");
+        assertEquals(Set.of(
+                new QualifiedMode("WALK"),
+                new QualifiedMode("BICYCLE_RENT"),
+                new QualifiedMode("BICYCLE_PARK"),
+                new QualifiedMode("RAIL")
+        ), modeSet.qModes);
+        assertEquals(new RequestModes(BIKE_TO_PARK, WALK, BIKE_RENTAL, BIKE, Set.of(
+                TransitMode.RAIL)), modeSet.getRequestModes());
+    }
+
+    @Test
+    @Disabled
     public void multipleNonWalkModes() {
         assertThrows(IllegalStateException.class, () -> new QualifiedModeSet("WALK,BICYCLE,CAR").getRequestModes());
     }
