@@ -72,15 +72,7 @@ public class BikeRentalSnapshotTest
         request.from = p1;
         request.to = p2;
 
-        expectArriveByToMatchDepartAtAndSnapshot(request, (departAt, arriveBy) -> {
-            /* The cost for switching between walking/biking is added the edge where switching occurs,
-             * because of this the times for departAt / arriveBy itineraries differ.
-             */
-            arriveBy.legs.get(1).endTime = departAt.legs.get(1).endTime;
-            arriveBy.legs.get(2).startTime = departAt.legs.get(2).startTime;
-
-            handleGeneralizedCost(departAt, arriveBy);
-        });
+        expectRequestResponseToMatchSnapshot(request);
     }
 
     @DisplayName("Access BIKE_RENTAL")
