@@ -18,7 +18,7 @@ the runtime configuration files (`otp-config.json`, `router-config.json`), use t
 ```
 docker pull mfdz/opentripplanner:latest
 docker run --rm -it \ 
-    -e GRAPH_ZIP_URL=http://example.com/graph.zip \
+    -e GRAPH_ZIP_URL=https://example.com/graph.zip \
     -p 8080:8080 \
     mfdz/opentripplanner:latest
 ```
@@ -36,3 +36,28 @@ docker run --rm -it \
     -p 8080:8080 \
     mfdz/opentripplanner:latest --load --serve graph
 ```
+
+#### Logback configuration
+
+OTP comes with a default `logback.xml` configuration file which is bundled inside the Jar. In
+order to change this, you need to build a new Jar and Docker image, which is cumbersome.
+
+However, it's also possible to define a different `logback.xml` file by using [standard Logback
+functionality](http://logback.qos.ch/manual/configuration.html#configFileProperty).
+
+In order to do this - combined with the automatic download of the graph - follow these steps:
+
+1. Create a file `logback.xml` in the directory where you're running Docker and fill it with the values that you wish.
+   A good idea for debugging would be to use a [configuration with colourful log output](https://stackoverflow.com/a/27899234/99022) to ensure that it's working.
+
+2. Run the following command to place the file into the container via a volume and configure the Logback to use it:
+```
+docker pull mfdz/opentripplanner:latest
+docker run --rm -it \
+    -v ./logback.xml:/opt/opentripplanner/logback.xml \
+    -e JAVA_OPTS="-Dlogback.configurationFile=/opt/opentripplanner/logback.xml" \
+    -e GRAPH_ZIP_URL=https://example.com/graph.zip \
+    -p 8080:8080 \
+    mfdz/opentripplanner:latest
+```
+3. See that the log output is now using colours.

@@ -7,6 +7,7 @@ VOLUME /opt/opentripplanner/graph
 ENV OTP_ROOT="/opt/opentripplanner"
 
 WORKDIR ${OTP_ROOT}
+RUN touch logback.xml
 
 ADD target/*-shaded.jar ${OTP_ROOT}/otp-shaded.jar
 ADD entrypoint.sh .
