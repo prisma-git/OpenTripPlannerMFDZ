@@ -9,8 +9,9 @@ This is a non-exhaustive list of features that this fork contains, but are not i
 
 ### Docker image
 
-#### Automatic graph download
 The image is [deployed to Dockerhub](https://hub.docker.com/r/mfdz/opentripplanner).
+
+#### Automatic graph download
 
 If you want the container to download a zip file containing the graph (`graph.obj`) and 
 the runtime configuration files (`otp-config.json`, `router-config.json`), use the following command:
