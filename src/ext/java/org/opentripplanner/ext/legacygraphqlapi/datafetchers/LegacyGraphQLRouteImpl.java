@@ -46,7 +46,7 @@ public class LegacyGraphQLRouteImpl implements LegacyGraphQLDataFetchers.LegacyG
   }
 
   @Override
-  public DataFetcher<Object> mode() {
+  public DataFetcher<String> mode() {
     return environment -> getSource(environment).getMode().name();
   }
 

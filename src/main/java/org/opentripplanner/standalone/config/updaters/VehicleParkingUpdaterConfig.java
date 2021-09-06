@@ -15,7 +15,6 @@ public class VehicleParkingUpdaterConfig {
   private static final Map<String, DataSourceType> CONFIG_MAPPING = new HashMap<>();
 
   static {
-    CONFIG_MAPPING.put("kml", DataSourceType.KML);
     CONFIG_MAPPING.put("park-api", DataSourceType.PARK_API);
     CONFIG_MAPPING.put("bicycle-park-api", DataSourceType.BICYCLE_PARK_API);
   }

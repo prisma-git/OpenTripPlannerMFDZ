@@ -153,8 +153,8 @@ public class ConstantsForTests {
 
             graph.index();
 
-            graph.getBikerentalStationService().getBikeRentalStations()
-                    .forEach(bikeRentalStation -> bikeRentalStation.isKeepingBicycleRentalAtDestinationAllowed = true);
+            graph.getVehicleRentalStationService().getVehicleRentalStations()
+                    .forEach(vehicleRentalStation -> vehicleRentalStation.isKeepingVehicleRentalAtDestinationAllowed = true);
 
             return graph;
         } catch (Exception e) {

@@ -5,7 +5,7 @@ import com.wdtinc.mapbox_vector_tile.VectorTile;
 import org.geotools.geometry.Envelope2D;
 import org.locationtech.jts.geom.Envelope;
 import org.opentripplanner.common.geometry.WebMercatorTile;
-import org.opentripplanner.ext.vectortiles.layers.bikerental.BikeRentalLayerBuilder;
+import org.opentripplanner.ext.vectortiles.layers.vehiclerental.VehicleRentalLayerBuilder;
 import org.opentripplanner.ext.vectortiles.layers.stations.StationsLayerBuilder;
 import org.opentripplanner.ext.vectortiles.layers.stops.StopsLayerBuilder;
 import org.opentripplanner.ext.vectortiles.layers.vehicleparkings.VehicleParkingsLayerBuilder;
@@ -37,14 +37,14 @@ import java.util.stream.Collectors;
 
 @Path("/routers/{ignoreRouterId}/vectorTiles")
 public class VectorTilesResource {
-  enum LayerType {Stop, Station, BikeRental, VehicleParking}
+  enum LayerType {Stop, Station, VehicleRental, VehicleParking}
 
   static Map<LayerType, BiFunction<Graph, LayerParameters, LayerBuilder>> layers = new HashMap<>();
 
   static {
     layers.put(LayerType.Stop, StopsLayerBuilder::new);
     layers.put(LayerType.Station, StationsLayerBuilder::new);
-    layers.put(LayerType.BikeRental, BikeRentalLayerBuilder::new);
+    layers.put(LayerType.VehicleRental, VehicleRentalLayerBuilder::new);
     layers.put(LayerType.VehicleParking, VehicleParkingsLayerBuilder::new);
   }
 

@@ -227,13 +227,13 @@ public class StateEditor {
     ) {
         cloneStateDataAsNeeded();
         if (reverse) {
-            child.stateData.bikeRentalState = BikeRentalState.BEFORE_RENTING;
+            child.stateData.vehicleRentalState = VehicleRentalState.BEFORE_RENTING;
             child.stateData.currentMode = TraverseMode.WALK;
-            child.stateData.bikeRentalNetworks = null;
+            child.stateData.vehicleRentalNetworks = null;
         } else {
-            child.stateData.bikeRentalState = BikeRentalState.RENTING_FLOATING;
+            child.stateData.vehicleRentalState = VehicleRentalState.RENTING_FLOATING;
             child.stateData.currentMode = vehicleMode;
-            child.stateData.bikeRentalNetworks = networks;
+            child.stateData.vehicleRentalNetworks = networks;
         }
     }
 
@@ -245,16 +245,16 @@ public class StateEditor {
     ) {
         cloneStateDataAsNeeded();
         if (reverse) {
-            child.stateData.mayKeepRentedBicycleAtDestination = mayKeep;
-            child.stateData.bikeRentalState = BikeRentalState.BEFORE_RENTING;
+            child.stateData.mayKeepRentedVehicleAtDestination = mayKeep;
+            child.stateData.vehicleRentalState = VehicleRentalState.BEFORE_RENTING;
             child.stateData.currentMode = TraverseMode.WALK;
-            child.stateData.bikeRentalNetworks = null;
+            child.stateData.vehicleRentalNetworks = null;
             child.stateData.backWalkingBike = false;
         } else {
-            child.stateData.mayKeepRentedBicycleAtDestination = mayKeep;
-            child.stateData.bikeRentalState = BikeRentalState.RENTING_FROM_STATION;
+            child.stateData.mayKeepRentedVehicleAtDestination = mayKeep;
+            child.stateData.vehicleRentalState = VehicleRentalState.RENTING_FROM_STATION;
             child.stateData.currentMode = vehicleMode;
-            child.stateData.bikeRentalNetworks = networks;
+            child.stateData.vehicleRentalNetworks = networks;
         }
     }
 
@@ -265,15 +265,15 @@ public class StateEditor {
     ) {
         cloneStateDataAsNeeded();
         if (reverse) {
-            child.stateData.mayKeepRentedBicycleAtDestination = false;
-            child.stateData.bikeRentalState = BikeRentalState.RENTING_FROM_STATION;
+            child.stateData.mayKeepRentedVehicleAtDestination = false;
+            child.stateData.vehicleRentalState = VehicleRentalState.RENTING_FROM_STATION;
             child.stateData.currentMode = vehicleMode;
-            child.stateData.bikeRentalNetworks = networks;
+            child.stateData.vehicleRentalNetworks = networks;
         } else {
-            child.stateData.mayKeepRentedBicycleAtDestination = false;
-            child.stateData.bikeRentalState = BikeRentalState.HAVE_RENTED;
+            child.stateData.mayKeepRentedVehicleAtDestination = false;
+            child.stateData.vehicleRentalState = VehicleRentalState.HAVE_RENTED;
             child.stateData.currentMode = TraverseMode.WALK;
-            child.stateData.bikeRentalNetworks = null;
+            child.stateData.vehicleRentalNetworks = null;
             child.stateData.backWalkingBike = false;
         }
     }
@@ -308,12 +308,13 @@ public class StateEditor {
         child.stateData.carPickupState = state.stateData.carPickupState;
         child.stateData.vehicleParked = state.stateData.vehicleParked;
         child.stateData.backWalkingBike = state.stateData.backWalkingBike;
+        child.stateData.backWalkingBike = state.stateData.backWalkingBike;
     }
 
     public void setNonTransitOptionsFromState(State state) {
         cloneStateDataAsNeeded();
         child.stateData.currentMode = state.getNonTransitMode();
-        child.stateData.bikeRentalState = state.stateData.bikeRentalState;
+        child.stateData.vehicleRentalState = state.stateData.vehicleRentalState;
     }
 
     public void setCarPickupState(CarPickupState carPickupState) {
@@ -376,8 +377,13 @@ public class StateEditor {
             child.stateData.timeRestrictions.add(timeRestriction);
 
             child.stateData.timeRestrictionSources = new HashSet<>();
-            child.stateData.timeRestrictionSources.addAll(child.backState.getTimeRestrictionSources());
+            child.stateData.timeRestrictionSources.addAll(
+                    child.backState.getTimeRestrictionSources());
             child.stateData.timeRestrictionSources.add(source);
         }
+    }
+    public void setBikeRentalNetwork(Set<String> networks) {
+        cloneStateDataAsNeeded();
+        child.stateData.vehicleRentalNetworks = networks;
     }
 }

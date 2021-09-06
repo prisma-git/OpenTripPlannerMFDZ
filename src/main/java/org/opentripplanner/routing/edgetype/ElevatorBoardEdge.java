@@ -42,6 +42,9 @@ public class ElevatorBoardEdge extends Edge implements BikeWalkableEdge, Elevato
     @Override
     public State traverse(State s0) {
         StateEditor s1 = createElevatorStateEditor(s0, this);
+        if (s1 == null) {
+            return null;
+        }
 
         RoutingRequest options = s0.getOptions();
         s1.incrementWeight(options.elevatorBoardCost);

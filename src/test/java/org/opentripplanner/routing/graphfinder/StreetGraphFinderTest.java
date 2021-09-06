@@ -18,7 +18,7 @@ import org.opentripplanner.routing.RoutingService;
 import org.opentripplanner.routing.algorithm.GraphRoutingTest;
 import org.opentripplanner.routing.edgetype.StreetTraversalPermission;
 import org.opentripplanner.routing.graph.GraphIndex;
-import org.opentripplanner.routing.vertextype.BikeRentalStationVertex;
+import org.opentripplanner.routing.vertextype.VehicleRentalStationVertex;
 import org.opentripplanner.routing.vertextype.IntersectionVertex;
 import org.opentripplanner.routing.vertextype.TransitStopVertex;
 
@@ -26,7 +26,7 @@ class StreetGraphFinderTest extends GraphRoutingTest {
 
     private TransitStopVertex S1, S2, S3;
     private IntersectionVertex A, B, C, D;
-    private BikeRentalStationVertex BR1, BR2;
+    private VehicleRentalStationVertex BR1, BR2;
     private RoutingService routingService;
     private StreetGraphFinder graphFinder;
     private Route R1, R2;
@@ -51,8 +51,8 @@ class StreetGraphFinderTest extends GraphRoutingTest {
                 S2 = stop("S2", 47.510, 19.001);
                 S3 = stop("S3", 47.520, 19.001);
 
-                BR1 = bikeRentalStation("BR1", 47.500, 18.999);
-                BR2 = bikeRentalStation("BR2", 47.520, 18.999);
+                BR1 = vehicleRentalStation("BR1", 47.500, 18.999);
+                BR2 = vehicleRentalStation("BR2", 47.520, 18.999);
 
                 A = intersection("A", 47.500, 19.00);
                 B = intersection("B", 47.510, 19.00);

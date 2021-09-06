@@ -10,12 +10,12 @@ import org.opentripplanner.model.StopLocation;
 import org.opentripplanner.model.WgsCoordinate;
 import org.opentripplanner.model.base.ToStringBuilder;
 import org.opentripplanner.routing.api.request.RoutingRequest;
-import org.opentripplanner.routing.bike_rental.BikeRentalStation;
 import org.opentripplanner.routing.core.TraverseMode;
 import org.opentripplanner.routing.graph.Vertex;
-import org.opentripplanner.routing.vertextype.BikeRentalStationVertex;
+import org.opentripplanner.routing.vehicle_rental.VehicleRentalStation;
 import org.opentripplanner.routing.vertextype.TransitStopVertex;
 import org.opentripplanner.routing.vertextype.VehicleParkingEntranceVertex;
+import org.opentripplanner.routing.vertextype.VehicleRentalStationVertex;
 
 /** 
 * A Place is where a journey starts or ends, or a transit stop along the way.
@@ -47,7 +47,7 @@ public class Place {
     /**
      * The bike rental station if the type is {@link VertexType#BIKESHARE}.
      */
-    private BikeRentalStation bikeRentalStation;
+    private VehicleRentalStation bikeRentalStation;
 
     /**
      * The vehicle parking entrance if the type is {@link VertexType#VEHICLEPARKING}.
@@ -161,7 +161,7 @@ public class Place {
                 .build();
     }
 
-    public static Place forBikeRentalStation(BikeRentalStationVertex vertex, String name) {
+    public static Place forBikeRentalStation(VehicleRentalStationVertex vertex, String name) {
         return defaults(vertex, name)
                 .vertexType(VertexType.BIKESHARE)
                 .bikeRentalStation(vertex.getStation())

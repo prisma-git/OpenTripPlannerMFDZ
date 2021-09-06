@@ -63,14 +63,36 @@ public class BikeRentalSnapshotTest
         });
     }
 
-    @DisplayName("Direct BIKE_RENTAL while keeping the bicycle at the destination")
-    @Test public void directBikeRentalArrivingAtDestination() {
+    /**
+     * The next to two tests are an example where departAt and arriveBy searches return different
+     * (but still correct) results.
+     *
+     * It's probably down to the intersection traversal because when you use a constant cost
+     * they become the same route again.
+     *
+     * More discussion: https://github.com/opentripplanner/OpenTripPlanner/pull/3574
+     */
+    @DisplayName("Direct BIKE_RENTAL while keeping the bicycle at the destination with departAt")
+    @Test public void directBikeRentalArrivingAtDestinationWithDepartAt() {
         RoutingRequest request = createTestRequest(2009, 9, 21, 16, 10, 0);
 
         request.modes = new RequestModes(null, null, null, StreetMode.BIKE_RENTAL, Set.of());
-        request.allowKeepingRentedBicycleAtDestination = true;
+        request.allowKeepingRentedVehicleAtDestination = true;
         request.from = p1;
         request.to = p2;
+
+        expectRequestResponseToMatchSnapshot(request);
+    }
+
+    @DisplayName("Direct BIKE_RENTAL while keeping the bicycle at the destination with arriveBy")
+    @Test public void directBikeRentalArrivingAtDestinationWithArriveBy() {
+        RoutingRequest request = createTestRequest(2009, 9, 21, 16, 10, 0);
+
+        request.modes = new RequestModes(null, null, null, StreetMode.BIKE_RENTAL, Set.of());
+        request.allowKeepingRentedVehicleAtDestination = true;
+        request.from = p1;
+        request.to = p2;
+        request.arriveBy = true;
 
         expectRequestResponseToMatchSnapshot(request);
     }

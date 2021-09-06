@@ -2,6 +2,7 @@ package org.opentripplanner.routing.graphfinder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +66,7 @@ public class NearbyStop implements Comparable<NearbyStop> {
 
   public String toString() {
     return String.format(
+            Locale.ROOT,
             "stop %s at %.1f meters%s%s%s",
             stop, distance,
             edges != null ? " (" + edges.size() + " edges)" : "",

@@ -3,6 +3,7 @@ package org.opentripplanner.standalone.config;
 import org.opentripplanner.model.TransitMode;
 import org.opentripplanner.routing.api.request.RequestModes;
 import org.opentripplanner.routing.api.request.RoutingRequest;
+import org.opentripplanner.routing.api.request.StreetMode;
 import org.opentripplanner.routing.api.request.TransferOptimizationRequest;
 import org.opentripplanner.routing.core.TraverseMode;
 import org.slf4j.Logger;
@@ -45,18 +46,21 @@ public class RoutingRequestMapper {
         request.bikeSwitchCost = c.asInt("bikeSwitchCost", dft.bikeSwitchCost);
         request.bikeWalkingReluctance = c.asDouble("bikeWalkingReluctance", dft.bikeWalkingReluctance);
         request.bikeWalkingSpeed = c.asDouble("bikeWalkingSpeed", dft.bikeWalkingSpeed);
-        request.allowKeepingRentedBicycleAtDestination = c.asBoolean("allowKeepingRentedBicycleAtDestination", dft.allowKeepingRentedBicycleAtDestination);
-        request.keepingRentedBicycleAtDestinationCost = c.asDouble("keepingRentedBicycleAtDestinationCost", dft.keepingRentedBicycleAtDestinationCost);
+        request.bikeWalkingReluctance = c.asDouble("bikeWalkingReluctance", dft.bikeWalkingReluctance);
+        request.bikeWalkingSpeed = c.asDouble("bikeWalkingSpeed", dft.bikeWalkingSpeed);
+        request.allowKeepingRentedVehicleAtDestination = c.asBoolean("allowKeepingRentedBicycleAtDestination", dft.allowKeepingRentedVehicleAtDestination);
+        request.keepingRentedVehicleAtDestinationCost = c.asDouble("keepingRentedBicycleAtDestinationCost", dft.keepingRentedVehicleAtDestinationCost);
         request.boardSlack = c.asInt("boardSlack", dft.boardSlack);
         request.boardSlackForMode = c.asEnumMap("boardSlackForMode", TraverseMode.class, NodeAdapter::asInt);
+        request.maxAccessEgressDurationSecondsForMode = c.asEnumMap("maxAccessEgressDurationSecondsForMode", StreetMode.class, NodeAdapter::asDouble);
         request.carAccelerationSpeed = c.asDouble("carAccelerationSpeed", dft.carAccelerationSpeed);
         request.carDecelerationSpeed = c.asDouble("carDecelerationSpeed", dft.carDecelerationSpeed);
         request.carDropoffTime = c.asInt("carDropoffTime", dft.carDropoffTime);
-        request.carParkCost = c.asInt("carParkCost", dft.carParkCost);
-        request.carParkTime = c.asInt("carParkTime", dft.carParkTime);
         request.carPickupCost = c.asInt("carPickupCost", dft.carPickupCost);
         request.carPickupTime = c.asInt("carPickupTime", dft.carPickupTime);
         request.carReluctance = c.asDouble("carReluctance", dft.carReluctance);
+        request.carParkCost = c.asInt("carParkCost", dft.carParkCost);
+        request.carParkTime = c.asInt("carParkTime", dft.carParkTime);
         request.carSpeed = c.asDouble("carSpeed", dft.carSpeed);
         request.itineraryFilters = ItineraryFiltersMapper.map(c.path("itineraryFilters"));
         request.disableAlertFiltering = c.asBoolean("disableAlertFiltering", dft.disableAlertFiltering);
@@ -76,7 +80,7 @@ public class RoutingRequestMapper {
         request.nonpreferredTransferCost = c.asInt("nonpreferredTransferPenalty", dft.nonpreferredTransferCost);
         request.numItineraries = c.asInt("numItineraries", dft.numItineraries);
         request.onlyTransitTrips = c.asBoolean("onlyTransitTrips", dft.onlyTransitTrips);
-        request.optimize = c.asEnum("optimize", dft.optimize);
+        request.bicycleOptimizeType = c.asEnum("optimize", dft.bicycleOptimizeType);
         request.otherThanPreferredRoutesPenalty = c.asInt("otherThanPreferredRoutesPenalty", dft.otherThanPreferredRoutesPenalty);
         request.parkAndRide = c.asBoolean("parkAndRide", dft.parkAndRide);
         request.pathComparator = c.asText("pathComparator", dft.pathComparator);
@@ -88,7 +92,7 @@ public class RoutingRequestMapper {
         request.transferSlack = c.asInt("transferSlack", dft.transferSlack);
         request.setTransitReluctanceForMode(c.asEnumMap("transitReluctanceForMode", TransitMode.class, NodeAdapter::asDouble));
         request.turnReluctance = c.asDouble("turnReluctance", dft.turnReluctance);
-        request.useBikeRentalAvailabilityInformation = c.asBoolean("useBikeRentalAvailabilityInformation", dft.useBikeRentalAvailabilityInformation);
+        request.useVehicleRentalAvailabilityInformation = c.asBoolean("useBikeRentalAvailabilityInformation", dft.useVehicleRentalAvailabilityInformation);
         request.useVehicleParkingAvailabilityInformation = c.asBoolean("useVehicleParkingAvailabilityInformation", dft.useVehicleParkingAvailabilityInformation);
         request.useUnpreferredRoutesPenalty = c.asInt("useUnpreferredRoutesPenalty", dft.useUnpreferredRoutesPenalty);
         request.vehicleParkingClosesSoonSeconds = c.asInt("vehicleParkingClosesSoonSeconds", dft.vehicleParkingClosesSoonSeconds);
@@ -108,9 +112,8 @@ public class RoutingRequestMapper {
     }
 
     private static void mapTransferOptimization(TransferOptimizationRequest p, NodeAdapter c) {
-        p.useOptimizeTransferCostFunction = c.asBoolean(
-            "adjustGeneralizedCost",
-            p.useOptimizeTransferCostFunction
+        p.optimizeTransferWaitTime = c.asBoolean(
+                "optimizeTransferWaitTime", p.optimizeTransferWaitTime
         );
         p.minSafeWaitTimeFactor = c.asDouble("minSafeWaitTimeFactor", p.minSafeWaitTimeFactor);
         p.inverseWaitReluctance = c.asDouble("inverseWaitReluctance", p.inverseWaitReluctance);

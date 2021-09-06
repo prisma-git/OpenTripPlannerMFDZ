@@ -466,6 +466,20 @@ public class NodeAdapter {
         return result;
     }
 
+    public <T> Map<String, T> asMap(String paramName, BiFunction<NodeAdapter, String, T> mapper) {
+        NodeAdapter node = path(paramName);
+
+        if(node.isEmpty()) { return Map.of(); }
+
+        Map<String, T> result = new HashMap<>();
+
+        Iterator<String> names = node.json.fieldNames();
+        while (names.hasNext()) {
+            String key = names.next();
+            result.put(key, mapper.apply(node, key));
+        }
+        return result;
+    }
     public Set<String> asStringSet(
             String paramName,
             Set<String> defaultValue

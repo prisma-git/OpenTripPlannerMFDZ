@@ -3,6 +3,8 @@ package org.opentripplanner.util.xml;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Collections;
+import java.util.Map;
 import lombok.Setter;
 import org.opentripplanner.util.HttpUtils;
 import org.slf4j.Logger;
@@ -63,7 +65,7 @@ public class JsonDataListDownloader<T> {
     URL downloadUrl = new URL(url);
     String proto = downloadUrl.getProtocol();
     if (proto.equals("http") || proto.equals("https")) {
-      return HttpUtils.getData(URI.create(url), headerName, headerValue);
+      return HttpUtils.getData(URI.create(url), Collections.emptyMap());
     } else {
       // Local file probably, try standard java
       return downloadUrl.openStream();

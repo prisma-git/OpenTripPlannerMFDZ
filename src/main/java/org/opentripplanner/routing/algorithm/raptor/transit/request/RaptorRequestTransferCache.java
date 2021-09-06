@@ -134,7 +134,7 @@ public class RaptorRequestTransferCache {
         public StreetRelevantOptions(RoutingRequest routingRequest) {
             this.transferMode = routingRequest.modes.transferMode;
 
-            this.optimize = routingRequest.optimize;
+            this.optimize = routingRequest.bicycleOptimizeType;
             this.bikeTriangleSafetyFactor = routingRequest.bikeTriangleSafetyFactor;
             this.bikeTriangleSlopeFactor = routingRequest.bikeTriangleSlopeFactor;
             this.bikeTriangleTimeFactor = routingRequest.bikeTriangleTimeFactor;

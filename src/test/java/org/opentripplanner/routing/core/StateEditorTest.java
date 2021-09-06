@@ -35,7 +35,7 @@ public class StateEditorTest {
         State state = new State(request);
 
         state.stateData.vehicleParked = true;
-        state.stateData.bikeRentalState = BikeRentalState.BEFORE_RENTING;
+        state.stateData.vehicleRentalState = VehicleRentalState.BEFORE_RENTING;
         state.stateData.currentMode = TraverseMode.WALK;
 
         StateEditor se = new StateEditor(request, null);

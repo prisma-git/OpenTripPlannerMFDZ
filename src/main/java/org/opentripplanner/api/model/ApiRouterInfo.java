@@ -5,7 +5,7 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.opentripplanner.api.mapping.TraverseModeMapper;
 import org.opentripplanner.common.geometry.GeometrySerializer;
-import org.opentripplanner.routing.bike_rental.BikeRentalStationService;
+import org.opentripplanner.routing.vehicle_rental.VehicleRentalStationService;
 import org.opentripplanner.routing.graph.Graph;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingService;
 import org.opentripplanner.util.TravelOption;
@@ -51,8 +51,8 @@ public class ApiRouterInfo {
 
 
     public ApiRouterInfo(String routerId, Graph graph) {
-        BikeRentalStationService bikeRentalService = graph.getService(
-                BikeRentalStationService.class, false
+        VehicleRentalStationService service = graph.getService(
+                VehicleRentalStationService.class, false
         );
         VehicleParkingService vehicleParkingService = graph.getService(
             VehicleParkingService.class, false
@@ -66,7 +66,7 @@ public class ApiRouterInfo {
         this.transitModes = TraverseModeMapper.mapToApi(graph.getTransitModes());
         this.envelope = graph.getEnvelope();
         this.hasParkRide = graph.hasParkRide;
-        this.hasBikeSharing = mapHasBikeSharing(bikeRentalService);
+        this.hasBikeSharing = mapHasBikeSharing(service);
         this.hasBikePark = mapHasBikePark(vehicleParkingService);
         this.hasCarPark = mapHasCarPark(vehicleParkingService);
         this.hasVehicleParking = mapHasVehicleParking(vehicleParkingService);
@@ -74,13 +74,13 @@ public class ApiRouterInfo {
         addCenter(graph.getCenter());
     }
 
-    public boolean mapHasBikeSharing(BikeRentalStationService service) {
+    public boolean mapHasBikeSharing(VehicleRentalStationService service) {
         if (service == null) {
             return false;
         }
 
         //at least 2 bike sharing stations are needed for useful bike sharing
-        return service.getBikeRentalStations().size() > 1;
+        return service.getVehicleRentalStations().size() > 1;
     }
 
     public boolean mapHasBikePark(VehicleParkingService service) {

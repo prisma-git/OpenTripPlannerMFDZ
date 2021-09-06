@@ -104,6 +104,9 @@ public class PathwayEdge extends Edge implements BikeWalkableEdge {
 
     public State traverse(State s0) {
         StateEditor s1 = createEditorForWalking(s0, this);
+        if (s1 == null) {
+            return null;
+        }
 
         /* TODO: Consider mode, so that passing through multiple fare gates is not possible */
         int time = traversalTime;

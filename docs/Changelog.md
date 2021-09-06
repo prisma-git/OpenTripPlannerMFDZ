@@ -30,7 +30,20 @@
 - Fix for traveling back in time when optimize transfers [#3491](https://github.com/opentripplanner/OpenTripPlanner/pull/3491)
 - Transit reluctance per transit mode [#3440](https://github.com/opentripplanner/OpenTripPlanner/issues/3440)
 - Allow the removal of P+R results consisting only of driving of walking [#3515](https://github.com/opentripplanner/OpenTripPlanner/pull/3515)
+- Allow http headers to be specified for bike rental updaters [#3533](https://github.com/opentripplanner/OpenTripPlanner/pull/3533)
 - Per-mode reluctance parameters are added so that itineraries with multiple modes may have varying reluctances. [#3501](https://github.com/opentripplanner/OpenTripPlanner/issues/3501)
+- Add `maxAreaNodes` configuration parameter for changing an area visibility calculation limit (https://github.com/opentripplanner/OpenTripPlanner/issues/3534)
+- Add maxAccessEgressDurationSecondsForMode to RoutingRequest [#3560](https://github.com/opentripplanner/OpenTripPlanner/issues/3560)
+- Add bicycle safety report to report API [#3563](https://github.com/opentripplanner/OpenTripPlanner/issues/3563)
+- Optimize Transfers performance issue [#3513](https://github.com/opentripplanner/OpenTripPlanner/issues/3513)
+- Don't allow bicycle loops in A* [#3574](https://github.com/opentripplanner/OpenTripPlanner/pull/3574)
+- Cancel individual stop on StopPattern instead of TripTimes [#3575](https://github.com/opentripplanner/OpenTripPlanner/issues/3575)
+- Refactor StopPattern/TripPattern/TripTimes [#3571](https://github.com/opentripplanner/OpenTripPlanner/issues/3571)
+- Do not allow bicycle traversal on ways tagged with mtb:scale [#3578](https://github.com/opentripplanner/OpenTripPlanner/pull/3578)
+- Changes to the StopTimes call [#3576](https://github.com/opentripplanner/OpenTripPlanner/issues/3576)
+- Fix bug in optimize transfer service decorating path [#3587](https://github.com/opentripplanner/OpenTripPlanner/issues/3587)
+- Remove non-GBFS bicycle rental updaters [#3562](https://github.com/opentripplanner/OpenTripPlanner/issues/3562)
+
 
 ## 2.0.0 (2020-11-27)
 

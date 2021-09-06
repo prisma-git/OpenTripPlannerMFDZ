@@ -83,7 +83,7 @@ public class PlanPlaceType {
         //                        .type(bikeParkType)
         //                        .description("The bike parking related to the place")
         //                        .dataFetcher(environment -> ((Place) environment.getSource()).vertexType.equals(VertexType.BIKEPARK) ?
-        //                                index.graph.getService(BikeRentalStationService.class)
+        //                                index.graph.getService(VehicleRentalStationService.class)
         //                                        .getBikeParks()
         //                                        .stream()
         //                                        .filter(bikePark -> bikePark.id.equals(((Place) environment.getSource()).bikeParkId))

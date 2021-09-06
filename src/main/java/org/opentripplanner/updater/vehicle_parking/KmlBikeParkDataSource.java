@@ -1,15 +1,16 @@
 package org.opentripplanner.updater.vehicle_parking;
 
+import static java.util.Locale.ROOT;
+
+import java.util.List;
 import org.opentripplanner.model.FeedScopedId;
 import org.opentripplanner.routing.vehicle_parking.VehicleParking;
 import org.opentripplanner.updater.DataSource;
 import org.opentripplanner.util.NonLocalizedString;
+import org.opentripplanner.routing.vehicle_parking.VehicleParking;
 import org.opentripplanner.util.xml.XmlDataListDownloader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.Locale;
 
 /**
  * Load bike park from a KML placemarks. Use name as bike park name and point coordinates. Rely on:
@@ -60,7 +61,7 @@ class KmlBikeParkDataSource implements DataSource<VehicleParking> {
             String[] coords = attributes.get("Point").trim().split(",");
             var x = Double.parseDouble(coords[0]);
             var y = Double.parseDouble(coords[1]);
-            var id = String.format(Locale.US, "%s[%.3f-%.3f]",
+            var id = String.format(ROOT, "%s[%.3f-%.3f]",
                 name.replace(" ", "_"), x, y);
 
             var localizedName = new NonLocalizedString(name);
