@@ -37,7 +37,6 @@ public class TripTimes implements Serializable, Comparable<TripTimes> {
     /** The trips whose arrivals and departures are represented by this TripTimes */
     private final Trip trip;
 
-    /** The code for the service on which this trip runs. For departure search optimizations. */
     // not final because these are set later, after TripTimes construction.
     private int serviceCode = -1;
 
