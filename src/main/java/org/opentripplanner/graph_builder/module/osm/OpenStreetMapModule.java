@@ -395,7 +395,7 @@ public class OpenStreetMapModule implements GraphBuilderModule {
             int n = 0;
             VehicleParkingService vehicleParkingService = graph.getService(
                     VehicleParkingService.class, true);
-            for (OSMNode node : osmdb.getBikeParkingNodes()) {
+            for (OSMNode node : nodes) {
                 n++;
 
                 I18NString creativeName = nameParkAndRideEntity(node);
