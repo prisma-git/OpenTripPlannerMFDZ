@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
+
 import org.opentripplanner.routing.algorithm.astar.NegativeWeightException;
 import org.opentripplanner.routing.api.request.RoutingRequest;
 import org.opentripplanner.routing.edgetype.StreetEdge;
@@ -537,8 +537,8 @@ public class State implements Cloneable {
         return foundAlternatePaths;
     }
 
-    public Set<String> getVehicleRentalNetworks() {
-        return stateData.vehicleRentalNetworks;
+    public String getVehicleRentalNetwork() {
+        return stateData.vehicleRentalNetwork;
     }
 
     /**
@@ -579,7 +579,7 @@ public class State implements Cloneable {
                 var stationVertex = ((VehicleRentalStationVertex) orig.vertex);
                 editor.dropOffRentedVehicleAtStation(
                         stationVertex.getVehicleMode(),
-                        stationVertex.getStation().networks,
+                        stationVertex.getStation().getNetwork(),
                         false
                 );
             }
@@ -588,7 +588,7 @@ public class State implements Cloneable {
                 if (orig.getBackState().isBikeRentingFromStation()) {
                     editor.beginVehicleRentingAtStation(
                             stationVertex.getVehicleMode(),
-                            stationVertex.getStation().networks,
+                            stationVertex.getStation().getNetwork(),
                             orig.backState.mayKeepRentedVehicleAtDestination(),
                             false
                     );
@@ -596,7 +596,7 @@ public class State implements Cloneable {
                 else if (orig.getBackState().isBikeRentingFloating()) {
                     editor.beginFloatingVehicleRenting(
                             stationVertex.getVehicleMode(),
-                            stationVertex.getStation().networks,
+                            stationVertex.getStation().getNetwork(),
                             false
                     );
                 }

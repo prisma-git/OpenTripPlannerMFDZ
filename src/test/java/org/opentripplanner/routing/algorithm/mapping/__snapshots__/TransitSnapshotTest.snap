@@ -16,7 +16,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 4923.150999999999,
-          "endTime": "2009-11-17T19:03:41.000+0000",
+          "endTime": "2009-11-17T19:03:41.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -39,7 +39,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "realTime": false,
           "rentedVehicle": false,
           "scheduled": false,
-          "startTime": "2009-11-17T18:00:00.000+0000",
+          "startTime": "2009-11-17T18:00:00.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -52,7 +52,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           },
           "transitAlerts": [ ],
           "transitLeg": false,
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [
             {
               "absoluteDirection": "WEST",
@@ -337,7 +336,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 920.3299999999999,
-          "endTime": "2009-11-17T18:12:58.000+0000",
+          "endTime": "2009-11-17T18:12:58.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -359,7 +358,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "realTime": false,
           "rentedVehicle": false,
           "scheduled": false,
-          "startTime": "2009-11-17T18:01:00.000+0000",
+          "startTime": "2009-11-17T18:01:00.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -396,7 +395,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           },
           "transitAlerts": [ ],
           "transitLeg": false,
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [
             {
               "absoluteDirection": "WEST",
@@ -475,7 +473,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 3602.7301325109484,
-          "endTime": "2009-11-17T18:25:49.000+0000",
+          "endTime": "2009-11-17T18:25:49.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -529,7 +527,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             "sequenceNumber": 20091117,
             "year": 2009
           },
-          "startTime": "2009-11-17T18:12:58.000+0000",
+          "startTime": "2009-11-17T18:12:58.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -611,7 +609,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             },
             "wheelchairAccessible": 0
           },
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [ ],
           "walkingLeg": false
         },
@@ -620,7 +617,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 999.0980000000001,
-          "endTime": "2009-11-17T18:38:41.000+0000",
+          "endTime": "2009-11-17T18:38:41.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -667,7 +664,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "realTime": false,
           "rentedVehicle": false,
           "scheduled": false,
-          "startTime": "2009-11-17T18:25:49.000+0000",
+          "startTime": "2009-11-17T18:25:49.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -679,7 +676,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           },
           "transitAlerts": [ ],
           "transitLeg": false,
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [
             {
               "absoluteDirection": "WEST",
@@ -794,7 +790,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 62.012,
-          "endTime": "2009-11-17T18:15:40.000+0000",
+          "endTime": "2009-11-17T18:15:40.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -816,7 +812,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "realTime": false,
           "rentedVehicle": false,
           "scheduled": false,
-          "startTime": "2009-11-17T18:14:52.000+0000",
+          "startTime": "2009-11-17T18:14:52.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -853,7 +849,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           },
           "transitAlerts": [ ],
           "transitLeg": false,
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [
             {
               "absoluteDirection": "WEST",
@@ -881,7 +876,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 5218.855598775394,
-          "endTime": "2009-11-17T18:35:54.000+0000",
+          "endTime": "2009-11-17T18:35:54.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -935,7 +930,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             "sequenceNumber": 20091117,
             "year": 2009
           },
-          "startTime": "2009-11-17T18:15:40.000+0000",
+          "startTime": "2009-11-17T18:15:40.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -1017,7 +1012,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             },
             "wheelchairAccessible": 0
           },
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [ ],
           "walkingLeg": false
         },
@@ -1026,7 +1020,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 266.211,
-          "endTime": "2009-11-17T18:39:22.000+0000",
+          "endTime": "2009-11-17T18:39:22.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -1073,7 +1067,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "realTime": false,
           "rentedVehicle": false,
           "scheduled": false,
-          "startTime": "2009-11-17T18:35:54.000+0000",
+          "startTime": "2009-11-17T18:35:54.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -1085,7 +1079,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           },
           "transitAlerts": [ ],
           "transitLeg": false,
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [
             {
               "absoluteDirection": "SOUTH",
@@ -1183,7 +1176,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 920.3299999999999,
-          "endTime": "2009-11-17T18:27:58.000+0000",
+          "endTime": "2009-11-17T18:27:58.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -1205,7 +1198,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "realTime": false,
           "rentedVehicle": false,
           "scheduled": false,
-          "startTime": "2009-11-17T18:16:00.000+0000",
+          "startTime": "2009-11-17T18:16:00.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -1242,7 +1235,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           },
           "transitAlerts": [ ],
           "transitLeg": false,
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [
             {
               "absoluteDirection": "WEST",
@@ -1321,7 +1313,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 3602.7301325109484,
-          "endTime": "2009-11-17T18:41:03.000+0000",
+          "endTime": "2009-11-17T18:41:03.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -1375,7 +1367,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             "sequenceNumber": 20091117,
             "year": 2009
           },
-          "startTime": "2009-11-17T18:27:58.000+0000",
+          "startTime": "2009-11-17T18:27:58.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -1457,7 +1449,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             },
             "wheelchairAccessible": 0
           },
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [ ],
           "walkingLeg": false
         },
@@ -1466,7 +1457,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 999.0980000000001,
-          "endTime": "2009-11-17T18:53:55.000+0000",
+          "endTime": "2009-11-17T18:53:55.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -1513,7 +1504,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "realTime": false,
           "rentedVehicle": false,
           "scheduled": false,
-          "startTime": "2009-11-17T18:41:03.000+0000",
+          "startTime": "2009-11-17T18:41:03.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -1525,7 +1516,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           },
           "transitAlerts": [ ],
           "transitLeg": false,
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [
             {
               "absoluteDirection": "WEST",
@@ -1640,7 +1630,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 62.012,
-          "endTime": "2009-11-17T18:30:40.000+0000",
+          "endTime": "2009-11-17T18:30:40.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -1662,7 +1652,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "realTime": false,
           "rentedVehicle": false,
           "scheduled": false,
-          "startTime": "2009-11-17T18:29:52.000+0000",
+          "startTime": "2009-11-17T18:29:52.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -1699,7 +1689,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           },
           "transitAlerts": [ ],
           "transitLeg": false,
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [
             {
               "absoluteDirection": "WEST",
@@ -1727,7 +1716,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 5218.855598775394,
-          "endTime": "2009-11-17T18:52:04.000+0000",
+          "endTime": "2009-11-17T18:52:04.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -1781,7 +1770,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             "sequenceNumber": 20091117,
             "year": 2009
           },
-          "startTime": "2009-11-17T18:30:40.000+0000",
+          "startTime": "2009-11-17T18:30:40.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -1863,7 +1852,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             },
             "wheelchairAccessible": 0
           },
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [ ],
           "walkingLeg": false
         },
@@ -1872,7 +1860,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 266.211,
-          "endTime": "2009-11-17T18:55:32.000+0000",
+          "endTime": "2009-11-17T18:55:32.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -1919,7 +1907,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "realTime": false,
           "rentedVehicle": false,
           "scheduled": false,
-          "startTime": "2009-11-17T18:52:04.000+0000",
+          "startTime": "2009-11-17T18:52:04.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -1931,7 +1919,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           },
           "transitAlerts": [ ],
           "transitLeg": false,
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [
             {
               "absoluteDirection": "SOUTH",
@@ -2033,7 +2020,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 419.61499999999995,
-          "endTime": "2009-11-17T18:42:54.000+0000",
+          "endTime": "2009-11-17T18:42:54.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -2055,7 +2042,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "realTime": false,
           "rentedVehicle": false,
           "scheduled": false,
-          "startTime": "2009-11-17T18:37:30.000+0000",
+          "startTime": "2009-11-17T18:37:30.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -2092,7 +2079,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           },
           "transitAlerts": [ ],
           "transitLeg": false,
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [
             {
               "absoluteDirection": "WEST",
@@ -2137,7 +2123,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 2347.5602438577907,
-          "endTime": "2009-11-17T18:52:12.000+0000",
+          "endTime": "2009-11-17T18:52:12.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -2191,7 +2177,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             "sequenceNumber": 20091117,
             "year": 2009
           },
-          "startTime": "2009-11-17T18:42:54.000+0000",
+          "startTime": "2009-11-17T18:42:54.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -2273,7 +2259,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             },
             "wheelchairAccessible": 0
           },
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [ ],
           "walkingLeg": false
         },
@@ -2282,7 +2267,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 3248.2996826174576,
-          "endTime": "2009-11-17T19:07:55.000+0000",
+          "endTime": "2009-11-17T19:07:55.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -2336,7 +2321,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             "sequenceNumber": 20091117,
             "year": 2009
           },
-          "startTime": "2009-11-17T18:56:09.000+0000",
+          "startTime": "2009-11-17T18:56:09.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -2418,7 +2403,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             },
             "wheelchairAccessible": 0
           },
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [ ],
           "walkingLeg": false
         },
@@ -2427,7 +2411,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 18.806,
-          "endTime": "2009-11-17T19:08:19.000+0000",
+          "endTime": "2009-11-17T19:08:19.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -2474,7 +2458,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "realTime": false,
           "rentedVehicle": false,
           "scheduled": false,
-          "startTime": "2009-11-17T19:07:55.000+0000",
+          "startTime": "2009-11-17T19:07:55.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -2486,7 +2470,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           },
           "transitAlerts": [ ],
           "transitLeg": false,
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [
             {
               "absoluteDirection": "WEST",
@@ -2545,7 +2528,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 4442.913999999999,
-          "endTime": "2009-11-17T18:57:31.000+0000",
+          "endTime": "2009-11-17T18:57:31.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -2591,7 +2574,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "realTime": false,
           "rentedVehicle": false,
           "scheduled": false,
-          "startTime": "2009-11-17T18:00:00.000+0000",
+          "startTime": "2009-11-17T18:00:00.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -2604,7 +2587,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           },
           "transitAlerts": [ ],
           "transitLeg": false,
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [
             {
               "absoluteDirection": "SOUTH",
@@ -2838,7 +2820,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 87.019,
-          "endTime": "2009-11-17T18:14:00.000+0000",
+          "endTime": "2009-11-17T18:14:00.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -2883,7 +2865,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "realTime": false,
           "rentedVehicle": false,
           "scheduled": false,
-          "startTime": "2009-11-17T18:12:47.000+0000",
+          "startTime": "2009-11-17T18:12:47.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -2920,7 +2902,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           },
           "transitAlerts": [ ],
           "transitLeg": false,
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [
             {
               "absoluteDirection": "SOUTH",
@@ -2965,7 +2946,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 3729.9737283822847,
-          "endTime": "2009-11-17T18:26:49.000+0000",
+          "endTime": "2009-11-17T18:26:49.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -3019,7 +3000,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             "sequenceNumber": 20091117,
             "year": 2009
           },
-          "startTime": "2009-11-17T18:14:00.000+0000",
+          "startTime": "2009-11-17T18:14:00.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -3101,7 +3082,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             },
             "wheelchairAccessible": 0
           },
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [ ],
           "walkingLeg": false
         },
@@ -3110,7 +3090,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 913.815,
-          "endTime": "2009-11-17T18:38:40.000+0000",
+          "endTime": "2009-11-17T18:38:40.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -3157,7 +3137,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "realTime": false,
           "rentedVehicle": false,
           "scheduled": false,
-          "startTime": "2009-11-17T18:26:49.000+0000",
+          "startTime": "2009-11-17T18:26:49.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -3169,7 +3149,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           },
           "transitAlerts": [ ],
           "transitLeg": false,
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [
             {
               "absoluteDirection": "WEST",
@@ -3318,7 +3297,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 87.019,
-          "endTime": "2009-11-17T18:29:00.000+0000",
+          "endTime": "2009-11-17T18:29:00.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -3363,7 +3342,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "realTime": false,
           "rentedVehicle": false,
           "scheduled": false,
-          "startTime": "2009-11-17T18:27:47.000+0000",
+          "startTime": "2009-11-17T18:27:47.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -3400,7 +3379,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           },
           "transitAlerts": [ ],
           "transitLeg": false,
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [
             {
               "absoluteDirection": "SOUTH",
@@ -3445,7 +3423,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 3729.9737283822847,
-          "endTime": "2009-11-17T18:42:19.000+0000",
+          "endTime": "2009-11-17T18:42:19.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -3499,7 +3477,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             "sequenceNumber": 20091117,
             "year": 2009
           },
-          "startTime": "2009-11-17T18:29:00.000+0000",
+          "startTime": "2009-11-17T18:29:00.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -3581,7 +3559,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             },
             "wheelchairAccessible": 0
           },
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [ ],
           "walkingLeg": false
         },
@@ -3590,7 +3567,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 913.815,
-          "endTime": "2009-11-17T18:54:10.000+0000",
+          "endTime": "2009-11-17T18:54:10.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -3637,7 +3614,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "realTime": false,
           "rentedVehicle": false,
           "scheduled": false,
-          "startTime": "2009-11-17T18:42:19.000+0000",
+          "startTime": "2009-11-17T18:42:19.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -3649,7 +3626,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           },
           "transitAlerts": [ ],
           "transitLeg": false,
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [
             {
               "absoluteDirection": "WEST",
@@ -3798,7 +3774,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 87.019,
-          "endTime": "2009-11-17T18:45:00.000+0000",
+          "endTime": "2009-11-17T18:45:00.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -3843,7 +3819,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "realTime": false,
           "rentedVehicle": false,
           "scheduled": false,
-          "startTime": "2009-11-17T18:43:47.000+0000",
+          "startTime": "2009-11-17T18:43:47.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -3880,7 +3856,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           },
           "transitAlerts": [ ],
           "transitLeg": false,
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [
             {
               "absoluteDirection": "SOUTH",
@@ -3925,7 +3900,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 3729.9737283822847,
-          "endTime": "2009-11-17T18:57:49.000+0000",
+          "endTime": "2009-11-17T18:57:49.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -3979,7 +3954,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             "sequenceNumber": 20091117,
             "year": 2009
           },
-          "startTime": "2009-11-17T18:45:00.000+0000",
+          "startTime": "2009-11-17T18:45:00.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -4061,7 +4036,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             },
             "wheelchairAccessible": 0
           },
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [ ],
           "walkingLeg": false
         },
@@ -4070,7 +4044,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 913.815,
-          "endTime": "2009-11-17T19:09:40.000+0000",
+          "endTime": "2009-11-17T19:09:40.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -4117,7 +4091,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "realTime": false,
           "rentedVehicle": false,
           "scheduled": false,
-          "startTime": "2009-11-17T18:57:49.000+0000",
+          "startTime": "2009-11-17T18:57:49.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -4129,7 +4103,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           },
           "transitAlerts": [ ],
           "transitLeg": false,
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [
             {
               "absoluteDirection": "WEST",
@@ -4282,7 +4255,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 20.74,
-          "endTime": "2009-11-17T18:46:00.000+0000",
+          "endTime": "2009-11-17T18:46:00.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -4327,7 +4300,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "realTime": false,
           "rentedVehicle": false,
           "scheduled": false,
-          "startTime": "2009-11-17T18:45:44.000+0000",
+          "startTime": "2009-11-17T18:45:44.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -4364,7 +4337,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           },
           "transitAlerts": [ ],
           "transitLeg": false,
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [
             {
               "absoluteDirection": "SOUTH",
@@ -4392,7 +4364,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 1667.1475209896525,
-          "endTime": "2009-11-17T18:52:12.000+0000",
+          "endTime": "2009-11-17T18:52:12.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -4446,7 +4418,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             "sequenceNumber": 20091117,
             "year": 2009
           },
-          "startTime": "2009-11-17T18:46:00.000+0000",
+          "startTime": "2009-11-17T18:46:00.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -4528,7 +4500,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             },
             "wheelchairAccessible": 0
           },
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [ ],
           "walkingLeg": false
         },
@@ -4537,7 +4508,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 3526.7741793792093,
-          "endTime": "2009-11-17T19:08:50.000+0000",
+          "endTime": "2009-11-17T19:08:50.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -4591,7 +4562,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             "sequenceNumber": 20091117,
             "year": 2009
           },
-          "startTime": "2009-11-17T18:56:09.000+0000",
+          "startTime": "2009-11-17T18:56:09.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -4673,7 +4644,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             },
             "wheelchairAccessible": 0
           },
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [ ],
           "walkingLeg": false
         },
@@ -4682,7 +4652,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 231.459,
-          "endTime": "2009-11-17T19:11:51.000+0000",
+          "endTime": "2009-11-17T19:11:51.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -4729,7 +4699,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "realTime": false,
           "rentedVehicle": false,
           "scheduled": false,
-          "startTime": "2009-11-17T19:08:50.000+0000",
+          "startTime": "2009-11-17T19:08:50.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -4741,7 +4711,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           },
           "transitAlerts": [ ],
           "transitLeg": false,
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [
             {
               "absoluteDirection": "SOUTH",
@@ -4797,7 +4766,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
     },
     {
       "arrivedAtDestinationWithRentedVehicle": false,
-      "durationSeconds": 1941,
+      "durationSeconds": 1940,
       "elevationGained": 0.0,
       "elevationLost": 0.0,
       "fare": {
@@ -4832,14 +4801,14 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           }
         }
       },
-      "generalizedCost": 3245,
+      "generalizedCost": 3290,
       "legs": [
         {
           "agencyTimeZoneOffset": -28800000,
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 718.722,
-          "endTime": "2009-11-17T19:02:00.000+0000",
+          "endTime": "2009-11-17T19:02:00.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -4884,7 +4853,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "realTime": false,
           "rentedVehicle": false,
           "scheduled": false,
-          "startTime": "2009-11-17T18:52:44.000+0000",
+          "startTime": "2009-11-17T18:52:44.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -4921,7 +4890,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           },
           "transitAlerts": [ ],
           "transitLeg": false,
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [
             {
               "absoluteDirection": "SOUTH",
@@ -4982,8 +4950,8 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "agencyTimeZoneOffset": 0,
           "arrivalDelay": 0,
           "departureDelay": 0,
-          "distanceMeters": 4844.785407243491,
-          "endTime": "2009-11-17T19:22:04.000+0000",
+          "distanceMeters": 4569.033127779713,
+          "endTime": "2009-11-17T19:21:00.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -5018,12 +4986,12 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             "stopSequence": 53,
             "vertexType": "TRANSIT"
           },
-          "generalizedCost": 1804,
+          "generalizedCost": 1740,
           "headsign": "NW 27th & Thurman",
           "intermediateStops": [ ],
           "legGeometry": {
-            "length": 126,
-            "points": "oaytG|zrkV?tBAjE?nD???X?hE?xC??Ah@?pE?~C???J?`@?vAAvBEbE?jEAlE?`BAbB@d@??@tAAj@Cx@Cb@Cp@_@dEcAtFoA`IS~@i@`BmAzDi@zAc@pAi@~C??Id@u@jEm@bD??If@u@jEk@bD??If@u@|DW`B??CPs@|Du@lElBz@??VJbCfAk@dD??Id@w@rEWvAId@AF??Q~@s@`Ei@~C??Ib@u@dEWzA??]jB]MQSe@WOKOKIIQe@GWE]GnD??AXKnEGnD???XGjD??AZEfCC`AEzB??AXCfAGxDE|AEtBIlC??APkAh@o@?sCB{BD??S?mCDmCDyBB??U?mCDmCDyBB??S?oCDmCDmCBo@@"
+            "length": 120,
+            "points": "oaytG|zrkV?tBAjE?nD???X?hE?xC??Ah@?pE?~C???J?`@?vAAvBEbE?jEAlE?`BAbB@d@??@tAAj@Cx@Cb@Cp@_@dEcAtFoA`IS~@i@`BmAzDi@zAc@pAi@~C??Id@u@jEm@bD??If@u@jEk@bD??If@u@|DW`B??CPs@|Du@lElBz@??VJbCfAk@dD??Id@w@rEWvAId@AF??Q~@s@`Ei@~C??Ib@u@dEWzA??]jB]MQSe@WOKOKIIQe@GWE]GnD??AXKnEGnD???XGjD??AZEfCC`AEzB??AXCfAGxDE|AEtBIlC??APkAh@o@?sCB{BD??S?mCDmCDyBB??U?mCDmCDyBB"
           },
           "mode": "BUS",
           "onStreetNonTransit": false,
@@ -5037,12 +5005,12 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             "sequenceNumber": 20091117,
             "year": 2009
           },
-          "startTime": "2009-11-17T19:02:00.000+0000",
+          "startTime": "2009-11-17T19:02:00.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
-              "latitude": 45.532159,
-              "longitude": -122.698634
+              "latitude": 45.529681,
+              "longitude": -122.698529
             },
             "name": "NW 23rd & Overton",
             "stop": {
@@ -5062,14 +5030,14 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
               ],
               "id": {
                 "feedId": "prt",
-                "id": "8981"
+              "id": "7163"
               },
               "name": "NW 23rd & Overton",
               "partOfStation": false,
               "wheelchairBoarding": "NO_INFORMATION"
             },
-            "stopIndex": 74,
-            "stopSequence": 75,
+            "stopIndex": 73,
+            "stopSequence": 74,
             "vertexType": "TRANSIT"
           },
           "transitAlerts": [ ],
@@ -5119,7 +5087,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             },
             "wheelchairAccessible": 0
           },
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [ ],
           "walkingLeg": false
         },
@@ -5127,13 +5094,13 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "agencyTimeZoneOffset": -28800000,
           "arrivalDelay": 0,
           "departureDelay": 0,
-          "distanceMeters": 231.459,
-          "endTime": "2009-11-17T19:25:05.000+0000",
+          "distanceMeters": 297.11,
+          "endTime": "2009-11-17T19:25:04.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
-              "latitude": 45.532159,
-              "longitude": -122.698634
+              "latitude": 45.529681,
+              "longitude": -122.698529
             },
             "name": "NW 23rd & Overton",
             "stop": {
@@ -5153,21 +5120,21 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
               ],
               "id": {
                 "feedId": "prt",
-                "id": "8981"
+              "id": "7163"
               },
               "name": "NW 23rd & Overton",
               "partOfStation": false,
               "wheelchairBoarding": "NO_INFORMATION"
             },
-            "stopIndex": 74,
-            "stopSequence": 75,
+            "stopIndex": 73,
+            "stopSequence": 74,
             "vertexType": "TRANSIT"
           },
-          "generalizedCost": 353,
+          "generalizedCost": 462,
           "interlineWithPreviousLeg": false,
           "legGeometry": {
-            "length": 10,
-            "points": "}~{tGnq{kV?LVAF?J?L?rBCLA?RDpH"
+            "length": 15,
+            "points": "oo{tGxp{kVG@?NM?M?_CD?B?FM?G@K?GBwADK?DpH"
           },
           "mode": "WALK",
           "onStreetNonTransit": true,
@@ -5175,7 +5142,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "realTime": false,
           "rentedVehicle": false,
           "scheduled": false,
-          "startTime": "2009-11-17T19:22:04.000+0000",
+          "startTime": "2009-11-17T19:21:00.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -5187,20 +5154,36 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           },
           "transitAlerts": [ ],
           "transitLeg": false,
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [
             {
-              "absoluteDirection": "SOUTH",
-              "angle": 3.117146926361324,
+              "absoluteDirection": "WEST",
+              "angle": -1.5896261859144973,
               "area": false,
-              "bogusName": false,
-              "distance": 104.452,
+              "bogusName": true,
+              "distance": 6.44,
               "edges": [ ],
               "elevation": [ ],
               "relativeDirection": "DEPART",
               "startLocation": {
-                "latitude": 45.53215782420268,
-                "longitude": -122.69870264831422
+                "latitude": 45.529726790620664,
+                "longitude": -122.69853023095405
+              },
+              "stayOn": false,
+              "streetName": "way 158083864 from 0",
+              "streetNotes": [ ]
+            },
+            {
+              "absoluteDirection": "NORTH",
+              "angle": -0.02639098155686617,
+              "area": false,
+              "bogusName": false,
+              "distance": 87.181,
+              "edges": [ ],
+              "elevation": [ ],
+              "relativeDirection": "RIGHT",
+              "startLocation": {
+                "latitude": 45.5297257,
+                "longitude": -122.69861290000001
               },
               "stayOn": false,
               "streetName": "Northwest 23rd Avenue",
@@ -5208,16 +5191,84 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
             },
             {
               "absoluteDirection": "WEST",
-              "angle": -1.576477897189337,
+              "angle": -1.5917857716676513,
               "area": false,
               "bogusName": false,
-              "distance": 127.007,
+              "distance": 4.768,
+              "edges": [ ],
+              "elevation": [ ],
+              "relativeDirection": "LEFT",
+              "startLocation": {
+                "latitude": 45.5305094,
+                "longitude": -122.69864600000001
+              },
+              "stayOn": false,
+              "streetName": "Northwest Marshall Street",
+              "streetNotes": [ ]
+            },
+            {
+              "absoluteDirection": "NORTH",
+              "angle": -0.023560834241705943,
+              "area": false,
+              "bogusName": true,
+              "distance": 7.274,
               "edges": [ ],
               "elevation": [ ],
               "relativeDirection": "RIGHT",
               "startLocation": {
-                "latitude": 45.531218800000005,
-                "longitude": -122.69866750000001
+                "latitude": 45.5305085,
+                "longitude": -122.6987072
+              },
+              "stayOn": false,
+              "streetName": "way 158083033 from 0",
+              "streetNotes": [ ]
+            },
+            {
+              "absoluteDirection": "NORTH",
+              "angle": -0.014157951861867555,
+              "area": false,
+              "bogusName": false,
+              "distance": 64.974,
+              "edges": [ ],
+              "elevation": [ ],
+              "relativeDirection": "CONTINUE",
+              "startLocation": {
+                "latitude": 45.5305739,
+                "longitude": -122.69870940000001
+              },
+              "stayOn": false,
+              "streetName": "Northwest 23rd Avenue",
+              "streetNotes": [ ]
+            },
+            {
+              "absoluteDirection": "NORTH",
+              "angle": -0.07909846198417768,
+              "area": false,
+              "bogusName": true,
+              "distance": 7.294,
+              "edges": [ ],
+              "elevation": [ ],
+              "relativeDirection": "CONTINUE",
+              "startLocation": {
+                "latitude": 45.531153,
+                "longitude": -122.69876060000001
+              },
+              "stayOn": false,
+              "streetName": "way 158083032 from 0",
+              "streetNotes": [ ]
+            },
+            {
+              "absoluteDirection": "WEST",
+              "angle": -1.598333529851037,
+              "area": false,
+              "bogusName": false,
+              "distance": 119.179,
+              "edges": [ ],
+              "elevation": [ ],
+              "relativeDirection": "LEFT",
+              "startLocation": {
+                "latitude": 45.5312184,
+                "longitude": -122.698768
               },
               "stayOn": false,
               "streetName": "Northwest Northrup Street",
@@ -5229,13 +5280,13 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
         }
       ],
       "nTransfers": 0,
-      "nonTransitDistanceMeters": 950.181,
-      "nonTransitTimeSeconds": 737,
+      "nonTransitDistanceMeters": 1015.832,
+      "nonTransitTimeSeconds": 800,
       "onStreetAllTheWay": false,
       "streetOnly": false,
       "systemNotices": [ ],
       "tooSloped": false,
-      "transitTimeSeconds": 1204,
+      "transitTimeSeconds": 1140,
       "waitTimeAdjustedGeneralizedCost": 0,
       "waitingTimeSeconds": 0,
       "walkOnly": false,
@@ -5263,7 +5314,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 4875.788999999999,
-          "endTime": "2009-11-17T19:03:24.000+0000",
+          "endTime": "2009-11-17T19:03:24.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -5286,7 +5337,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "realTime": false,
           "rentedVehicle": false,
           "scheduled": false,
-          "startTime": "2009-11-17T18:00:00.000+0000",
+          "startTime": "2009-11-17T18:00:00.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -5299,7 +5350,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           },
           "transitAlerts": [ ],
           "transitLeg": false,
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [
             {
               "absoluteDirection": "NORTH",
@@ -5630,7 +5680,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "arrivalDelay": 0,
           "departureDelay": 0,
           "distanceMeters": 4154.147999999998,
-          "endTime": "2009-11-17T18:53:50.000+0000",
+          "endTime": "2009-11-17T18:53:50.000+00:00",
           "flexibleTrip": false,
           "from": {
             "coordinate": {
@@ -5676,7 +5726,7 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           "realTime": false,
           "rentedVehicle": false,
           "scheduled": false,
-          "startTime": "2009-11-17T18:00:00.000+0000",
+          "startTime": "2009-11-17T18:00:00.000+00:00",
           "streetNotes": [ ],
           "to": {
             "coordinate": {
@@ -5689,7 +5739,6 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
           },
           "transitAlerts": [ ],
           "transitLeg": false,
-          "vehicleRentalNetworks": [ ],
           "walkSteps": [
             {
               "absoluteDirection": "SOUTH",
@@ -5869,6 +5918,345 @@ org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_plan
       "nTransfers": 0,
       "nonTransitDistanceMeters": 4154.147999999998,
       "nonTransitTimeSeconds": 3230,
+      "onStreetAllTheWay": true,
+      "streetOnly": true,
+      "systemNotices": [ ],
+      "tooSloped": false,
+      "transitTimeSeconds": 0,
+      "waitTimeAdjustedGeneralizedCost": -1,
+      "waitingTimeSeconds": 0,
+      "walkOnly": true,
+      "walkingAllTheWay": true
+    }
+  ]
+]
+
+
+org.opentripplanner.routing.algorithm.mapping.TransitSnapshotTest.test_trip_planning_with_walk_only_stop_collection=[
+  [
+    {
+      "arrivedAtDestinationWithRentedVehicle": false,
+      "durationSeconds": 2361,
+      "elevationGained": 0.0,
+      "elevationLost": 0.0,
+      "fare": {
+        "details": { },
+        "fare": { }
+      },
+      "generalizedCost": 4557,
+      "legs": [
+        {
+          "agencyTimeZoneOffset": -28800000,
+          "arrivalDelay": 0,
+          "departureDelay": 0,
+          "distanceMeters": 2989.7960000000003,
+          "endTime": "2009-11-17T18:39:21.000+0000",
+          "flexibleTrip": false,
+          "from": {
+            "coordinate": {
+              "latitude": 45.530244,
+              "longitude": -122.667794
+            },
+            "name": "Interstate/Rose Quarter MAX Station",
+            "orig": "Rose Quarter Transit Center",
+            "stopCode": "11508",
+            "stopId": {
+              "feedId": "prt",
+              "id": "11508"
+            },
+            "vertexType": "TRANSIT",
+            "zoneId": "0"
+          },
+          "generalizedCost": 4557,
+          "interlineWithPreviousLeg": false,
+          "legGeometry": {
+            "length": 173,
+            "points": "_s{tGvpukV??c@tADDFDDDHHYx@Wt@{@lBS^MROZ]h@Y`@[`@k@r@kAtASVEDa@f@EDm@l@s@p@JVA@GOCBzEfKxF`M|AfDJRLPVb@DBBBBBDBB@CRE\\C?A@A@ABAB?DAHATC\\AXAVCZATAPAPATG`AATAPAL?J?F?F?D?F@x@AJ@D@B@DAB?RK@I??TBlBCJ?D?BAFAB?DADABEFCDA@CDC?c@@{@@O?K??LCDC??LC?G?E@GBE?KCI?EFC@?N?F?D?BABA@AD?D?B?D@B@BABAB?D?DADABABABC@A@I@IZCFIJ?L@`B@dA?R?RBbD?T?NBbD?R?P@|D@jB?x@@J?N?B?P?LBjD@N@fD?T?LBdD?R?PF`K?RDlJ?R?PFlJ?RDbH@xA?D?P?RDpH"
+          },
+          "mode": "WALK",
+          "onStreetNonTransit": true,
+          "pathway": false,
+          "realTime": false,
+          "rentedVehicle": false,
+          "scheduled": false,
+          "startTime": "2009-11-17T18:00:00.000+0000",
+          "streetNotes": [ ],
+          "to": {
+            "coordinate": {
+              "latitude": 45.531,
+              "longitude": -122.70029
+            },
+            "name": "NW Northrup St. & NW 24th Ave. (P3)",
+            "orig": "NW Northrup St. & NW 24th Ave. (P3)",
+            "vertexType": "NORMAL"
+          },
+          "transitAlerts": [ ],
+          "transitLeg": false,
+          "vehicleRentalNetworks": [ ],
+          "walkSteps": [
+            {
+              "absoluteDirection": "NORTHWEST",
+              "angle": -1.0117505068799668,
+              "area": false,
+              "bogusName": false,
+              "distance": 39.035,
+              "edges": [ ],
+              "elevation": [ ],
+              "relativeDirection": "DEPART",
+              "startLocation": {
+                "latitude": 45.53024090735772,
+                "longitude": -122.66779676192563
+              },
+              "stayOn": false,
+              "streetName": "Interstate/Rose Quarter Northbound Yellow Line MAX Platform",
+              "streetNotes": [ ]
+            },
+            {
+              "absoluteDirection": "SOUTHWEST",
+              "angle": -2.5578844637953133,
+              "area": false,
+              "bogusName": true,
+              "distance": 20.608,
+              "edges": [ ],
+              "elevation": [ ],
+              "relativeDirection": "LEFT",
+              "startLocation": {
+                "latitude": 45.530427100000004,
+                "longitude": -122.66822160000001
+              },
+              "stayOn": false,
+              "streetName": "way 125785939 from 4",
+              "streetNotes": [ ]
+            },
+            {
+              "absoluteDirection": "NORTHWEST",
+              "angle": -1.0040390128191803,
+              "area": false,
+              "bogusName": false,
+              "distance": 410.023,
+              "edges": [ ],
+              "elevation": [ ],
+              "relativeDirection": "RIGHT",
+              "startLocation": {
+                "latitude": 45.5302724,
+                "longitude": -122.66836730000001
+              },
+              "stayOn": false,
+              "streetName": "North Interstate Avenue",
+              "streetNotes": [ ]
+            },
+            {
+              "absoluteDirection": "SOUTHWEST",
+              "angle": -2.1939957467118765,
+              "area": false,
+              "bogusName": true,
+              "distance": 40.36,
+              "edges": [ ],
+              "elevation": [ ],
+              "relativeDirection": "LEFT",
+              "startLocation": {
+                "latitude": 45.532912800000005,
+                "longitude": -122.67197920000001
+              },
+              "stayOn": false,
+              "streetName": "way 117315127 from 2",
+              "streetNotes": [ ]
+            },
+            {
+              "absoluteDirection": "NORTHWEST",
+              "angle": -0.5513565900563633,
+              "area": false,
+              "bogusName": true,
+              "distance": 2.245,
+              "edges": [ ],
+              "elevation": [ ],
+              "relativeDirection": "RIGHT",
+              "startLocation": {
+                "latitude": 45.532907900000005,
+                "longitude": -122.67202800000001
+              },
+              "stayOn": true,
+              "streetName": "way 117315115 from 0",
+              "streetNotes": [ ]
+            },
+            {
+              "absoluteDirection": "SOUTHWEST",
+              "angle": -2.244625586005241,
+              "area": false,
+              "bogusName": false,
+              "distance": 543.668,
+              "edges": [ ],
+              "elevation": [ ],
+              "relativeDirection": "LEFT",
+              "startLocation": {
+                "latitude": 45.5329251,
+                "longitude": -122.67204310000001
+              },
+              "stayOn": false,
+              "streetName": "Broadway Bridge",
+              "streetNotes": [ ]
+            },
+            {
+              "absoluteDirection": "SOUTHWEST",
+              "angle": -2.6328128620177256,
+              "area": false,
+              "bogusName": false,
+              "distance": 14.158,
+              "edges": [ ],
+              "elevation": [ ],
+              "relativeDirection": "CONTINUE",
+              "startLocation": {
+                "latitude": 45.5298506,
+                "longitude": -122.67746670000001
+              },
+              "stayOn": false,
+              "streetName": "Northwest Broadway",
+              "streetNotes": [ ]
+            },
+            {
+              "absoluteDirection": "NORTH",
+              "angle": -0.3605525651149334,
+              "area": false,
+              "bogusName": false,
+              "distance": 23.666,
+              "edges": [ ],
+              "elevation": [ ],
+              "relativeDirection": "UTURN_RIGHT",
+              "startLocation": {
+                "latitude": 45.5297871,
+                "longitude": -122.67780010000001
+              },
+              "stayOn": true,
+              "streetName": "Northwest Broadway",
+              "streetNotes": [ ]
+            },
+            {
+              "absoluteDirection": "NORTHWEST",
+              "angle": -0.824039902719837,
+              "area": false,
+              "bogusName": false,
+              "distance": 298.376,
+              "edges": [ ],
+              "elevation": [ ],
+              "relativeDirection": "SLIGHTLY_LEFT",
+              "startLocation": {
+                "latitude": 45.529817200000004,
+                "longitude": -122.6778163
+              },
+              "stayOn": false,
+              "streetName": "Northwest Lovejoy Street",
+              "streetNotes": [ ]
+            },
+            {
+              "absoluteDirection": "NORTH",
+              "angle": -0.02530676616508235,
+              "area": false,
+              "bogusName": false,
+              "distance": 71.22,
+              "edges": [ ],
+              "elevation": [ ],
+              "relativeDirection": "RIGHT",
+              "startLocation": {
+                "latitude": 45.5302432,
+                "longitude": -122.6813836
+              },
+              "stayOn": false,
+              "streetName": "Northwest 10th Avenue",
+              "streetNotes": [ ]
+            },
+            {
+              "absoluteDirection": "WEST",
+              "angle": -1.6009032896942996,
+              "area": false,
+              "bogusName": false,
+              "distance": 5.54,
+              "edges": [ ],
+              "elevation": [ ],
+              "relativeDirection": "LEFT",
+              "startLocation": {
+                "latitude": 45.5308835,
+                "longitude": -122.68140700000001
+              },
+              "stayOn": false,
+              "streetName": "Northwest Marshall Street",
+              "streetNotes": [ ]
+            },
+            {
+              "absoluteDirection": "NORTHWEST",
+              "angle": -0.43945025938890175,
+              "area": false,
+              "bogusName": true,
+              "distance": 5.888,
+              "edges": [ ],
+              "elevation": [ ],
+              "relativeDirection": "RIGHT",
+              "startLocation": {
+                "latitude": 45.530882000000005,
+                "longitude": -122.6814781
+              },
+              "stayOn": false,
+              "streetName": "way 117751890 from 1",
+              "streetNotes": [ ]
+            },
+            {
+              "absoluteDirection": "WEST",
+              "angle": -1.2367914711217416,
+              "area": false,
+              "bogusName": false,
+              "distance": 7.364,
+              "edges": [ ],
+              "elevation": [ ],
+              "relativeDirection": "LEFT",
+              "startLocation": {
+                "latitude": 45.5309273,
+                "longitude": -122.6815085
+              },
+              "stayOn": false,
+              "streetName": "Tanner Springs Park",
+              "streetNotes": [ ]
+            },
+            {
+              "absoluteDirection": "NORTH",
+              "angle": -0.023281899787656588,
+              "area": false,
+              "bogusName": false,
+              "distance": 116.77899999999998,
+              "edges": [ ],
+              "elevation": [ ],
+              "relativeDirection": "RIGHT",
+              "startLocation": {
+                "latitude": 45.530944000000005,
+                "longitude": -122.6815772
+              },
+              "stayOn": false,
+              "streetName": "Tanner Springs Park Trail",
+              "streetNotes": [ ]
+            },
+            {
+              "absoluteDirection": "WEST",
+              "angle": -1.5979804349450852,
+              "area": false,
+              "bogusName": false,
+              "distance": 1390.866,
+              "edges": [ ],
+              "elevation": [ ],
+              "relativeDirection": "LEFT",
+              "startLocation": {
+                "latitude": 45.5315117,
+                "longitude": -122.68244770000001
+              },
+              "stayOn": false,
+              "streetName": "Northwest Northrup Street",
+              "streetNotes": [ ]
+            }
+          ],
+          "walkingBike": false,
+          "walkingLeg": true
+        }
+      ],
+      "nTransfers": 0,
+      "nonTransitDistanceMeters": 2989.7960000000003,
+      "nonTransitTimeSeconds": 2361,
       "onStreetAllTheWay": true,
       "streetOnly": true,
       "systemNotices": [ ],

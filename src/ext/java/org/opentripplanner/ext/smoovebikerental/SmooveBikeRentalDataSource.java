@@ -1,6 +1,7 @@
 package org.opentripplanner.ext.smoovebikerental;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.opentripplanner.model.FeedScopedId;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalStation;
 import org.opentripplanner.updater.vehicle_rental.VehicleRentalDataSource;
 import org.opentripplanner.updater.vehicle_rental.datasources.GenericJsonVehicleRentalDataSource;
@@ -13,12 +14,17 @@ import org.slf4j.LoggerFactory;
  * Implementation of a VehicleRentalDataSource for the Smoove GIR SabiWeb used in Helsinki.
  * @see VehicleRentalDataSource
  */
-public class SmooveBikeRentalDataSource extends GenericJsonVehicleRentalDataSource<VehicleRentalDataSourceParameters> {
+public class SmooveBikeRentalDataSource extends GenericJsonVehicleRentalDataSource<SmooveBikeRentalDataSourceParameters> {
 
     private static final Logger log = LoggerFactory.getLogger(SmooveBikeRentalDataSource.class);
 
-    public SmooveBikeRentalDataSource(VehicleRentalDataSourceParameters config) {
+    public static final String DEFAULT_NETWORK_NAME = "smoove";
+
+    private final String networkName;
+
+    public SmooveBikeRentalDataSource(SmooveBikeRentalDataSourceParameters config) {
         super(config,"result");
+        networkName = config.getNetwork(DEFAULT_NETWORK_NAME);
     }
 
     /**
@@ -41,8 +47,9 @@ public class SmooveBikeRentalDataSource extends GenericJsonVehicleRentalDataSour
      */
     public VehicleRentalStation makeStation(JsonNode node) {
         VehicleRentalStation station = new VehicleRentalStation();
-        station.id = node.path("name").asText().split("\\s", 2)[0];
-        station.name = new NonLocalizedString(node.path("name").asText().split("\\s", 2)[1]);
+        String[] nameParts = node.path("name").asText().split("\\s", 2);
+        station.id = new FeedScopedId(networkName, nameParts[0]);
+        station.name = new NonLocalizedString(nameParts[1]);
         String[] coordinates = node.path("coordinates").asText().split(",");
         try {
             station.latitude = Double.parseDouble(coordinates[0].trim());

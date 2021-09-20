@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.locationtech.jts.geom.Coordinate;
 import org.opentripplanner.common.TurnRestriction;
 import org.opentripplanner.common.TurnRestrictionType;
@@ -303,27 +304,26 @@ public abstract class GraphRoutingTest {
                 String id,
                 double latitude,
                 double longitude,
-                String ... networks
+                String network
         ) {
-            var bikeRentalStation = new VehicleRentalStation();
-            bikeRentalStation.id = id;
-            bikeRentalStation.longitude = longitude;
-            bikeRentalStation.latitude = latitude;
-            bikeRentalStation.networks = Set.of(networks);
-            bikeRentalStation.isKeepingVehicleRentalAtDestinationAllowed = false;
+            var vehicleRentalStation = new VehicleRentalStation();
+            vehicleRentalStation.id = new FeedScopedId(network, id);
+            vehicleRentalStation.longitude = longitude;
+            vehicleRentalStation.latitude = latitude;
+            vehicleRentalStation.isKeepingVehicleRentalAtDestinationAllowed = false;
             bikeRentalStation.name = new NonLocalizedString(id);
-            return bikeRentalStation;
+            return vehicleRentalStation;
         }
 
         public VehicleRentalStationVertex vehicleRentalStation(
                 String id,
                 double latitude,
                 double longitude,
-                String ... networks
+                String network
         ) {
             var vertex = new VehicleRentalStationVertex(
                     graph,
-                    vehicleRentalStationEntity(id, latitude, longitude, networks)
+                    vehicleRentalStationEntity(id, latitude, longitude, network)
             );
             new VehicleRentalEdge(vertex);
             return vertex;

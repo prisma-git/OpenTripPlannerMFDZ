@@ -6,23 +6,31 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import graphql.ExecutionInput;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
-import graphql.GraphQLError;
 import graphql.analysis.MaxQueryComplexityInstrumentation;
+import graphql.execution.AbortExecutionException;
+import graphql.scalars.ExtendedScalars;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
+import org.opentripplanner.api.json.GraphQLResponseSerializer;
+import org.opentripplanner.ext.legacygraphqlapi.datafetchers.*;
+import org.opentripplanner.routing.RoutingService;
+import org.opentripplanner.standalone.server.Router;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.core.Response;
 import java.net.URL;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import java.util.concurrent.TimeoutException;
 import javax.ws.rs.core.Response;
 import org.opentripplanner.ext.legacygraphqlapi.datafetchers.LegacyGraphQLAgencyImpl;
 import org.opentripplanner.ext.legacygraphqlapi.datafetchers.LegacyGraphQLAlertImpl;
@@ -84,6 +92,7 @@ class LegacyGraphQLIndex {
           .newRuntimeWiring()
           .scalar(LegacyGraphQLScalars.polylineScalar)
           .scalar(LegacyGraphQLScalars.graphQLIDScalar)
+          .scalar(ExtendedScalars.GraphQLLong)
           .type("Node", type -> type.typeResolver(new LegacyGraphQLNodeTypeResolver()))
           .type("PlaceInterface", type -> type.typeResolver(new LegacyGraphQLPlaceInterfaceTypeResolver()))
           .type(IntrospectionTypeWiring.build(LegacyGraphQLAgencyImpl.class))
@@ -131,7 +140,7 @@ class LegacyGraphQLIndex {
     return null;
   }
 
-  static HashMap<String, Object> getGraphQLExecutionResult(
+  static ExecutionResult getGraphQLExecutionResult(
       String query, Router router, Map<String, Object> variables, String operationName,
       int maxResolves, int timeoutMs, Locale locale
   ) {
@@ -157,32 +166,18 @@ class LegacyGraphQLIndex {
         .variables(variables)
         .locale(locale)
         .build();
-    HashMap<String, Object> content = new HashMap<>();
-    ExecutionResult executionResult;
     try {
-      executionResult = graphQL.executeAsync(executionInput).get(timeoutMs, TimeUnit.MILLISECONDS);
-      if (!executionResult.getErrors().isEmpty()) {
-        content.put("errors", mapErrors(executionResult.getErrors()));
-      }
-      if (executionResult.getData() != null) {
-        content.put("data", executionResult.getData());
-      }
+      return graphQL.executeAsync(executionInput).get(timeoutMs, TimeUnit.MILLISECONDS);
+    } catch (InterruptedException | ExecutionException | TimeoutException e) {
+      return new AbortExecutionException(e).toExecutionResult();
     }
-    catch (Exception e) {
-      Throwable reason = e;
-      if (e.getCause() != null) { reason = e.getCause(); }
-      LOG.warn("Exception during graphQL.execute: " + reason.getMessage(), reason);
-      content.put("errors", mapErrors(List.of(reason)));
-    }
-    return content;
   }
 
   static Response getGraphQLResponse(
       String query, Router router, Map<String, Object> variables, String operationName,
       int maxResolves, int timeoutMs, Locale locale
   ) {
-    Response.ResponseBuilder res = Response.status(Response.Status.OK);
-    HashMap<String, Object> content = getGraphQLExecutionResult(
+    ExecutionResult executionResult = getGraphQLExecutionResult(
         query,
         router,
         variables,
@@ -191,29 +186,7 @@ class LegacyGraphQLIndex {
         timeoutMs,
         locale
     );
-    return res.entity(content).build();
+
+    return Response.status(Response.Status.OK).entity(GraphQLResponseSerializer.serialize(executionResult)).build();
   }
-
-  static private List<Map<String, Object>> mapErrors(Collection<?> errors) {
-    return errors.stream().map(e -> {
-      HashMap<String, Object> response = new HashMap<>();
-
-      if (e instanceof GraphQLError) {
-        GraphQLError graphQLError = (GraphQLError) e;
-        response.put("message", graphQLError.getMessage());
-        response.put("errorType", graphQLError.getErrorType());
-        response.put("locations", graphQLError.getLocations());
-        response.put("path", graphQLError.getPath());
-      }
-      else {
-        if (e instanceof Exception) {
-          response.put("message", ((Exception) e).getMessage());
-        }
-        response.put("errorType", e.getClass().getSimpleName());
-      }
-
-      return response;
-    }).collect(Collectors.toList());
-  }
-
 }

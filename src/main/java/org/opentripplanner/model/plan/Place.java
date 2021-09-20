@@ -62,6 +62,7 @@ public class Place {
     /**
      * For transit trips, the stop index (numbered from zero from the start of the trip).
      */
+    public FeedScopedId bikeShareId;
     private Integer stopIndex;
 
     /**
@@ -118,6 +119,8 @@ public class Place {
                 .addObj("stopId", stop != null ? stop.getId() : null)
                 .addNum("stopIndex", stopIndex)
                 .addNum("stopSequence", stopSequence)
+                .addEnum("vertexType", vertexType)
+                .addObj("bikeShareId", bikeShareId)
                 .toString();
     }
 
