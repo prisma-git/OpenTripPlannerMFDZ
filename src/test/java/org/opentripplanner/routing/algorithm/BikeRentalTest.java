@@ -40,7 +40,6 @@ public class BikeRentalTest extends GraphRoutingTest {
     private String NETWORK1 = "network-1";
     private String NETWORK2 = "network-2";
     private String NETWORK3 = "network-3";
-    private String NETWORK4 = "network-4";
 
     @BeforeEach
     public void setUp() {
@@ -66,8 +65,8 @@ public class BikeRentalTest extends GraphRoutingTest {
                 T1 = streetLocation("T1", 47.500, 18.999, false);
                 T2 = streetLocation("T1", 47.530, 18.999, true);
 
-                B1 = vehicleRentalStation("B1", 47.510, 19.001, NETWORK1, NETWORK2, NETWORK3);
-                B2 = vehicleRentalStation("B2", 47.520, 19.001, NETWORK1, NETWORK2, NETWORK4);
+                B1 = vehicleRentalStation("B1", 47.510, 19.001, NETWORK1);
+                B2 = vehicleRentalStation("B2", 47.520, 19.001, NETWORK1);
 
                 biLink(A, S1);
                 biLink(D, E1);

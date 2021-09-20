@@ -61,7 +61,7 @@ public class StreetVehicleRentalLink extends Edge {
             return null;
         }
 
-        if (networkIsNotAllowed(s0.getOptions(), vehicleRentalStationVertex.getStation().networks)) {
+        if (networkIsNotAllowed(s0.getOptions(), vehicleRentalStationVertex.getStation().getNetwork())) {
             return null;
         }
 
@@ -72,17 +72,17 @@ public class StreetVehicleRentalLink extends Edge {
         return s1.makeState();
     }
 
-    private boolean networkIsNotAllowed(RoutingRequest options, Set<String> networks) {
+    private boolean networkIsNotAllowed(RoutingRequest options, String network) {
         if (
                 !options.bannedBikeRentalNetworks.isEmpty()
-                && options.bannedBikeRentalNetworks.containsAll(networks)
+                && options.bannedBikeRentalNetworks.contains(network)
         ) {
             return true;
         }
 
         if (
                 !options.allowedBikeRentalNetworks.isEmpty()
-                && options.allowedBikeRentalNetworks.stream().noneMatch(networks::contains)
+                && options.allowedBikeRentalNetworks.stream().noneMatch(network::equals)
         ) {
             return false;
         }

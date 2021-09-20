@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
+import java.util.Set;
 import org.opentripplanner.routing.algorithm.astar.NegativeWeightException;
 import org.opentripplanner.routing.api.request.RoutingRequest;
 import org.opentripplanner.routing.edgetype.StreetEdge;

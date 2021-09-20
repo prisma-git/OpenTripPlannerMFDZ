@@ -46,7 +46,7 @@ public class PlaceMapper {
             case NORMAL:
                 break;
             case BIKESHARE:
-                api.bikeShareId = domain.getBikeRentalStation().id;
+                api.bikeShareId = domain.getBikeRentalStation().id.getId();
                 break;
             case VEHICLEPARKING:
                 api.vehicleParking = mapVehicleParking(domain.getVehicleParkingWithEntrance());

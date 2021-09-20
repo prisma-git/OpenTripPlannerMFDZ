@@ -9,6 +9,7 @@ import org.opentripplanner.ext.transmodelapi.model.EnumTypes;
 import org.opentripplanner.ext.transmodelapi.model.scalars.GeoJSONCoordinatesScalar;
 import org.opentripplanner.ext.transmodelapi.support.GqlUtil;
 import org.opentripplanner.model.plan.Place;
+import org.opentripplanner.model.plan.VertexType;
 
 public class PlanPlaceType {
 
@@ -76,14 +77,7 @@ public class PlanPlaceType {
             .name("bikeRentalStation")
             .type(bikeRentalStationType)
             .description("The bike rental station related to the place")
-            .dataFetcher(environment -> {
-              return ((Place) environment.getSource()).vertexType.equals(VertexType.BIKESHARE)
-                  ? GqlUtil
-                  .getRoutingService(environment)
-                  .getVehicleRentalStationService()
-                  .getVehicleRentalStation(((Place) environment.getSource()).bikeShareId)
-                  : null;
-            })
+            .dataFetcher(environment -> ((Place) environment.getSource()).getBikeRentalStation())
             .build())
         //                .field(GraphQLFieldDefinition.newFieldDefinition()
         //                        .name("bikePark")

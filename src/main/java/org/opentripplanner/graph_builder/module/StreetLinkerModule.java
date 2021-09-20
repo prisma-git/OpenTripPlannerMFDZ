@@ -62,7 +62,6 @@ public class StreetLinkerModule implements GraphBuilderModule {
       linkTransitStops(graph);
       linkTransitEntrances(graph);
       linkVehicleParks(graph, issueStore);
-      linkBikeParks(graph);
     }
 
     // Calculates convex hull of a graph which is shown in routerInfo API point

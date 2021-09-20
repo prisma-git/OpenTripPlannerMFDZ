@@ -1,7 +1,9 @@
 package org.opentripplanner.routing.edgetype;
 
+import java.util.HashSet;
 import java.util.Locale;
 
+import java.util.Set;
 import org.locationtech.jts.geom.LineString;
 import org.opentripplanner.routing.api.request.RoutingRequest;
 import org.opentripplanner.routing.core.State;

@@ -311,7 +311,7 @@ public abstract class GraphRoutingTest {
             vehicleRentalStation.longitude = longitude;
             vehicleRentalStation.latitude = latitude;
             vehicleRentalStation.isKeepingVehicleRentalAtDestinationAllowed = false;
-            bikeRentalStation.name = new NonLocalizedString(id);
+            vehicleRentalStation.name = new NonLocalizedString(id);
             return vehicleRentalStation;
         }
 

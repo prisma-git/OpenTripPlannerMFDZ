@@ -313,8 +313,25 @@ public class OpenStreetMapModule implements GraphBuilderModule {
             applyBikeSafetyFactor(graph);
         } // END buildGraph()
 
-        private void processBikeParkAndRideNodes() {
-            LOG.info("Processing bike P+R nodes...");
+        private OptionalInt parseCapacity(OSMWithTags element) {
+            return parseCapacity(element, "capacity");
+        }
+
+        private OptionalInt parseCapacity(OSMWithTags element, String capacityTag) {
+            if (element.hasTag(capacityTag)) {
+                String capacity = element.getTag(capacityTag);
+                try {
+                    int parsedValue = Integer.parseInt(capacity);
+                    return OptionalInt.of(parsedValue);
+                } catch (NumberFormatException e) {
+                    issueStore.add(new InvalidVehicleParkingCapacity(element.getId(), capacity));
+                }
+            }
+            return OptionalInt.empty();
+        }
+
+        private void processParkAndRideNodes(Collection<OSMNode> nodes, boolean isCarParkAndRide) {
+            LOG.info("Processing {} P+R nodes.", isCarParkAndRide ? "car" : "bike");
             int n = 0;
             VehicleParkingService vehicleParkingService = graph.getService(
                     VehicleParkingService.class, true);

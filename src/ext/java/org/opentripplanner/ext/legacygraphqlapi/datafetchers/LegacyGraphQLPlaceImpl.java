@@ -56,18 +56,7 @@ public class LegacyGraphQLPlaceImpl implements LegacyGraphQLDataFetchers.LegacyG
 
   @Override
   public DataFetcher<VehicleRentalStation> bikeRentalStation() {
-    return environment -> {
-      Place place = getSource(environment).place;
-
-      if (!place.vertexType.equals(VertexType.BIKESHARE)) { return null; }
-
-      VehicleRentalStationService vehicleRentalStationService = getRoutingService(environment)
-          .getVehicleRentalStationService();
-
-      if (vehicleRentalStationService == null) { return null; }
-
-      return vehicleRentalStationService.getVehicleRentalStation(place.bikeShareId);
-    };
+    return environment -> getSource(environment).place.getBikeRentalStation();
   }
 
   @Override
