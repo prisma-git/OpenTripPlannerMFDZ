@@ -72,23 +72,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102309"
-            },
+                "feedId": "test-network",
+                "id": "-102309"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
-              "longitude": -122.70038790000001,
+              "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5277374,
@@ -172,23 +169,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102309"
-            },
+                "feedId": "test-network",
+                "id": "-102309"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
-              "longitude": -122.70038790000001,
+              "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5277374,
@@ -277,23 +271,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102323"
-            },
+                "feedId": "test-network",
+                "id": "-102323"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
-              "latitude": 45.527849100000005,
+              "latitude": 45.5278491,
               "longitude": -122.6942362,
               "name": {
                 "name": "-102323"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5278491,
@@ -338,23 +329,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102323"
-            },
+                "feedId": "test-network",
+                "id": "-102323"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
-              "latitude": 45.527849100000005,
+              "latitude": 45.5278491,
               "longitude": -122.6942362,
               "name": {
                 "name": "-102323"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5278491,
@@ -2135,23 +2123,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102309"
-            },
+                "feedId": "test-network",
+                "id": "-102309"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
-              "longitude": -122.70038790000001,
+              "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5277374,
@@ -2235,23 +2220,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102309"
-            },
+                "feedId": "test-network",
+                "id": "-102309"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
-              "longitude": -122.70038790000001,
+              "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5277374,
@@ -2340,23 +2322,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102323"
-            },
+                "feedId": "test-network",
+                "id": "-102323"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
-              "latitude": 45.527849100000005,
+              "latitude": 45.5278491,
               "longitude": -122.6942362,
               "name": {
                 "name": "-102323"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5278491,
@@ -2401,23 +2380,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102323"
-            },
+                "feedId": "test-network",
+                "id": "-102323"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
-              "latitude": 45.527849100000005,
+              "latitude": 45.5278491,
               "longitude": -122.6942362,
               "name": {
                 "name": "-102323"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5278491,
@@ -2836,23 +2812,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102309"
-            },
+                "feedId": "test-network",
+                "id": "-102309"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
-              "longitude": -122.70038790000001,
+              "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5277374,
@@ -2936,23 +2909,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102309"
-            },
+                "feedId": "test-network",
+                "id": "-102309"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
-              "longitude": -122.70038790000001,
+              "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5277374,
@@ -3041,23 +3011,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102323"
-            },
+                "feedId": "test-network",
+                "id": "-102323"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
-              "latitude": 45.527849100000005,
+              "latitude": 45.5278491,
               "longitude": -122.6942362,
               "name": {
                 "name": "-102323"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5278491,
@@ -3102,23 +3069,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102323"
-            },
+                "feedId": "test-network",
+                "id": "-102323"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
-              "latitude": 45.527849100000005,
+              "latitude": 45.5278491,
               "longitude": -122.6942362,
               "name": {
                 "name": "-102323"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5278491,
@@ -3516,23 +3480,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102309"
-            },
+                "feedId": "test-network",
+                "id": "-102309"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
-              "longitude": -122.70038790000001,
+              "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5277374,
@@ -3616,23 +3577,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102309"
-            },
+                "feedId": "test-network",
+                "id": "-102309"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
-              "longitude": -122.70038790000001,
+              "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5277374,
@@ -3721,23 +3679,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102323"
-            },
+                "feedId": "test-network",
+                "id": "-102323"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
-              "latitude": 45.527849100000005,
+              "latitude": 45.5278491,
               "longitude": -122.6942362,
               "name": {
                 "name": "-102323"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5278491,
@@ -3782,23 +3737,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102323"
-            },
+                "feedId": "test-network",
+                "id": "-102323"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
-              "latitude": 45.527849100000005,
+              "latitude": 45.5278491,
               "longitude": -122.6942362,
               "name": {
                 "name": "-102323"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5278491,
@@ -3959,23 +3911,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102309"
-            },
+                "feedId": "test-network",
+                "id": "-102309"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
-              "longitude": -122.70038790000001,
+              "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5277374,
@@ -4059,23 +4008,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102309"
-            },
+                "feedId": "test-network",
+                "id": "-102309"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
-              "longitude": -122.70038790000001,
+              "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5277374,
@@ -4293,23 +4239,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102309"
-            },
+                "feedId": "test-network",
+                "id": "-102309"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
-              "longitude": -122.70038790000001,
+              "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5277374,
@@ -4393,23 +4336,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102309"
-            },
+                "feedId": "test-network",
+                "id": "-102309"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
-              "longitude": -122.70038790000001,
+              "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5277374,
@@ -4943,23 +4883,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102323"
-            },
+                "feedId": "test-network",
+                "id": "-102323"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
-              "latitude": 45.527849100000005,
+              "latitude": 45.5278491,
               "longitude": -122.6942362,
               "name": {
                 "name": "-102323"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5278491,
@@ -5026,23 +4963,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102323"
-            },
+                "feedId": "test-network",
+                "id": "-102323"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
-              "latitude": 45.527849100000005,
+              "latitude": 45.5278491,
               "longitude": -122.6942362,
               "name": {
                 "name": "-102323"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5278491,
@@ -5131,23 +5065,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102309"
-            },
+                "feedId": "test-network",
+                "id": "-102309"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
-              "longitude": -122.70038790000001,
+              "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5277374,
@@ -5192,23 +5123,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102309"
-            },
+                "feedId": "test-network",
+                "id": "-102309"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
-              "longitude": -122.70038790000001,
+              "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5277374,
@@ -6586,23 +6514,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102323"
-            },
+                "feedId": "test-network",
+                "id": "-102323"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
-              "latitude": 45.527849100000005,
+              "latitude": 45.5278491,
               "longitude": -122.6942362,
               "name": {
                 "name": "-102323"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5278491,
@@ -6669,23 +6594,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102323"
-            },
+                "feedId": "test-network",
+                "id": "-102323"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
-              "latitude": 45.527849100000005,
+              "latitude": 45.5278491,
               "longitude": -122.6942362,
               "name": {
                 "name": "-102323"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5278491,
@@ -6774,23 +6696,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102309"
-            },
+                "feedId": "test-network",
+                "id": "-102309"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
-              "longitude": -122.70038790000001,
+              "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5277374,
@@ -6835,23 +6754,20 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
             "bikeRentalStation": {
               "allowDropoff": true,
               "id": {
-              "feedId": "test-network",
-              "id": "-102309"
-            },
+                "feedId": "test-network",
+                "id": "-102309"
+              },
               "isCarStation": false,
               "isFloatingBike": false,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
-              "longitude": -122.70038790000001,
+              "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
-              "networks": [
-                "test-network"
-              ],
               "realTimeData": false,
-              "spacesAvailable": 1073741823,
-              "vehiclesAvailable": 1073741824
+              "spacesAvailable": 2147483647,
+              "vehiclesAvailable": 2147483647
             },
             "coordinate": {
               "latitude": 45.5277374,

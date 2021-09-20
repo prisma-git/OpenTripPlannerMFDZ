@@ -74,17 +74,17 @@ public class StreetVehicleRentalLink extends Edge {
 
     private boolean networkIsNotAllowed(RoutingRequest options, String network) {
         if (
+                !options.allowedBikeRentalNetworks.isEmpty()
+                        && options.allowedBikeRentalNetworks.stream().noneMatch(network::equals)
+        ) {
+            return false;
+        }
+
+        if (
                 !options.bannedBikeRentalNetworks.isEmpty()
                 && options.bannedBikeRentalNetworks.contains(network)
         ) {
             return true;
-        }
-
-        if (
-                !options.allowedBikeRentalNetworks.isEmpty()
-                && options.allowedBikeRentalNetworks.stream().noneMatch(network::equals)
-        ) {
-            return false;
         }
 
         return false;

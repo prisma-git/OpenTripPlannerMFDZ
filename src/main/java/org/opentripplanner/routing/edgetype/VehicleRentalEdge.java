@@ -32,7 +32,11 @@ public class VehicleRentalEdge extends Edge {
         RoutingRequest options = s0.getOptions();
 
         VehicleRentalStationVertex stationVertex = (VehicleRentalStationVertex) tov;
-        String network = stationVertex.getStation().getNetwork();
+        var network = allowedNetworkBasedOnOptions(options, stationVertex.getStation().getNetwork());
+
+        if(network == null) {
+            return null;
+        }
 
         boolean pickedUp;
         if (options.arriveBy) {
@@ -135,19 +139,23 @@ public class VehicleRentalEdge extends Edge {
         return false;
     }
 
-    private Set<String> allowedNetworkBasedOnOptions(RoutingRequest options, Set<String> networks) {
+    private String allowedNetworkBasedOnOptions(RoutingRequest options, String network) {
         if (options.allowedBikeRentalNetworks.isEmpty()
                 && options.bannedBikeRentalNetworks.isEmpty()
         ) {
-            return networks;
+            return network;
+        }
+        else if(options.allowedBikeRentalNetworks.contains(network)) {
+            return network;
+        }
+        else if(!options.allowedBikeRentalNetworks.isEmpty()) {
+            return null;
+        }
+        else if(options.bannedBikeRentalNetworks.contains(network)) {
+            return null;
         }
 
-        var result = new HashSet<>(networks);
-        result.removeAll(options.bannedBikeRentalNetworks);
-        if (!options.allowedBikeRentalNetworks.isEmpty()) {
-            result.retainAll(options.allowedBikeRentalNetworks);
-        }
-        return result;
+        return network;
     }
 
     /**

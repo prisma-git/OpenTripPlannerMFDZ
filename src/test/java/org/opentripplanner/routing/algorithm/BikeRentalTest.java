@@ -373,7 +373,7 @@ public class BikeRentalTest extends GraphRoutingTest {
 
     @Test
     public void pathWithoutBannedWithAllowedNetworks() {
-        assertPathWithNetwork(B, C, Set.of(NETWORK1), Set.of(NETWORK1, NETWORK2), Set.of(NETWORK2));
+        assertPathWithNetwork(B, C, Set.of(), Set.of(NETWORK1, NETWORK2), Set.of(NETWORK2));
     }
 
     private void assertNoRental(StreetVertex fromVertex, StreetVertex toVertex, Set<String> bannedNetworks, Set<String> allowedNetworks) {
