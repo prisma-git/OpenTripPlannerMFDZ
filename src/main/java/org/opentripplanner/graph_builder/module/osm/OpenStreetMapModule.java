@@ -45,15 +45,12 @@ import org.opentripplanner.openstreetmap.model.OSMNode;
 import org.opentripplanner.openstreetmap.model.OSMWay;
 import org.opentripplanner.openstreetmap.model.OSMWithTags;
 import org.opentripplanner.routing.api.request.RoutingRequest;
-import org.opentripplanner.routing.vehicle_rental.VehicleRentalStation;
-import org.opentripplanner.routing.vehicle_rental.VehicleRentalStationService;
 import org.opentripplanner.routing.core.OsmOpeningHours;
 import org.opentripplanner.routing.core.TimeRestriction;
 import org.opentripplanner.routing.core.TraversalRequirements;
 import org.opentripplanner.routing.core.TraverseMode;
 import org.opentripplanner.routing.edgetype.AreaEdge;
 import org.opentripplanner.routing.edgetype.AreaEdgeList;
-import org.opentripplanner.routing.edgetype.VehicleRentalEdge;
 import org.opentripplanner.routing.edgetype.ElevatorAlightEdge;
 import org.opentripplanner.routing.edgetype.ElevatorBoardEdge;
 import org.opentripplanner.routing.edgetype.ElevatorHopEdge;
@@ -72,7 +69,6 @@ import org.opentripplanner.routing.vehicle_parking.VehicleParking.VehicleParking
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingHelper;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingService;
 import org.opentripplanner.routing.vertextype.BarrierVertex;
-import org.opentripplanner.routing.vertextype.VehicleRentalStationVertex;
 import org.opentripplanner.routing.vertextype.ElevatorOffboardVertex;
 import org.opentripplanner.routing.vertextype.ElevatorOnboardVertex;
 import org.opentripplanner.routing.vertextype.ExitVertex;
@@ -451,17 +447,18 @@ public class OpenStreetMapModule implements GraphBuilderModule {
                 if (!walkAccessibleOut || !carAccessibleIn || !walkAccessibleIn || !carAccessibleOut) {
                     // This will prevent the P+R to be useful.
                     issueStore.add(new ParkAndRideUnlinked(creativeName.toString(), entity));
-                    return false;
                 }
             } else {
                 if (!walkAccessibleOut || !walkAccessibleIn) {
                     // This will prevent the P+R to be useful.
                     issueStore.add(new ParkAndRideUnlinked(creativeName.toString(), entity));
-                    return false;
                 }
             }
 
             List<VehicleParking.VehicleParkingEntranceCreator> entrances = createParkingEntrancesFromAccessVertices(accessVertices, creativeName, entity);
+            if(entrances.isEmpty()) {
+                entrances = createArtificialEntrances(group, creativeName, entity, isCarParkAndRide);
+            }
 
             var vehicleParking = createVehicleParkingObjectFromOsmEntity(
                     isCarParkAndRide,
@@ -604,6 +601,28 @@ public class OpenStreetMapModule implements GraphBuilderModule {
             );
 
             return accessVertices;
+        }
+
+        private List<VehicleParking.VehicleParkingEntranceCreator> createArtificialEntrances(
+                AreaGroup area,
+                I18NString vehicleParkingName,
+                OSMWithTags entity,
+                boolean isCarPark
+        ) {
+            LOG.warn("Adding artificial entrance to centroid of vehicle parking {}, because it is not connected to the street network.", entity.getOpenStreetMapLink());
+
+            var centroid = area.outermostRings.get(0).toJtsPolygon().getCentroid();
+
+            return List.of((builder) -> builder
+                        .entranceId(new FeedScopedId(VEHICLE_PARKING_OSM_FEED_ID, String.format("%s/%d/centroid", entity.getClass().getSimpleName(), entity.getId())))
+                        .name(vehicleParkingName)
+                        .x(centroid.getX())
+                        .y(centroid.getY())
+                        // setting the vertex to null signals the rest of the build process that this needs to be linked to the street network
+                        .vertex(null)
+                        .walkAccessible(true)
+                        .carAccessible(isCarPark));
+
         }
 
         private List<VehicleParking.VehicleParkingEntranceCreator> createParkingEntrancesFromAccessVertices(
