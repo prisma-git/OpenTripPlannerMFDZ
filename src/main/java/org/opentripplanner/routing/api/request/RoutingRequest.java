@@ -370,6 +370,9 @@ public class RoutingRequest implements AutoCloseable, Cloneable, Serializable {
 
     public Set<String> bannedVehicleParkingTags = Set.of();
 
+    public Set<String> preferredVehicleParkingTags = Set.of();
+    public double unpreferredVehicleParkingTagPenalty = 5 * 60;
+
     /**
      * If the opening hours should be taken into account for vehicle parkings. If true, it is not
      * possible to park outside of opening hours.
@@ -1090,6 +1093,8 @@ public class RoutingRequest implements AutoCloseable, Cloneable, Serializable {
 
             clone.requiredVehicleParkingTags = Set.copyOf(requiredVehicleParkingTags);
             clone.bannedVehicleParkingTags = Set.copyOf(bannedVehicleParkingTags);
+            clone.preferredVehicleParkingTags = Set.copyOf(preferredVehicleParkingTags);
+            clone.unpreferredVehicleParkingTagPenalty = unpreferredVehicleParkingTagPenalty;
 
             clone.preferredAgencies = Set.copyOf(preferredAgencies);
             clone.unpreferredAgencies = Set.copyOf(unpreferredAgencies);
