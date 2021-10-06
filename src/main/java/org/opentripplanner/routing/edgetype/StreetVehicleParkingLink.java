@@ -78,9 +78,22 @@ public class StreetVehicleParkingLink extends Edge {
         }
 
         StateEditor s1 = s0.edit(this);
+
+        if(isUnpreferredParking(options, vehicleParking)) {
+            s1.incrementWeight(options.unpreferredVehicleParkingTagPenalty);
+        }
+
         s1.incrementWeight(1);
         s1.setBackMode(null);
         return s1.makeState();
+    }
+
+    private boolean isUnpreferredParking(RoutingRequest req, VehicleParking parking) {
+        if(req.preferredVehicleParkingTags.isEmpty()) {
+            return false;
+        } else {
+            return req.preferredVehicleParkingTags.stream().noneMatch(tag -> parking.getTags().contains(tag));
+        }
     }
 
     private boolean hasBannedTags(RoutingRequest options, VehicleParking vehicleParking) {

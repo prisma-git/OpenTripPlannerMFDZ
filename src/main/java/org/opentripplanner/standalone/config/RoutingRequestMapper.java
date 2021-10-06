@@ -30,6 +30,8 @@ public class RoutingRequestMapper {
         request.arriveBy = c.asBoolean("arriveBy", dft.arriveBy);
         request.bannedBikeRentalNetworks = c.asStringSet("bannedBikeRentalNetworks", dft.bannedBikeRentalNetworks);
         request.bannedVehicleParkingTags = c.asStringSet("bannedVehicleParkingTags", dft.bannedVehicleParkingTags);
+        request.preferredVehicleParkingTags = c.asStringSet("preferredVehicleParkingTags", dft.preferredVehicleParkingTags);
+        request.unpreferredVehicleParkingTagPenalty = c.asDouble("unpreferredVehicleParkingTagPenalty", dft.unpreferredVehicleParkingTagPenalty);
         request.bikeBoardCost = c.asInt("bikeBoardCost", dft.bikeBoardCost);
         request.bikeParkTime = c.asInt("bikeParkTime", dft.bikeParkTime);
         request.bikeParkCost = c.asInt("bikeParkCost", dft.bikeParkCost);
