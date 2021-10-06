@@ -986,6 +986,8 @@ public class LegacyGraphQLTypes {
     private Iterable<String> _bannedBikeRentalNetworks;
     private Iterable<String> _bannedVehicleParkingTags;
     private Iterable<String> _requiredVehicleParkingTags;
+    private Iterable<String> _preferredVehicleParkingTags;
+    private Float _unpreferredVehicleParkingTagPenalty;
     private Boolean _useVehicleParkingAvailabilityInformation;
   
     public LegacyGraphQLQueryTypePlanArgs(Map<String, Object> args) {
@@ -1059,6 +1061,8 @@ public class LegacyGraphQLTypes {
         this._vehicleParkingClosesSoonSeconds = (Integer) args.get("vehicleParkingClosesSoonSeconds");
         this._bannedBikeRentalNetworks = (Iterable<String>) args.get("bannedBikeRentalNetworks");
         this._bannedVehicleParkingTags = (Iterable<String>) args.get("bannedVehicleParkingTags");
+        this._preferredVehicleParkingTags = (Iterable<String>) args.get("preferredVehicleParkingTags");
+        this._unpreferredVehicleParkingTagPenalty = (Float) args.get("unpreferredVehicleParkingTagPenalty");
         this._requiredVehicleParkingTags = (Iterable<String>) args.get("requiredVehicleParkingTags");
         this._useVehicleParkingAvailabilityInformation = (Boolean) args.get("useVehicleParkingAvailabilityInformation");
       }
@@ -1126,6 +1130,8 @@ public class LegacyGraphQLTypes {
     public Iterable<String> getLegacyGraphQLBannedBikeRentalNetworks() { return this._bannedBikeRentalNetworks; }
     public Iterable<String> getLegacyGraphQLBannedVehicleParkingTags() { return this._bannedVehicleParkingTags; }
     public Iterable<String> getLegacyGraphQLRequiredVehicleParkingTags() { return this._requiredVehicleParkingTags; }
+    public Iterable<String> getLegacyGraphQLPreferredVehicleParkingTags() { return this._preferredVehicleParkingTags; }
+    public Float getLegacyGraphQLUnpreferredVehicleParkingTagPenalty() { return this._unpreferredVehicleParkingTagPenalty; }
     public Boolean getLegacyGraphQLUseVehicleParkingAvailabilityInformation() { return this._useVehicleParkingAvailabilityInformation; }
   }
   public enum LegacyGraphQLRealtimeState {

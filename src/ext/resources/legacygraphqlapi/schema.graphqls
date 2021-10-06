@@ -2064,6 +2064,8 @@ type QueryType {
         """
         requiredVehicleParkingTags: [String]
 
+        preferredVehicleParkingTags: [String]
+        unpreferredVehicleParkingTagPenalty: Float
         """
         Whether or not vehicle parking availability information will be used to plan park and ride trips
         """
