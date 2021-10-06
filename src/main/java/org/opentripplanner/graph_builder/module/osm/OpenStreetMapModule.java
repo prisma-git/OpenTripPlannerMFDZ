@@ -147,6 +147,9 @@ public class OpenStreetMapModule implements GraphBuilderModule {
 
     public int maxAreaNodes = 500;
 
+    private final List<String>
+            OSM_VEHICLE_PARKING_EXTRA_TAGS = List.of("bicycle_parking", "operator", "fee", "source");
+
     public List<String> provides() {
         return Arrays.asList("streets", "turns");
     }
@@ -535,6 +538,13 @@ public class OpenStreetMapModule implements GraphBuilderModule {
             if (entity.hasTag("surveillance") && !entity.isTagFalse("surveillance")) {
                 tags.add("osm:surveillance");
             }
+
+            OSM_VEHICLE_PARKING_EXTRA_TAGS.forEach(key ->{
+                if(entity.hasTag(key)){
+                    var value = entity.getTag(key);
+                    tags.add("osm:" + key + "=" + value);
+                }
+            });
 
             return VehicleParking.builder()
                     .id(id)
