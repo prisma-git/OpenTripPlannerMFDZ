@@ -17,7 +17,7 @@ public class DigitransitVehicleRentalPropertyMapper extends PropertyMapper<Vehic
   protected Collection<T2<String, Object>> map(VehicleRentalStation station) {
     return List.of(
         new T2<>("id", station.getStationId()),
-        new T2<>("name", station.name),
+        new T2<>("name", station.name.toString()),
         new T2<>("networks", station.getNetwork())
     );
   }
