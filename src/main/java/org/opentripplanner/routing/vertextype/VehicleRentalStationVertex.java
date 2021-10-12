@@ -18,10 +18,6 @@ public class VehicleRentalStationVertex extends Vertex {
 
     private static final long serialVersionUID = 1L;
 
-    private int vehiclesAvailable;
-
-    private int spacesAvailable;
-
     private FeedScopedId id;
 
     /** Some car rental systems and flex transit systems work exactly like bike rental, but with cars. */
@@ -44,19 +40,19 @@ public class VehicleRentalStationVertex extends Vertex {
     }
 
     public int getVehiclesAvailable() {
-        return vehiclesAvailable;
+        return station.vehiclesAvailable;
     }
 
     public int getSpacesAvailable() {
-        return spacesAvailable;
+        return station.spacesAvailable;
     }
 
     public void setVehiclesAvailable(int bikes) {
-        this.vehiclesAvailable = bikes;
+        this.station.vehiclesAvailable = bikes;
     }
 
     public void setSpacesAvailable(int spaces) {
-        this.spacesAvailable = spaces;
+        this.station.spacesAvailable = spaces;
     }
 
     public FeedScopedId getId() {
