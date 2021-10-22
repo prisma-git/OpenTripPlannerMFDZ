@@ -1,23 +1,18 @@
-package org.opentripplanner.routing.algorithm.filterchain.filters;
+package org.opentripplanner.routing.algorithm.filterchain.deletionflagger;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.opentripplanner.model.plan.Itinerary;
-import org.opentripplanner.routing.algorithm.filterchain.ItineraryFilter;
+import org.opentripplanner.routing.algorithm.filterchain.ItineraryListFilter;
 import org.opentripplanner.routing.core.TraverseMode;
 
 /**
  * Remove all itineraries where all the final leg is more than x minutes of walking.
  */
-public class FlexOnlyToDestinationFilter implements ItineraryFilter {
+public class FlexOnlyToDestinationFilter implements ItineraryListFilter {
 
     private final long maxWalkDuration = Duration.ofMinutes(2).toSeconds();
-
-    @Override
-    public String name() {
-        return "flex-only-to-destination";
-    }
 
     @Override
     public List<Itinerary> filter(List<Itinerary> itineraries) {
@@ -39,8 +34,4 @@ public class FlexOnlyToDestinationFilter implements ItineraryFilter {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public boolean removeItineraries() {
-        return true;
-    }
 }

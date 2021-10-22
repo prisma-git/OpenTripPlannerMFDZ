@@ -74,7 +74,7 @@ public class TransitRouter {
 
         debugTimingAggregator.finishedPatternFiltering();
 
-        var accessEgresses = getAccessEgresses(transitLayer);
+        var accessEgresses = getAccessEgresses(transitLayer, requestTransitDataProvider);
 
         debugTimingAggregator.finishedAccessEgress();
 
@@ -147,7 +147,9 @@ public class TransitRouter {
     }
 
     private AccessEgresses getAccessEgresses(
-            TransitLayer transitLayer
+            TransitLayer transitLayer,
+
+            RaptorRoutingRequestTransitData requestTransitDataProvider
     ) {
         var accessEgressMapper = new AccessEgressMapper(transitLayer.getStopIndex());
         var accessList = new ArrayList<AccessEgress>();
@@ -155,13 +157,13 @@ public class TransitRouter {
 
         var accessCalculator = (Runnable) () -> {
             debugTimingAggregator.startedAccessCalculating();
-            accessList.addAll(getAccessEgresses(accessEgressMapper, false));
+            accessList.addAll(getAccessEgresses(requestTransitDataProvider, accessEgressMapper, false));
             debugTimingAggregator.finishedAccessCalculating();
         };
 
         var egressCalculator = (Runnable) () -> {
             debugTimingAggregator.startedEgressCalculating();
-            egressList.addAll(getAccessEgresses(accessEgressMapper, true));
+            egressList.addAll(getAccessEgresses(requestTransitDataProvider, accessEgressMapper, true));
             debugTimingAggregator.finishedEgressCalculating();
         };
 
@@ -181,6 +183,7 @@ public class TransitRouter {
     }
 
     private Collection<AccessEgress> getAccessEgresses(
+            RaptorRoutingRequestTransitData requestTransitDataProvider,
             AccessEgressMapper accessEgressMapper,
             boolean isEgress
     ) {
@@ -200,7 +203,7 @@ public class TransitRouter {
                     isEgress
             );
 
-            results.addAll(accessEgressMapper.mapNearbyStops(nearbyStops, isEgress));
+            results.addAll(accessEgressMapper.mapNearbyStops(nearbyStops, requestTransitDataProvider.getStartOfTime(), isEgress));
 
             // Special handling of flex accesses
             if (OTPFeature.FlexRouting.isOn() && mode == StreetMode.FLEXIBLE) {
@@ -209,7 +212,7 @@ public class TransitRouter {
                         isEgress
                 );
 
-                results.addAll(accessEgressMapper.mapFlexAccessEgresses(flexAccessList, isEgress));
+                results.addAll(accessEgressMapper.mapFlexAccessEgresses(flexAccessList, requestTransitDataProvider.getStartOfTime(), isEgress));
             }
         }
 

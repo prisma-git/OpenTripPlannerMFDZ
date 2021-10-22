@@ -46,15 +46,6 @@ public class PathTransfer implements Serializable {
     public List<Edge> getEdges() { return this.edges; }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) { return true; }
-        if (o == null || getClass() != o.getClass()) { return false; }
-        final SimpleTransfer that = (SimpleTransfer) o;
-        return Double.compare(that.distanceMeters, distanceMeters) == 0 && from.equals(
-                that.from) && to.equals(that.to) && Objects.equals(edges, that.edges);
-    }
-
-    @Override
     public int hashCode() {
         return Objects.hash(from, to, distanceMeters, edges);
     }

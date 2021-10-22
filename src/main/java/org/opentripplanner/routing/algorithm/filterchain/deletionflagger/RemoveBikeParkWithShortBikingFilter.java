@@ -1,23 +1,18 @@
-package org.opentripplanner.routing.algorithm.filterchain.filters;
+package org.opentripplanner.routing.algorithm.filterchain.deletionflagger;
 
 import org.opentripplanner.model.plan.Itinerary;
-import org.opentripplanner.routing.algorithm.filterchain.ItineraryFilter;
+import org.opentripplanner.routing.algorithm.filterchain.ItineraryListFilter;
 import org.opentripplanner.routing.core.TraverseMode;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RemoveBikeParkWithShortBikingFilter implements ItineraryFilter {
+public class RemoveBikeParkWithShortBikingFilter implements ItineraryListFilter {
 
   private final double minBikeParkingDistance;
 
   public RemoveBikeParkWithShortBikingFilter(double minBikeParkingDistance) {
     this.minBikeParkingDistance = minBikeParkingDistance;
-  }
-
-  @Override
-  public String name() {
-    return "remove-bike-park-with-short-biking-filter";
   }
 
   @Override
@@ -42,8 +37,4 @@ public class RemoveBikeParkWithShortBikingFilter implements ItineraryFilter {
     return bikeParkingDistance > minBikeParkingDistance;
   }
 
-  @Override
-  public boolean removeItineraries() {
-    return true;
-  }
 }

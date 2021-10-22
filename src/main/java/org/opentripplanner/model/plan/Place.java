@@ -11,6 +11,14 @@ import org.opentripplanner.model.FeedScopedId;
 import org.opentripplanner.model.StopLocation;
 import org.opentripplanner.model.WgsCoordinate;
 import org.opentripplanner.model.base.ToStringBuilder;
+import org.opentripplanner.routing.api.request.RoutingRequest;
+import org.opentripplanner.routing.core.TraverseMode;
+import org.opentripplanner.routing.graph.Vertex;
+import org.opentripplanner.routing.vehicle_rental.VehicleRentalPlace;
+import org.opentripplanner.routing.vehicle_rental.VehicleRentalStation;
+import org.opentripplanner.routing.vertextype.TransitStopVertex;
+import org.opentripplanner.routing.vertextype.VehicleParkingEntranceVertex;
+import org.opentripplanner.routing.vertextype.VehicleRentalStationVertex;
 
 /** 
 * A Place is where a journey starts or ends, or a transit stop along the way.
@@ -51,12 +59,7 @@ public class Place {
      * Type of vertex. (Normal, Bike sharing station, Bike P+R, Transit stop)
      * Mostly used for better localization of bike sharing and P+R station names
      */
-    private VertexType vertexType;
-
-    /**
-     * The bike rental station if the type is {@link VertexType#BIKESHARE}.
-     */
-    private VehicleRentalStation bikeRentalStation;
+    public VertexType vertexType;
 
     /**
      * The vehicle parking entrance if the type is {@link VertexType#VEHICLEPARKING}.
@@ -67,12 +70,6 @@ public class Place {
      * In case the vertex is of type vehicle sharing station.
      */
     public VehicleRentalPlace vehicleRentalStation;
-    private Integer stopIndex;
-
-    /**
-     * For transit trips, the sequence number of the stop. Per GTFS, these numbers are increasing.
-     */
-    private Integer stopSequence;
 
     public Place(Double lat, Double lon, String name) {
         this.name = name;
@@ -123,13 +120,12 @@ public class Place {
                 .addStr("orig", orig)
                 .addObj("coordinate", coordinate)
                 .addEnum("vertexType", vertexType)
-                .addObj("bikeRentalStation", bikeRentalStation)
                 .addObj("vehicleParkingEntrance", vehicleParkingWithEntrance)
                 .addObj("stopId", stop != null ? stop.getId() : null)
                 .addNum("stopIndex", stopIndex)
                 .addNum("stopSequence", stopSequence)
                 .addEnum("vertexType", vertexType)
-                .addObj("vehicleRentalId", vehicleRentalStation)
+                .addObj("vehicleRentalStation", vehicleRentalStation)
                 .toString();
     }
 
@@ -176,7 +172,7 @@ public class Place {
     public static Place forBikeRentalStation(VehicleRentalStationVertex vertex, String name) {
         return defaults(vertex, name)
                 .vertexType(VertexType.BIKESHARE)
-                .bikeRentalStation(vertex.getStation())
+                .vehicleRentalStation(vertex.getStation())
                 .build();
     }
 

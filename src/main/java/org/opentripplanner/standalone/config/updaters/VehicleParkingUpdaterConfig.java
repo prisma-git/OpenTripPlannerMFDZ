@@ -37,7 +37,7 @@ public class VehicleParkingUpdaterConfig {
         c.asInt("frequencySec", 60),
         c.asBoolean("zip", false),
         mapStringToSourceType(c.asText("sourceType")),
-        new ArrayList<>(c.asStringSet("tags", null))
+        new ArrayList<>(c.asTextSet("tags", null))
     );
   }
 }

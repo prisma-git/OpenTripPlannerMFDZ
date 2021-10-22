@@ -20,7 +20,6 @@ import org.opentripplanner.ext.flex.FlexLegMapper;
 import org.opentripplanner.ext.flex.edgetype.FlexTripEdge;
 import org.opentripplanner.model.VehicleRentalStationInfo;
 import org.opentripplanner.model.StreetNote;
-import org.opentripplanner.model.VehicleRentalStationInfo;
 import org.opentripplanner.model.WgsCoordinate;
 import org.opentripplanner.model.plan.Itinerary;
 import org.opentripplanner.model.plan.Leg;
@@ -43,12 +42,10 @@ import org.opentripplanner.routing.graph.Graph;
 import org.opentripplanner.routing.graph.Vertex;
 import org.opentripplanner.routing.location.TemporaryStreetLocation;
 import org.opentripplanner.routing.spt.GraphPath;
-import org.opentripplanner.routing.vertextype.BikeParkVertex;
 import org.opentripplanner.routing.vertextype.VehicleRentalStationVertex;
 import org.opentripplanner.routing.vertextype.ExitVertex;
 import org.opentripplanner.routing.vertextype.StreetVertex;
 import org.opentripplanner.routing.vertextype.TransitStopVertex;
-import org.opentripplanner.routing.vertextype.VehicleRentalStationVertex;
 import org.opentripplanner.routing.vertextype.VehicleParkingEntranceVertex;
 import org.opentripplanner.util.OTPFeature;
 import org.opentripplanner.util.PolylineEncoder;
@@ -468,22 +465,17 @@ public abstract class GraphPathToItineraryMapper {
         Vertex firstVertex = states[0].getVertex();
         Vertex lastVertex = states[states.length - 1].getVertex();
 
-        leg.from = makePlace(firstVertex, requestedLocale);
-        leg.to = makePlace(lastVertex, requestedLocale);
+        leg.from = makePlace(states[0], firstVertex, requestedLocale);
+        leg.to = makePlace(states[states.length - 1], lastVertex, requestedLocale);
     }
 
     /**
      * Make a {@link Place} to add to a {@link Leg}.
      *
-     * @param state The {@link State}.
      * @param requestedLocale The locale to use for all text attributes.
      * @return The resulting {@link Place} object.
      */
-    private static Place makePlace(Vertex vertex, Locale requestedLocale) {
-        if (vertex instanceof TransitStopVertex) {
-            return new Place(((TransitStopVertex) vertex).getStop());
-        }
-
+    private static Place makePlace(State state, Vertex vertex, Locale requestedLocale) {
         String name = vertex.getName(requestedLocale);
 
         //This gets nicer names instead of osm:node:id when changing mode of transport
@@ -493,13 +485,6 @@ public abstract class GraphPathToItineraryMapper {
             name = ((StreetVertex) vertex).getIntersectionName(requestedLocale).toString(requestedLocale);
         }
 
-
-        if (vertex instanceof VehicleRentalStationVertex) {
-            place.vehicleRentalStation = ((VehicleRentalStationVertex) vertex).getStation();
-            LOG.trace("Added bike share Id {} to place", place.vehicleRentalStation.getId());
-            place.vertexType = VertexType.BIKESHARE;
-        } else if (vertex instanceof BikeParkVertex) {
-            place.vertexType = VertexType.BIKEPARK;
         if (vertex instanceof TransitStopVertex) {
             return Place.forStop((TransitStopVertex) vertex, name);
         } else if(vertex instanceof VehicleRentalStationVertex) {

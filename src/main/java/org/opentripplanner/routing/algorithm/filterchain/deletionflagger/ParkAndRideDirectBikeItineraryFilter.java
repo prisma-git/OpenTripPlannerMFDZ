@@ -1,19 +1,14 @@
-package org.opentripplanner.routing.algorithm.filterchain.filters;
+package org.opentripplanner.routing.algorithm.filterchain.deletionflagger;
 
 import org.opentripplanner.model.plan.Itinerary;
-import org.opentripplanner.routing.algorithm.filterchain.ItineraryFilter;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import org.opentripplanner.routing.algorithm.filterchain.ItineraryListFilter;
 
 import static org.opentripplanner.routing.core.TraverseMode.BICYCLE;
 
-public class ParkAndRideDirectBikeItineraryFilter implements ItineraryFilter {
-
-  @Override
-  public String name() {
-    return "park-and-ride-direct-bike-itinerary-filter";
-  }
+public class ParkAndRideDirectBikeItineraryFilter implements ItineraryListFilter {
 
   @Override
   public List<Itinerary> filter(List<Itinerary> itineraries) {
@@ -26,8 +21,4 @@ public class ParkAndRideDirectBikeItineraryFilter implements ItineraryFilter {
     return !itinerary.legs.stream().allMatch(leg -> leg.mode == BICYCLE || leg.walkingBike);
   }
 
-  @Override
-  public boolean removeItineraries() {
-    return true;
-  }
 }

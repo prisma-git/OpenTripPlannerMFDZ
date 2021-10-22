@@ -25,12 +25,12 @@ public class RoutingRequestMapper {
         // mapping or duplicate exist.
         request.alightSlack = c.asInt("alightSlack", dft.alightSlack);
         request.alightSlackForMode = c.asEnumMap("alightSlackForMode", TraverseMode.class, NodeAdapter::asInt);
-        request.allowedBikeRentalNetworks = c.asStringSet("allowedBikeRentalNetworks", dft.allowedBikeRentalNetworks);
+        request.allowedBikeRentalNetworks = c.asTextSet("allowedBikeRentalNetworks", dft.allowedBikeRentalNetworks);
         request.bikeRental = c.asBoolean("allowBikeRental", dft.bikeRental);
         request.arriveBy = c.asBoolean("arriveBy", dft.arriveBy);
-        request.bannedBikeRentalNetworks = c.asStringSet("bannedBikeRentalNetworks", dft.bannedBikeRentalNetworks);
-        request.bannedVehicleParkingTags = c.asStringSet("bannedVehicleParkingTags", dft.bannedVehicleParkingTags);
-        request.preferredVehicleParkingTags = c.asStringSet("preferredVehicleParkingTags", dft.preferredVehicleParkingTags);
+        request.bannedBikeRentalNetworks = c.asTextSet("bannedBikeRentalNetworks", dft.bannedBikeRentalNetworks);
+        request.bannedVehicleParkingTags = c.asTextSet("bannedVehicleParkingTags", dft.bannedVehicleParkingTags);
+        request.preferredVehicleParkingTags = c.asTextSet("preferredVehicleParkingTags", dft.preferredVehicleParkingTags);
         request.unpreferredVehicleParkingTagPenalty = c.asDouble("unpreferredVehicleParkingTagPenalty", dft.unpreferredVehicleParkingTagPenalty);
         request.bikeBoardCost = c.asInt("bikeBoardCost", dft.bikeBoardCost);
         request.bikeParkTime = c.asInt("bikeParkTime", dft.bikeParkTime);
@@ -86,7 +86,7 @@ public class RoutingRequestMapper {
         request.otherThanPreferredRoutesPenalty = c.asInt("otherThanPreferredRoutesPenalty", dft.otherThanPreferredRoutesPenalty);
         request.parkAndRide = c.asBoolean("parkAndRide", dft.parkAndRide);
         request.pathComparator = c.asText("pathComparator", dft.pathComparator);
-        request.requiredVehicleParkingTags = c.asStringSet("requiredVehicleParkingTags", dft.requiredVehicleParkingTags);
+        request.requiredVehicleParkingTags = c.asTextSet("requiredVehicleParkingTags", dft.requiredVehicleParkingTags);
         request.showIntermediateStops = c.asBoolean("showIntermediateStops", dft.showIntermediateStops);
         request.stairsReluctance = c.asDouble("stairsReluctance", dft.stairsReluctance);
         request.startingTransitTripId = c.asFeedScopedId("startingTransitTripId", dft.startingTransitTripId);

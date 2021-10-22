@@ -1,22 +1,5 @@
 package org.opentripplanner.routing.algorithm.filterchain;
 
-import org.opentripplanner.model.plan.Itinerary;
-import org.opentripplanner.routing.algorithm.filterchain.comparator.OtpDefaultSortOrder;
-import org.opentripplanner.routing.algorithm.filterchain.comparator.SortOnGeneralizedCost;
-import org.opentripplanner.routing.algorithm.filterchain.filter.AddMinSafeTransferCostFilter;
-import org.opentripplanner.routing.algorithm.filterchain.filter.DeletionFlaggingFilter;
-import org.opentripplanner.routing.algorithm.filterchain.filter.GroupByFilter;
-import org.opentripplanner.routing.algorithm.filterchain.filter.SortingFilter;
-import org.opentripplanner.routing.algorithm.filterchain.groupids.GroupByTripIdAndDistance;
-import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.LatestDepartureTimeFilter;
-import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.MaxLimitFilter;
-import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.NonTransitGeneralizedCostFilter;
-import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.RemoveBikerentalWithMostlyWalkingFilter;
-import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.RemoveParkAndRideWithMostlyWalkingFilter;
-import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.RemoveTransitIfStreetOnlyIsBetterFilter;
-import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.RemoveWalkOnlyFilter;
-import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.TransitGeneralizedCostFilter;
-
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -25,23 +8,24 @@ import java.util.function.Consumer;
 import java.util.function.DoubleFunction;
 import java.util.stream.Collectors;
 import org.opentripplanner.model.plan.Itinerary;
-import org.opentripplanner.routing.algorithm.filterchain.filters.AddMinSafeTransferCostFilter;
-import org.opentripplanner.routing.algorithm.filterchain.filters.RemoveBikeParkWithShortBikingFilter;
-import org.opentripplanner.routing.algorithm.filterchain.filters.DebugFilterWrapper;
-import org.opentripplanner.routing.algorithm.filterchain.filters.FilterChain;
-import org.opentripplanner.routing.algorithm.filterchain.filters.GroupBySimilarLegsFilter;
-import org.opentripplanner.routing.algorithm.filterchain.filters.LatestDepartureTimeFilter;
-import org.opentripplanner.routing.algorithm.filterchain.filters.MaxLimitFilter;
-import org.opentripplanner.routing.algorithm.filterchain.filters.NonTransitGeneralizedCostFilter;
-import org.opentripplanner.routing.algorithm.filterchain.filters.OtpDefaultSortOrder;
-import org.opentripplanner.routing.algorithm.filterchain.filters.RemoveBikerentalWithMostlyWalkingFilter;
-import org.opentripplanner.routing.algorithm.filterchain.filters.FlexOnlyToDestinationFilter;
-import org.opentripplanner.routing.algorithm.filterchain.filters.ParkAndRideDirectBikeItineraryFilter;
-import org.opentripplanner.routing.algorithm.filterchain.filters.RemoveParkAndRideWithMostlyWalkingFilter;
-import org.opentripplanner.routing.algorithm.filterchain.filters.RemoveTransitIfStreetOnlyIsBetterFilter;
-import org.opentripplanner.routing.algorithm.filterchain.filters.RemoveWalkOnlyFilter;
-import org.opentripplanner.routing.algorithm.filterchain.filters.SortOnGeneralizedCost;
-import org.opentripplanner.routing.algorithm.filterchain.filters.TransitGeneralizedCostFilter;
+import org.opentripplanner.routing.algorithm.filterchain.comparator.OtpDefaultSortOrder;
+import org.opentripplanner.routing.algorithm.filterchain.comparator.SortOnGeneralizedCost;
+import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.FlexOnlyToDestinationFilter;
+import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.LatestDepartureTimeFilter;
+import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.MaxLimitFilter;
+import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.NonTransitGeneralizedCostFilter;
+import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.ParkAndRideDirectBikeItineraryFilter;
+import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.RemoveBikeParkWithShortBikingFilter;
+import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.RemoveBikerentalWithMostlyWalkingFilter;
+import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.RemoveParkAndRideWithMostlyWalkingFilter;
+import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.RemoveTransitIfStreetOnlyIsBetterFilter;
+import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.RemoveWalkOnlyFilter;
+import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.TransitGeneralizedCostFilter;
+import org.opentripplanner.routing.algorithm.filterchain.filter.AddMinSafeTransferCostFilter;
+import org.opentripplanner.routing.algorithm.filterchain.filter.DeletionFlaggingFilter;
+import org.opentripplanner.routing.algorithm.filterchain.filter.GroupByFilter;
+import org.opentripplanner.routing.algorithm.filterchain.filter.SortingFilter;
+import org.opentripplanner.routing.algorithm.filterchain.groupids.GroupByTripIdAndDistance;
 
 
 /**
@@ -233,17 +217,17 @@ public class ItineraryListFilterChainBuilder {
      * and remove-transit-with-higher-cost-than-best-on-street-only filters. This make sure that
      * poor transit itineraries are filtered away before the walk-all-the-way itinerary is removed.
      */
-    public ItineraryFilterChainBuilder withFlexOnlyToDestination(boolean enable) {
+    public ItineraryListFilterChainBuilder withFlexOnlyToDestination(boolean enable) {
         this.flexOnlyToDestination = enable;
         return this;
     }
 
-    public ItineraryFilterChainBuilder withMinBikeParkingDistance(double minBikeParkingDistance) {
+    public ItineraryListFilterChainBuilder withMinBikeParkingDistance(double minBikeParkingDistance) {
         this.minBikeParkingDistance = minBikeParkingDistance;
         return this;
     }
 
-    public ItineraryFilterChainBuilder withRemoveBikeOnlyParkAndRideItineraries(boolean enabled) {
+    public ItineraryListFilterChainBuilder withRemoveBikeOnlyParkAndRideItineraries(boolean enabled) {
         this.removeBikeOnlyParkAndRideItineraries = enabled;
         return this;
     }

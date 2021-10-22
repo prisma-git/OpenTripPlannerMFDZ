@@ -364,7 +364,7 @@ public class BikeRentalTest extends GraphRoutingTest {
 
     @Test
     public void noPathIfNoAllowedNetworks() {
-        assertNoRental(B, C, Set.of(), Set.of(NETWORK3));
+        assertNoRental(B, C, Set.of(NETWORK3, NETWORK2, NETWORK1), Set.of());
     }
 
     @Test

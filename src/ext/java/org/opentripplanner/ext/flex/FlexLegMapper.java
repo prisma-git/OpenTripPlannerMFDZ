@@ -3,21 +3,15 @@ package org.opentripplanner.ext.flex;
 import java.util.ArrayList;
 import java.util.Locale;
 import org.opentripplanner.ext.flex.edgetype.FlexTripEdge;
+import org.opentripplanner.model.Stop;
 import org.opentripplanner.model.plan.Leg;
 import org.opentripplanner.model.plan.Place;
+import org.opentripplanner.model.plan.VertexType;
 import org.opentripplanner.routing.algorithm.mapping.GraphPathToItineraryMapper;
 
 public class FlexLegMapper {
 
     static public void fixFlexTripLeg(Leg leg, FlexTripEdge flexTripEdge) {
-      leg.from.stop = flexTripEdge.s1;
-      // TODO: Should flex be of its own type
-      leg.from.vertexType = flexTripEdge.s1 instanceof Stop ? VertexType.TRANSIT : VertexType.NORMAL;
-      leg.from.stopIndex = flexTripEdge.flexTemplate.fromStopIndex;
-      leg.to.stop = flexTripEdge.s2;
-      leg.to.vertexType = flexTripEdge.s2 instanceof Stop ? VertexType.TRANSIT : VertexType.NORMAL;
-      leg.to.stopIndex = flexTripEdge.flexTemplate.toStopIndex;
-
         leg.intermediateStops = new ArrayList<>();
         leg.distanceMeters = flexTripEdge.getDistanceMeters();
 
