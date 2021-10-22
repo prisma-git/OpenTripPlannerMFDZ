@@ -53,6 +53,9 @@ public class RentalVehicleType {
         }
 
         public static FormFactor fromGbfs(GBFSVehicleType.FormFactor formFactor) {
+            if(formFactor == null) {
+                return OTHER;
+            }
             switch (formFactor) {
                 case BICYCLE: return BICYCLE;
                 case CAR: return CAR;
