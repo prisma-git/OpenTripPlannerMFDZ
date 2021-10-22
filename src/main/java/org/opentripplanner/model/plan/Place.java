@@ -1,5 +1,7 @@
 package org.opentripplanner.model.plan;
 
+import org.opentripplanner.model.Stop;
+import org.opentripplanner.model.StopLocation;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,13 +11,6 @@ import org.opentripplanner.model.FeedScopedId;
 import org.opentripplanner.model.StopLocation;
 import org.opentripplanner.model.WgsCoordinate;
 import org.opentripplanner.model.base.ToStringBuilder;
-import org.opentripplanner.routing.api.request.RoutingRequest;
-import org.opentripplanner.routing.core.TraverseMode;
-import org.opentripplanner.routing.graph.Vertex;
-import org.opentripplanner.routing.vehicle_rental.VehicleRentalStation;
-import org.opentripplanner.routing.vertextype.TransitStopVertex;
-import org.opentripplanner.routing.vertextype.VehicleParkingEntranceVertex;
-import org.opentripplanner.routing.vertextype.VehicleRentalStationVertex;
 
 /** 
 * A Place is where a journey starts or ends, or a transit stop along the way.
@@ -28,15 +23,29 @@ public class Place {
     /** 
      * For transit stops, the name of the stop.  For points of interest, the name of the POI.
      */
-    private String name;
+    public final String name;
 
-    @Setter
-    private String orig;
+    /**
+     * Reference to the stop.
+     */
+    public StopLocation stop;
 
     /**
      * The coordinate of the place.
      */
-    private WgsCoordinate coordinate;
+    public final WgsCoordinate coordinate;
+
+    public String orig;
+
+    /**
+     * For transit trips, the stop index (numbered from zero from the start of the trip).
+     */
+    public Integer stopIndex;
+
+    /**
+     * For transit trips, the sequence number of the stop. Per GTFS, these numbers are increasing.
+     */
+    public Integer stopSequence;
 
     /**
      * Type of vertex. (Normal, Bike sharing station, Bike P+R, Transit stop)
@@ -55,14 +64,9 @@ public class Place {
     private VehicleParkingWithEntrance vehicleParkingWithEntrance;
 
     /**
-     * The stop if the type is {@link VertexType#TRANSIT}.
+     * In case the vertex is of type vehicle sharing station.
      */
-    private StopLocation stop;
-
-    /**
-     * For transit trips, the stop index (numbered from zero from the start of the trip).
-     */
-    public FeedScopedId bikeShareId;
+    public VehicleRentalPlace vehicleRentalStation;
     private Integer stopIndex;
 
     /**
@@ -76,8 +80,11 @@ public class Place {
         this.coordinate = WgsCoordinate.creatOptionalCoordinate(lat, lon);
     }
 
-    public FeedScopedId getStopId() {
-        return stop != null ? stop.getId() : null;
+    public Place(Stop stop) {
+        this.name = stop.getName();
+        this.stop = stop;
+        this.coordinate = stop.getCoordinate();
+        this.vertexType = VertexType.TRANSIT;
     }
 
     /**
@@ -89,7 +96,7 @@ public class Place {
         if(coordinate != null) {
             return coordinate.sameLocation(other.coordinate);
         }
-        return stop != null && Objects.equals(this.stop, other.stop);
+        return stop != null && stop.equals(other.stop);
     }
 
     /**
@@ -111,6 +118,8 @@ public class Place {
     public String toString() {
         return ToStringBuilder.of(Place.class)
                 .addStr("name", name)
+                .addObj("stop", stop)
+                .addObj("coordinate", coordinate)
                 .addStr("orig", orig)
                 .addObj("coordinate", coordinate)
                 .addEnum("vertexType", vertexType)
@@ -120,7 +129,7 @@ public class Place {
                 .addNum("stopIndex", stopIndex)
                 .addNum("stopSequence", stopSequence)
                 .addEnum("vertexType", vertexType)
-                .addObj("bikeShareId", bikeShareId)
+                .addObj("vehicleRentalId", vehicleRentalStation)
                 .toString();
     }
 

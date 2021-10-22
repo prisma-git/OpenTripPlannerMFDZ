@@ -3,6 +3,7 @@ package org.opentripplanner.routing.algorithm.raptor.transit;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import org.opentripplanner.model.base.ToStringBuilder;
+import org.opentripplanner.routing.algorithm.raptor.transit.cost.RaptorCostConverter;
 import org.opentripplanner.routing.core.State;
 import org.opentripplanner.routing.core.TimeRestrictionWithOffset;
 import org.opentripplanner.transit.raptor.api.transit.RaptorCostConverter;

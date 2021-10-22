@@ -5,6 +5,7 @@ import static org.opentripplanner.util.time.TimeUtils.time;
 import org.opentripplanner.model.FeedScopedId;
 import org.opentripplanner.model.Stop;
 import org.opentripplanner.model.WgsCoordinate;
+import org.opentripplanner.model.Stop;
 import org.opentripplanner.model.calendar.ServiceDate;
 import org.opentripplanner.util.time.DurationUtils;
 
@@ -72,10 +73,21 @@ public interface PlanTestConstants {
   Place G = place("G", 9.5, 11.0);
 
   private static Place place(String name, double lat, double lon) {
-    return Place.builder()
-            .name(name)
-            .coordinate(WgsCoordinate.creatOptionalCoordinate(lat, lon))
-            .stop(new Stop(new FeedScopedId(FEED_ID, name), null, null, null, null, null, null, null, null, null, null, null))
-            .build();
+    Place p = new Place(lat, lon, name);
+    p.stop = new Stop(
+            new FeedScopedId(FEED_ID, name),
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+    );
+    return p;
   }
 }

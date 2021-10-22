@@ -47,10 +47,13 @@ import org.opentripplanner.openstreetmap.model.OSMWithTags;
 import org.opentripplanner.routing.api.request.RoutingRequest;
 import org.opentripplanner.routing.core.OsmOpeningHours;
 import org.opentripplanner.routing.core.TimeRestriction;
+import org.opentripplanner.routing.bike_park.BikePark;
+import org.opentripplanner.routing.vehicle_rental.VehicleRentalStationService;
 import org.opentripplanner.routing.core.TraversalRequirements;
 import org.opentripplanner.routing.core.TraverseMode;
 import org.opentripplanner.routing.edgetype.AreaEdge;
 import org.opentripplanner.routing.edgetype.AreaEdgeList;
+import org.opentripplanner.routing.edgetype.BikeParkEdge;
 import org.opentripplanner.routing.edgetype.ElevatorAlightEdge;
 import org.opentripplanner.routing.edgetype.ElevatorBoardEdge;
 import org.opentripplanner.routing.edgetype.ElevatorHopEdge;
@@ -69,6 +72,7 @@ import org.opentripplanner.routing.vehicle_parking.VehicleParking.VehicleParking
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingHelper;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingService;
 import org.opentripplanner.routing.vertextype.BarrierVertex;
+import org.opentripplanner.routing.vertextype.BikeParkVertex;
 import org.opentripplanner.routing.vertextype.ElevatorOffboardVertex;
 import org.opentripplanner.routing.vertextype.ElevatorOnboardVertex;
 import org.opentripplanner.routing.vertextype.ExitVertex;
@@ -886,6 +890,7 @@ public class OpenStreetMapModule implements GraphBuilderModule {
             Set<T2<StreetNote, NoteMatcher>> notes = wayPropertySet.getNoteForWay(way);
             boolean motorVehicleNoThrough = wayPropertySetSource.isMotorVehicleThroughTrafficExplicitlyDisallowed(way);
             boolean bicycleNoThrough = wayPropertySetSource.isBicycleNoThroughTrafficExplicitlyDisallowed(way);
+            boolean walkNoThrough = wayPropertySetSource.isWalkNoThroughTrafficExplicitlyDisallowed(way);
 
             if (street != null) {
                 double safety = wayData.getSafetyFeatures().first;
@@ -899,6 +904,7 @@ public class OpenStreetMapModule implements GraphBuilderModule {
                 }
                 street.setMotorVehicleNoThruTraffic(motorVehicleNoThrough);
                 street.setBicycleNoThruTraffic(bicycleNoThrough);
+                street.setWalkNoThruTraffic(walkNoThrough);
             }
 
             if (backStreet != null) {
@@ -913,6 +919,7 @@ public class OpenStreetMapModule implements GraphBuilderModule {
                 }
                 backStreet.setMotorVehicleNoThruTraffic(motorVehicleNoThrough);
                 backStreet.setBicycleNoThruTraffic(bicycleNoThrough);
+                backStreet.setWalkNoThruTraffic(walkNoThrough);
             }
         }
 

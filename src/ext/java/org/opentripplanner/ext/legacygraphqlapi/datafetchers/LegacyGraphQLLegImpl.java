@@ -184,7 +184,7 @@ public class LegacyGraphQLLegImpl implements LegacyGraphQLDataFetchers.LegacyGra
 
   @Override
   public DataFetcher<Boolean> interlineWithPreviousLeg() {
-    return environment -> getSource(environment).interlineWithPreviousLeg;
+    return environment -> getSource(environment).isInterlinedWithPreviousLeg();
   }
 
   @Override

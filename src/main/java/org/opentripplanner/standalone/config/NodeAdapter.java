@@ -1,14 +1,6 @@
 package org.opentripplanner.standalone.config;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import java.util.stream.Collectors;
-import java.util.HashSet;
-import org.opentripplanner.model.FeedScopedId;
-import org.opentripplanner.routing.api.request.RequestFunctions;
-import org.opentripplanner.util.OtpAppException;
-import org.slf4j.Logger;
-
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
@@ -27,6 +19,14 @@ import java.util.function.BiFunction;
 import java.util.function.DoubleFunction;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import javax.validation.constraints.NotNull;
+import org.opentripplanner.api.parameter.QualifiedModeSet;
+import org.opentripplanner.model.FeedScopedId;
+import org.opentripplanner.routing.api.request.RequestFunctions;
+import org.opentripplanner.routing.api.request.RequestModes;
+import org.opentripplanner.util.OtpAppException;
+import org.slf4j.Logger;
 
 
 /**
@@ -173,6 +173,11 @@ public class NodeAdapter {
     public Set<String> asTextSet(String paramName, Set<String> defaultValue) {
         if(!exist(paramName)) return defaultValue;
         return arrayAsList(paramName, JsonNode::asText).stream().collect(Collectors.toSet());
+    }
+
+    public RequestModes asRequestModes(String paramName, RequestModes defaultValue) {
+        var node = param(paramName);
+        return node == null || node.asText().isBlank() ? defaultValue : new QualifiedModeSet(node.asText()).getRequestModes();
     }
 
     /**
@@ -485,21 +490,5 @@ public class NodeAdapter {
             result.put(key, mapper.apply(node, key));
         }
         return result;
-    }
-    public Set<String> asStringSet(
-            String paramName,
-            Set<String> defaultValue
-    ) {
-        if (!exist(paramName)) { return Set.of(); }
-
-        JsonNode param = param(paramName);
-        if (param.isArray()) {
-            Set<String> result = new HashSet<>(param.size());
-            for (JsonNode it : param) {
-                result.add(it.asText());
-            }
-            return result;
-        }
-        return defaultValue;
     }
 }

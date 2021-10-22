@@ -9,6 +9,8 @@ import org.opentripplanner.model.plan.StopArrival;
 import org.opentripplanner.model.plan.VehicleParkingWithEntrance;
 import org.opentripplanner.model.plan.VertexType;
 import org.opentripplanner.routing.RoutingService;
+import org.opentripplanner.routing.bike_park.BikePark;
+import org.opentripplanner.routing.vehicle_rental.VehicleRentalPlace;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalStation;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalStationService;
 import org.opentripplanner.routing.vehicle_parking.VehicleParking;
@@ -47,16 +49,18 @@ public class LegacyGraphQLPlaceImpl implements LegacyGraphQLDataFetchers.LegacyG
 
   @Override
   public DataFetcher<Object> stop() {
-    return environment -> {
-      Place place = getSource(environment).place;
-      return place.getVertexType().equals(VertexType.TRANSIT) ?
-          getRoutingService(environment).getStopForId(place.getStopId()) : null;
-    };
+    return environment -> getSource(environment).place.stop;
   }
 
   @Override
-  public DataFetcher<VehicleRentalStation> bikeRentalStation() {
-    return environment -> getSource(environment).place.getBikeRentalStation();
+  public DataFetcher<VehicleRentalPlace> bikeRentalStation() {
+    return environment -> {
+      Place place = getSource(environment).place;
+
+      if (!place.vertexType.equals(VertexType.BIKESHARE)) { return null; }
+
+      return place.vehicleRentalStation;
+    };
   }
 
   @Override

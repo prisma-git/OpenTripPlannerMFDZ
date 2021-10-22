@@ -1,6 +1,9 @@
 package org.opentripplanner.api.mapping;
 
-import java.util.ArrayList;
+import org.opentripplanner.api.model.ApiPlace;
+import org.opentripplanner.model.plan.Place;
+import org.opentripplanner.model.plan.StopArrival;
+
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
@@ -30,11 +33,18 @@ public class PlaceMapper {
 
         ApiPlace api = new ApiPlace();
 
-        api.name = domain.getName();
-        api.orig = domain.getOrig();
-        if(domain.getCoordinate() != null) {
-            api.lon = domain.getCoordinate().longitude();
-            api.lat = domain.getCoordinate().latitude();
+        api.name = domain.name;
+
+        if (domain.stop != null) {
+            api.stopId = FeedScopedIdMapper.mapToApi(domain.stop.getId());
+            api.stopCode = domain.stop.getCode();
+            api.platformCode = domain.stop instanceof Stop ? ((Stop) domain.stop).getPlatformCode() : null;
+            api.zoneId = domain.stop instanceof Stop ? ((Stop) domain.stop).getFirstZoneAsString() : null;
+        }
+
+        if(domain.coordinate != null) {
+            api.lon = domain.coordinate.longitude();
+            api.lat = domain.coordinate.latitude();
         }
 
         api.vertexType = VertexTypeMapper.mapVertexType(domain.getVertexType());

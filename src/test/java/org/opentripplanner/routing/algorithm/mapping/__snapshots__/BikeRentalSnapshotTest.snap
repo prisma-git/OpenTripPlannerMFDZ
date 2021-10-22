@@ -37,6 +37,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
           }
         }
       },
+      "flaggedForDeletion": false,
       "generalizedCost": 2087,
       "legs": [
         {
@@ -55,7 +56,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
             "vertexType": "NORMAL"
           },
           "generalizedCost": 288,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 4,
             "points": "}f{tGv}{kVjCA?e@WA"
@@ -69,29 +70,39 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
           "startTime": "2009-10-21T23:14:55.000+00:00",
           "streetNotes": [ ],
           "to": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5277374,
+              "longitude": -122.7003879
+            },
+            "name": "-102309",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102309"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
               "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5277374,
-              "longitude": -122.7003879
-            },
-            "name": "-102309",
             "vertexType": "BIKESHARE"
           },
           "transitAlerts": [ ],
@@ -166,33 +177,43 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
           "endTime": "2009-10-21T23:17:37.000+00:00",
           "flexibleTrip": false,
           "from": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5277374,
+              "longitude": -122.7003879
+            },
+            "name": "-102309",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102309"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
               "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5277374,
-              "longitude": -122.7003879
-            },
-            "name": "-102309",
             "vertexType": "BIKESHARE"
           },
           "generalizedCost": 51,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 2,
             "points": "ic{tGl|{kVV@"
@@ -254,7 +275,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
             "vertexType": "NORMAL"
           },
           "generalizedCost": 236,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 6,
             "points": "qb{tGn|{kVGsJEuKE}HAwAAo@"
@@ -268,29 +289,39 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
           "startTime": "2009-10-21T23:17:37.000+00:00",
           "streetNotes": [ ],
           "to": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5278491,
+              "longitude": -122.6942362
+            },
+            "name": "-102323",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102323"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5278491,
               "longitude": -122.6942362,
               "name": {
                 "name": "-102323"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5278491,
-              "longitude": -122.6942362
-            },
-            "name": "-102323",
             "vertexType": "BIKESHARE"
           },
           "transitAlerts": [ ],
@@ -326,33 +357,43 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
           "endTime": "2009-10-21T23:20:25.000+00:00",
           "flexibleTrip": false,
           "from": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5278491,
+              "longitude": -122.6942362
+            },
+            "name": "-102323",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102323"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5278491,
               "longitude": -122.6942362,
               "name": {
                 "name": "-102323"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5278491,
-              "longitude": -122.6942362
-            },
-            "name": "-102323",
             "vertexType": "BIKESHARE"
           },
           "generalizedCost": 49,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 5,
             "points": "ic{tG~uzkV@n@M@C??H"
@@ -487,6 +528,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
           },
           "generalizedCost": 1175,
           "headsign": "136th Ave",
+          "interlinedWithPreviousLeg": false,
           "intermediateStops": [ ],
           "legGeometry": {
             "length": 39,
@@ -630,7 +672,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
             "vertexType": "TRANSIT"
           },
           "generalizedCost": 285,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 15,
             "points": "}rztGlnwkVM??C?[?SC_D?M?E?MCgD?A?O?C?M?a@"
@@ -683,8 +725,9 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
       "streetOnly": false,
       "systemNotices": [ ],
       "tooSloped": false,
+      "transferPriorityCost": 0,
       "transitTimeSeconds": 575,
-      "waitTimeAdjustedGeneralizedCost": 0,
+      "waitTimeOptimizedCost": 0,
       "waitingTimeSeconds": 0,
       "walkOnly": false,
       "walkingAllTheWay": false
@@ -726,6 +769,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
           }
         }
       },
+      "flaggedForDeletion": false,
       "generalizedCost": 2577,
       "legs": [
         {
@@ -744,7 +788,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
             "vertexType": "NORMAL"
           },
           "generalizedCost": 865,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 34,
             "points": "}f{tGv}{kVjCAjCEnCCFCFErACj@CLMHGFJLNNNDBDBDBF@FBLBH@FBDBNHNJLDPLb@Z^XPNNTBQT{ARJEP"
@@ -924,6 +968,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
           },
           "generalizedCost": 1133,
           "headsign": "Gresham TC",
+          "interlinedWithPreviousLeg": false,
           "intermediateStops": [ ],
           "legGeometry": {
             "length": 53,
@@ -1067,7 +1112,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
             "vertexType": "TRANSIT"
           },
           "generalizedCost": 579,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 23,
             "points": "oeztGxiwkVE?AgA?OKCKAM?iBBI?K?wBBK?K?sBDM@?E?MCgD?A?O?C?M?a@"
@@ -1171,496 +1216,9 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
       "streetOnly": false,
       "systemNotices": [ ],
       "tooSloped": false,
+      "transferPriorityCost": 0,
       "transitTimeSeconds": 533,
-      "waitTimeAdjustedGeneralizedCost": 0,
-      "waitingTimeSeconds": 0,
-      "walkOnly": false,
-      "walkingAllTheWay": false
-    },
-    {
-      "arrivedAtDestinationWithRentedVehicle": false,
-      "durationSeconds": 1296,
-      "elevationGained": 0.0,
-      "elevationLost": 0.0,
-      "fare": {
-        "details": {
-          "regular": [
-            {
-              "fareId": {
-                "feedId": "prt",
-                "id": "8"
-              },
-              "price": {
-                "cents": 200,
-                "currency": {
-                  "value": "USD"
-                }
-              },
-              "routes": [
-                {
-                  "feedId": "prt",
-                  "id": "20"
-                }
-              ]
-            }
-          ]
-        },
-        "fare": {
-          "regular": {
-            "cents": 200,
-            "currency": {
-              "value": "USD"
-            }
-          }
-        }
-      },
-      "generalizedCost": 2539,
-      "legs": [
-        {
-          "agencyTimeZoneOffset": -25200000,
-          "arrivalDelay": 0,
-          "departureDelay": 0,
-          "distanceMeters": 565.958,
-          "endTime": "2009-10-21T23:23:59.000+00:00",
-          "flexibleTrip": false,
-          "from": {
-            "coordinate": {
-              "latitude": 45.52832,
-              "longitude": -122.70059
-            },
-            "name": "SW Johnson St. & NW 24th Ave. (P1)",
-            "vertexType": "NORMAL"
-          },
-          "generalizedCost": 865,
-          "interlineWithPreviousLeg": false,
-          "legGeometry": {
-            "length": 34,
-            "points": "}f{tGv}{kVjCAjCEnCCFCFErACj@CLMHGFJLNNNDBDBDBF@FBLBH@FBDBNHNJLDPLb@Z^XPNNTBQT{ARJEP"
-          },
-          "mode": "WALK",
-          "onStreetNonTransit": true,
-          "pathway": false,
-          "realTime": false,
-          "rentedVehicle": false,
-          "scheduled": false,
-          "startTime": "2009-10-21T23:16:33.000+00:00",
-          "streetNotes": [ ],
-          "to": {
-            "coordinate": {
-              "latitude": 45.523773,
-              "longitude": -122.700988
-            },
-            "name": "W Burnside & SW Osage",
-            "stop": {
-              "code": "9354",
-              "coordinate": {
-                "latitude": 45.523773,
-                "longitude": -122.700988
-              },
-              "description": "Eastbound stop in Portland (Stop ID 9354)",
-              "fareZones": [
-                {
-                  "id": {
-                    "feedId": "prt",
-                    "id": "1"
-                  }
-                }
-              ],
-              "id": {
-                "feedId": "prt",
-                "id": "9354"
-              },
-              "name": "W Burnside & SW Osage",
-              "partOfStation": false,
-              "wheelchairBoarding": "NO_INFORMATION"
-            },
-            "stopIndex": 36,
-            "stopSequence": 37,
-            "vertexType": "TRANSIT"
-          },
-          "transitAlerts": [ ],
-          "transitLeg": false,
-          "walkSteps": [
-            {
-              "absoluteDirection": "SOUTH",
-              "angle": 3.1263917767722313,
-              "area": false,
-              "bogusName": false,
-              "distance": 317.401,
-              "edges": [ ],
-              "elevation": [ ],
-              "relativeDirection": "DEPART",
-              "startLocation": {
-                "latitude": 45.52831993266165,
-                "longitude": -122.70059632295107
-              },
-              "stayOn": false,
-              "streetName": "Northwest 24th Avenue",
-              "streetNotes": [ ]
-            },
-            {
-              "absoluteDirection": "SOUTHEAST",
-              "angle": 2.5526330127940713,
-              "area": false,
-              "bogusName": false,
-              "distance": 15.262,
-              "edges": [ ],
-              "elevation": [ ],
-              "relativeDirection": "SLIGHTLY_LEFT",
-              "startLocation": {
-                "latitude": 45.525472400000005,
-                "longitude": -122.7004445
-              },
-              "stayOn": false,
-              "streetName": "Northwest Westover Road",
-              "streetNotes": [ ]
-            },
-            {
-              "absoluteDirection": "SOUTHWEST",
-              "angle": -2.444809332621762,
-              "area": false,
-              "bogusName": false,
-              "distance": 176.41,
-              "edges": [ ],
-              "elevation": [ ],
-              "relativeDirection": "RIGHT",
-              "startLocation": {
-                "latitude": 45.5253583,
-                "longitude": -122.70033570000001
-              },
-              "stayOn": false,
-              "streetName": "Northwest 24th Place",
-              "streetNotes": [ ]
-            },
-            {
-              "absoluteDirection": "EAST",
-              "angle": 1.8983573391990143,
-              "area": false,
-              "bogusName": false,
-              "distance": 45.172,
-              "edges": [ ],
-              "elevation": [ ],
-              "relativeDirection": "LEFT",
-              "startLocation": {
-                "latitude": 45.5239733,
-                "longitude": -122.701384
-              },
-              "stayOn": false,
-              "streetName": "West Burnside Street",
-              "streetNotes": [ ]
-            },
-            {
-              "absoluteDirection": "SOUTHWEST",
-              "angle": -2.7486456202400182,
-              "area": false,
-              "bogusName": true,
-              "distance": 11.713,
-              "edges": [ ],
-              "elevation": [ ],
-              "relativeDirection": "RIGHT",
-              "startLocation": {
-                "latitude": 45.5238426,
-                "longitude": -122.70083500000001
-              },
-              "stayOn": false,
-              "streetName": "way 113897002 from 7",
-              "streetNotes": [ ]
-            }
-          ],
-          "walkingBike": false,
-          "walkingLeg": true
-        },
-        {
-          "agencyTimeZoneOffset": 0,
-          "arrivalDelay": 0,
-          "departureDelay": 0,
-          "distanceMeters": 2044.4088086831664,
-          "endTime": "2009-10-21T23:34:00.000+00:00",
-          "flexibleTrip": false,
-          "from": {
-            "coordinate": {
-              "latitude": 45.523773,
-              "longitude": -122.700988
-            },
-            "name": "W Burnside & SW Osage",
-            "stop": {
-              "code": "9354",
-              "coordinate": {
-                "latitude": 45.523773,
-                "longitude": -122.700988
-              },
-              "description": "Eastbound stop in Portland (Stop ID 9354)",
-              "fareZones": [
-                {
-                  "id": {
-                    "feedId": "prt",
-                    "id": "1"
-                  }
-                }
-              ],
-              "id": {
-                "feedId": "prt",
-                "id": "9354"
-              },
-              "name": "W Burnside & SW Osage",
-              "partOfStation": false,
-              "wheelchairBoarding": "NO_INFORMATION"
-            },
-            "stopIndex": 36,
-            "stopSequence": 37,
-            "vertexType": "TRANSIT"
-          },
-          "generalizedCost": 1201,
-          "headsign": "Gresham TC",
-          "intermediateStops": [ ],
-          "legGeometry": {
-            "length": 57,
-            "points": "gkztGz_|kVTmALiBt@mJJ_DBoA??@e@D}AFyDBgADwB??@]BaADgCDmC??By@FiEJoEBuA??DsBD}BBiADmC@y@AiB???Y?g@As@?_@?YAeB@uD???{@G{D?mECeBAu@??Ai@CoEASAuDAmB???MCqEA_B??A{ACsEAwB"
-          },
-          "mode": "BUS",
-          "onStreetNonTransit": false,
-          "pathway": false,
-          "realTime": false,
-          "scheduled": true,
-          "serviceDate": {
-            "day": 21,
-            "minMax": false,
-            "month": 10,
-            "sequenceNumber": 20091021,
-            "year": 2009
-          },
-          "startTime": "2009-10-21T23:23:59.000+00:00",
-          "streetNotes": [ ],
-          "to": {
-            "coordinate": {
-              "latitude": 45.522974,
-              "longitude": -122.674799
-            },
-            "name": "W Burnside & SW 4th",
-            "stop": {
-              "code": "772",
-              "coordinate": {
-                "latitude": 45.522974,
-                "longitude": -122.674799
-              },
-              "description": "Eastbound stop in Portland (Stop ID 772)",
-              "fareZones": [
-                {
-                  "id": {
-                    "feedId": "prt",
-                    "id": "0"
-                  }
-                }
-              ],
-              "id": {
-                "feedId": "prt",
-                "id": "772"
-              },
-              "name": "W Burnside & SW 4th",
-              "partOfStation": false,
-              "wheelchairBoarding": "NO_INFORMATION"
-            },
-            "stopIndex": 46,
-            "stopSequence": 47,
-            "vertexType": "TRANSIT"
-          },
-          "transitAlerts": [ ],
-          "transitLeg": true,
-          "trip": {
-            "alteration": "PLANNED",
-            "bikesAllowed": "UNKNOWN",
-            "blockId": "1237",
-            "direction": "INBOUND",
-            "id": {
-              "feedId": "prt",
-              "id": "201W1450"
-            },
-            "route": {
-              "agency": {
-                "fareUrl": "http://trimet.org/fares/index.htm",
-                "id": {
-                  "feedId": "prt",
-                  "id": "prt"
-                },
-                "lang": "en",
-                "name": "TriMet",
-                "phone": "503-238-7433",
-                "timezone": "America/Los_Angeles",
-                "url": "http://trimet.org"
-              },
-              "bikesAllowed": "UNKNOWN",
-              "id": {
-                "feedId": "prt",
-                "id": "20"
-              },
-              "longName": "Burnside/Stark",
-              "mode": "BUS",
-              "shortName": "20",
-              "sortOrder": -999,
-              "sortOrderSet": false,
-              "type": 3,
-              "url": "http://trimet.org/schedules/r020.htm"
-            },
-            "serviceId": {
-              "feedId": "prt",
-              "id": "W"
-            },
-            "shapeId": {
-              "feedId": "prt",
-              "id": "20.1.3"
-            },
-            "wheelchairAccessible": 0
-          },
-          "walkSteps": [ ],
-          "walkingLeg": false
-        },
-        {
-          "agencyTimeZoneOffset": -25200000,
-          "arrivalDelay": 0,
-          "departureDelay": 0,
-          "distanceMeters": 308.24,
-          "endTime": "2009-10-21T23:38:09.000+00:00",
-          "flexibleTrip": false,
-          "from": {
-            "coordinate": {
-              "latitude": 45.522974,
-              "longitude": -122.674799
-            },
-            "name": "W Burnside & SW 4th",
-            "stop": {
-              "code": "772",
-              "coordinate": {
-                "latitude": 45.522974,
-                "longitude": -122.674799
-              },
-              "description": "Eastbound stop in Portland (Stop ID 772)",
-              "fareZones": [
-                {
-                  "id": {
-                    "feedId": "prt",
-                    "id": "0"
-                  }
-                }
-              ],
-              "id": {
-                "feedId": "prt",
-                "id": "772"
-              },
-              "name": "W Burnside & SW 4th",
-              "partOfStation": false,
-              "wheelchairBoarding": "NO_INFORMATION"
-            },
-            "stopIndex": 46,
-            "stopSequence": 47,
-            "vertexType": "TRANSIT"
-          },
-          "generalizedCost": 472,
-          "interlineWithPreviousLeg": false,
-          "legGeometry": {
-            "length": 18,
-            "points": "qeztGn|vkVK@?v@@f@?RWBK@kBBI?K?wBBI?K?I?mBBK@?M?a@"
-          },
-          "mode": "WALK",
-          "onStreetNonTransit": true,
-          "pathway": false,
-          "realTime": false,
-          "rentedVehicle": false,
-          "scheduled": false,
-          "startTime": "2009-10-21T23:34:00.000+00:00",
-          "streetNotes": [ ],
-          "to": {
-            "coordinate": {
-              "latitude": 45.52523,
-              "longitude": -122.67525
-            },
-            "name": "NW Everett St. & NW 5th Ave. (P3)",
-            "vertexType": "NORMAL"
-          },
-          "transitAlerts": [ ],
-          "transitLeg": false,
-          "walkSteps": [
-            {
-              "absoluteDirection": "WEST",
-              "angle": -1.6005588803815705,
-              "area": false,
-              "bogusName": false,
-              "distance": 45.562,
-              "edges": [ ],
-              "elevation": [ ],
-              "relativeDirection": "DEPART",
-              "startLocation": {
-                "latitude": 45.52303774853131,
-                "longitude": -122.6748017088418
-              },
-              "stayOn": false,
-              "streetName": "West Burnside Street",
-              "streetNotes": [ ]
-            },
-            {
-              "absoluteDirection": "NORTH",
-              "angle": -0.1012967237660391,
-              "area": false,
-              "bogusName": false,
-              "distance": 12.942,
-              "edges": [ ],
-              "elevation": [ ],
-              "relativeDirection": "RIGHT",
-              "startLocation": {
-                "latitude": 45.5230254,
-                "longitude": -122.67538630000001
-              },
-              "stayOn": false,
-              "streetName": "Southwest 5th Avenue",
-              "streetNotes": [ ]
-            },
-            {
-              "absoluteDirection": "NORTH",
-              "angle": -0.03473794392561525,
-              "area": false,
-              "bogusName": false,
-              "distance": 231.76099999999997,
-              "edges": [ ],
-              "elevation": [ ],
-              "relativeDirection": "CONTINUE",
-              "startLocation": {
-                "latitude": 45.523141200000005,
-                "longitude": -122.67540310000001
-              },
-              "stayOn": false,
-              "streetName": "Northwest 5th Avenue",
-              "streetNotes": [ ]
-            },
-            {
-              "absoluteDirection": "EAST",
-              "angle": 1.547640308928389,
-              "area": false,
-              "bogusName": false,
-              "distance": 17.975,
-              "edges": [ ],
-              "elevation": [ ],
-              "relativeDirection": "RIGHT",
-              "startLocation": {
-                "latitude": 45.525224200000004,
-                "longitude": -122.67548060000001
-              },
-              "stayOn": false,
-              "streetName": "Northwest Everett Street",
-              "streetNotes": [ ]
-            }
-          ],
-          "walkingBike": false,
-          "walkingLeg": true
-        }
-      ],
-      "nTransfers": 0,
-      "nonTransitDistanceMeters": 874.198,
-      "nonTransitTimeSeconds": 695,
-      "onStreetAllTheWay": false,
-      "streetOnly": false,
-      "systemNotices": [ ],
-      "tooSloped": false,
-      "transitTimeSeconds": 601,
-      "waitTimeAdjustedGeneralizedCost": 0,
+      "waitTimeOptimizedCost": 0,
       "waitingTimeSeconds": 0,
       "walkOnly": false,
       "walkingAllTheWay": false
@@ -1702,6 +1260,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
           }
         }
       },
+      "flaggedForDeletion": false,
       "generalizedCost": 1805,
       "legs": [
         {
@@ -1720,7 +1279,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
             "vertexType": "NORMAL"
           },
           "generalizedCost": 336,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 6,
             "points": "}f{tGv}{kVC?mCBmCD@zCN?"
@@ -1849,6 +1408,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
           },
           "generalizedCost": 1391,
           "headsign": "Troutdale",
+          "interlinedWithPreviousLeg": false,
           "intermediateStops": [ ],
           "legGeometry": {
             "length": 60,
@@ -1992,7 +1552,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
             "vertexType": "TRANSIT"
           },
           "generalizedCost": 77,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 3,
             "points": "ksztGh{vkVI?@~B"
@@ -2045,8 +1605,9 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
       "streetOnly": false,
       "systemNotices": [ ],
       "tooSloped": false,
+      "transferPriorityCost": 0,
       "transitTimeSeconds": 791,
-      "waitTimeAdjustedGeneralizedCost": 0,
+      "waitTimeOptimizedCost": 0,
       "waitingTimeSeconds": 0,
       "walkOnly": false,
       "walkingAllTheWay": false
@@ -2088,6 +1649,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
           }
         }
       },
+      "flaggedForDeletion": false,
       "generalizedCost": 2087,
       "legs": [
         {
@@ -2106,7 +1668,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
             "vertexType": "NORMAL"
           },
           "generalizedCost": 288,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 4,
             "points": "}f{tGv}{kVjCA?e@WA"
@@ -2120,29 +1682,39 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
           "startTime": "2009-10-21T23:27:55.000+00:00",
           "streetNotes": [ ],
           "to": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5277374,
+              "longitude": -122.7003879
+            },
+            "name": "-102309",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102309"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
               "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5277374,
-              "longitude": -122.7003879
-            },
-            "name": "-102309",
             "vertexType": "BIKESHARE"
           },
           "transitAlerts": [ ],
@@ -2217,33 +1789,43 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
           "endTime": "2009-10-21T23:30:37.000+00:00",
           "flexibleTrip": false,
           "from": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5277374,
+              "longitude": -122.7003879
+            },
+            "name": "-102309",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102309"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
               "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5277374,
-              "longitude": -122.7003879
-            },
-            "name": "-102309",
             "vertexType": "BIKESHARE"
           },
           "generalizedCost": 51,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 2,
             "points": "ic{tGl|{kVV@"
@@ -2305,7 +1887,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
             "vertexType": "NORMAL"
           },
           "generalizedCost": 236,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 6,
             "points": "qb{tGn|{kVGsJEuKE}HAwAAo@"
@@ -2319,29 +1901,39 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
           "startTime": "2009-10-21T23:30:37.000+00:00",
           "streetNotes": [ ],
           "to": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5278491,
+              "longitude": -122.6942362
+            },
+            "name": "-102323",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102323"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5278491,
               "longitude": -122.6942362,
               "name": {
                 "name": "-102323"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5278491,
-              "longitude": -122.6942362
-            },
-            "name": "-102323",
             "vertexType": "BIKESHARE"
           },
           "transitAlerts": [ ],
@@ -2377,33 +1969,43 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
           "endTime": "2009-10-21T23:33:25.000+00:00",
           "flexibleTrip": false,
           "from": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5278491,
+              "longitude": -122.6942362
+            },
+            "name": "-102323",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102323"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5278491,
               "longitude": -122.6942362,
               "name": {
                 "name": "-102323"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5278491,
-              "longitude": -122.6942362
-            },
-            "name": "-102323",
             "vertexType": "BIKESHARE"
           },
           "generalizedCost": 49,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 5,
             "points": "ic{tG~uzkV@n@M@C??H"
@@ -2538,6 +2140,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
           },
           "generalizedCost": 1175,
           "headsign": "136th Ave",
+          "interlinedWithPreviousLeg": false,
           "intermediateStops": [ ],
           "legGeometry": {
             "length": 39,
@@ -2681,7 +2284,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
             "vertexType": "TRANSIT"
           },
           "generalizedCost": 285,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 15,
             "points": "}rztGlnwkVM??C?[?SC_D?M?E?MCgD?A?O?C?M?a@"
@@ -2734,8 +2337,9 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
       "streetOnly": false,
       "systemNotices": [ ],
       "tooSloped": false,
+      "transferPriorityCost": 0,
       "transitTimeSeconds": 575,
-      "waitTimeAdjustedGeneralizedCost": 0,
+      "waitTimeOptimizedCost": 0,
       "waitingTimeSeconds": 0,
       "walkOnly": false,
       "walkingAllTheWay": false
@@ -2777,6 +2381,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
           }
         }
       },
+      "flaggedForDeletion": false,
       "generalizedCost": 2087,
       "legs": [
         {
@@ -2795,7 +2400,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
             "vertexType": "NORMAL"
           },
           "generalizedCost": 288,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 4,
             "points": "}f{tGv}{kVjCA?e@WA"
@@ -2809,29 +2414,39 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
           "startTime": "2009-10-21T23:36:55.000+00:00",
           "streetNotes": [ ],
           "to": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5277374,
+              "longitude": -122.7003879
+            },
+            "name": "-102309",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102309"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
               "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5277374,
-              "longitude": -122.7003879
-            },
-            "name": "-102309",
             "vertexType": "BIKESHARE"
           },
           "transitAlerts": [ ],
@@ -2906,33 +2521,43 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
           "endTime": "2009-10-21T23:39:37.000+00:00",
           "flexibleTrip": false,
           "from": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5277374,
+              "longitude": -122.7003879
+            },
+            "name": "-102309",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102309"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
               "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5277374,
-              "longitude": -122.7003879
-            },
-            "name": "-102309",
             "vertexType": "BIKESHARE"
           },
           "generalizedCost": 51,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 2,
             "points": "ic{tGl|{kVV@"
@@ -2994,7 +2619,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
             "vertexType": "NORMAL"
           },
           "generalizedCost": 236,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 6,
             "points": "qb{tGn|{kVGsJEuKE}HAwAAo@"
@@ -3008,29 +2633,39 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
           "startTime": "2009-10-21T23:39:37.000+00:00",
           "streetNotes": [ ],
           "to": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5278491,
+              "longitude": -122.6942362
+            },
+            "name": "-102323",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102323"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5278491,
               "longitude": -122.6942362,
               "name": {
                 "name": "-102323"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5278491,
-              "longitude": -122.6942362
-            },
-            "name": "-102323",
             "vertexType": "BIKESHARE"
           },
           "transitAlerts": [ ],
@@ -3066,33 +2701,43 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
           "endTime": "2009-10-21T23:42:25.000+00:00",
           "flexibleTrip": false,
           "from": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5278491,
+              "longitude": -122.6942362
+            },
+            "name": "-102323",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102323"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5278491,
               "longitude": -122.6942362,
               "name": {
                 "name": "-102323"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5278491,
-              "longitude": -122.6942362
-            },
-            "name": "-102323",
             "vertexType": "BIKESHARE"
           },
           "generalizedCost": 49,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 5,
             "points": "ic{tG~uzkV@n@M@C??H"
@@ -3227,6 +2872,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
           },
           "generalizedCost": 1175,
           "headsign": "136th Ave",
+          "interlinedWithPreviousLeg": false,
           "intermediateStops": [ ],
           "legGeometry": {
             "length": 39,
@@ -3370,7 +3016,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
             "vertexType": "TRANSIT"
           },
           "generalizedCost": 285,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 15,
             "points": "}rztGlnwkVM??C?[?SC_D?M?E?MCgD?A?O?C?M?a@"
@@ -3423,8 +3069,398 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.accessBikeR
       "streetOnly": false,
       "systemNotices": [ ],
       "tooSloped": false,
+      "transferPriorityCost": 0,
       "transitTimeSeconds": 575,
-      "waitTimeAdjustedGeneralizedCost": 0,
+      "waitTimeOptimizedCost": 0,
+      "waitingTimeSeconds": 0,
+      "walkOnly": false,
+      "walkingAllTheWay": false
+    },
+    {
+      "arrivedAtDestinationWithRentedVehicle": false,
+      "durationSeconds": 1001,
+      "elevationGained": 0.0,
+      "elevationLost": 0.0,
+      "fare": {
+        "details": {
+          "regular": [
+            {
+              "fareId": {
+                "feedId": "prt",
+                "id": "8"
+              },
+              "price": {
+                "cents": 200,
+                "currency": {
+                  "value": "USD"
+                }
+              },
+              "routes": [
+                {
+                  "feedId": "prt",
+                  "id": "77"
+                }
+              ]
+            }
+          ]
+        },
+        "fare": {
+          "regular": {
+            "cents": 200,
+            "currency": {
+              "value": "USD"
+            }
+          }
+        }
+      },
+      "flaggedForDeletion": false,
+      "generalizedCost": 1805,
+      "legs": [
+        {
+          "agencyTimeZoneOffset": -25200000,
+          "arrivalDelay": 0,
+          "departureDelay": 0,
+          "distanceMeters": 220.14600000000002,
+          "endTime": "2009-10-21T23:42:21.000+00:00",
+          "flexibleTrip": false,
+          "from": {
+            "coordinate": {
+              "latitude": 45.52832,
+              "longitude": -122.70059
+            },
+            "name": "SW Johnson St. & NW 24th Ave. (P1)",
+            "vertexType": "NORMAL"
+          },
+          "generalizedCost": 336,
+          "interlinedWithPreviousLeg": false,
+          "legGeometry": {
+            "length": 6,
+            "points": "}f{tGv}{kVC?mCBmCD@zCN?"
+          },
+          "mode": "WALK",
+          "onStreetNonTransit": true,
+          "pathway": false,
+          "realTime": false,
+          "rentedVehicle": false,
+          "scheduled": false,
+          "startTime": "2009-10-21T23:39:29.000+00:00",
+          "streetNotes": [ ],
+          "to": {
+            "coordinate": {
+              "latitude": 45.529662,
+              "longitude": -122.701423
+            },
+            "name": "2400 Block NW Lovejoy",
+            "stop": {
+              "code": "3589",
+              "coordinate": {
+                "latitude": 45.529662,
+                "longitude": -122.701423
+              },
+              "description": "Eastbound stop in Portland (Stop ID 3589)",
+              "fareZones": [
+                {
+                  "id": {
+                    "feedId": "prt",
+                    "id": "1"
+                  }
+                }
+              ],
+              "id": {
+                "feedId": "prt",
+                "id": "3589"
+              },
+              "name": "2400 Block NW Lovejoy",
+              "partOfStation": false,
+              "wheelchairBoarding": "NO_INFORMATION"
+            },
+            "stopIndex": 6,
+            "stopSequence": 7,
+            "vertexType": "TRANSIT"
+          },
+          "transitAlerts": [ ],
+          "transitLeg": false,
+          "walkSteps": [
+            {
+              "absoluteDirection": "NORTH",
+              "angle": -0.015200780078397704,
+              "area": false,
+              "bogusName": false,
+              "distance": 159.625,
+              "edges": [ ],
+              "elevation": [ ],
+              "relativeDirection": "DEPART",
+              "startLocation": {
+                "latitude": 45.52831993266165,
+                "longitude": -122.70059632295107
+              },
+              "stayOn": false,
+              "streetName": "Northwest 24th Avenue",
+              "streetNotes": [ ]
+            },
+            {
+              "absoluteDirection": "WEST",
+              "angle": -1.5928981885811253,
+              "area": false,
+              "bogusName": false,
+              "distance": 60.521,
+              "edges": [ ],
+              "elevation": [ ],
+              "relativeDirection": "LEFT",
+              "startLocation": {
+                "latitude": 45.529755,
+                "longitude": -122.70064880000001
+              },
+              "stayOn": false,
+              "streetName": "Northwest Lovejoy Street",
+              "streetNotes": [ ]
+            }
+          ],
+          "walkingBike": false,
+          "walkingLeg": true
+        },
+        {
+          "agencyTimeZoneOffset": 0,
+          "arrivalDelay": 0,
+          "departureDelay": 0,
+          "distanceMeters": 2804.1297859664874,
+          "endTime": "2009-10-21T23:55:32.000+00:00",
+          "flexibleTrip": false,
+          "from": {
+            "coordinate": {
+              "latitude": 45.529662,
+              "longitude": -122.701423
+            },
+            "name": "2400 Block NW Lovejoy",
+            "stop": {
+              "code": "3589",
+              "coordinate": {
+                "latitude": 45.529662,
+                "longitude": -122.701423
+              },
+              "description": "Eastbound stop in Portland (Stop ID 3589)",
+              "fareZones": [
+                {
+                  "id": {
+                    "feedId": "prt",
+                    "id": "1"
+                  }
+                }
+              ],
+              "id": {
+                "feedId": "prt",
+                "id": "3589"
+              },
+              "name": "2400 Block NW Lovejoy",
+              "partOfStation": false,
+              "wheelchairBoarding": "NO_INFORMATION"
+            },
+            "stopIndex": 6,
+            "stopSequence": 7,
+            "vertexType": "TRANSIT"
+          },
+          "generalizedCost": 1391,
+          "headsign": "Troutdale",
+          "interlinedWithPreviousLeg": false,
+          "intermediateStops": [ ],
+          "legGeometry": {
+            "length": 60,
+            "points": "yo{tG|b|kVC}CEuKGwI???}@G{J???YGsKEuKCuD???UCiECeEAgA?{@AkA?WAwDE{C???i@CiECkECcD??Ae@?mE{BDQ@q@@??{ADCsDbBiB`DaEt@_AVANIX?tBCLK`@c@\\c@l@w@??\\c@FKDCFEXCCgEvBEVAlCClCEnCECoD"
+          },
+          "mode": "BUS",
+          "onStreetNonTransit": false,
+          "pathway": false,
+          "realTime": false,
+          "scheduled": true,
+          "serviceDate": {
+            "day": 21,
+            "minMax": false,
+            "month": 10,
+            "sequenceNumber": 20091021,
+            "year": 2009
+          },
+          "startTime": "2009-10-21T23:42:21.000+00:00",
+          "streetNotes": [ ],
+          "to": {
+            "coordinate": {
+              "latitude": 45.525183,
+              "longitude": -122.674607
+            },
+            "name": "NW Everett & 4th",
+            "stop": {
+              "code": "9546",
+              "coordinate": {
+                "latitude": 45.525183,
+                "longitude": -122.674607
+              },
+              "description": "Eastbound stop in Portland (Stop ID 9546)",
+              "fareZones": [
+                {
+                  "id": {
+                    "feedId": "prt",
+                    "id": "0"
+                  }
+                }
+              ],
+              "id": {
+                "feedId": "prt",
+                "id": "9546"
+              },
+              "name": "NW Everett & 4th",
+              "partOfStation": false,
+              "wheelchairBoarding": "NO_INFORMATION"
+            },
+            "stopIndex": 14,
+            "stopSequence": 15,
+            "vertexType": "TRANSIT"
+          },
+          "transitAlerts": [ ],
+          "transitLeg": true,
+          "trip": {
+            "alteration": "PLANNED",
+            "bikesAllowed": "UNKNOWN",
+            "blockId": "7703",
+            "direction": "OUTBOUND",
+            "id": {
+              "feedId": "prt",
+              "id": "770W1400"
+            },
+            "route": {
+              "agency": {
+                "fareUrl": "http://trimet.org/fares/index.htm",
+                "id": {
+                  "feedId": "prt",
+                  "id": "prt"
+                },
+                "lang": "en",
+                "name": "TriMet",
+                "phone": "503-238-7433",
+                "timezone": "America/Los_Angeles",
+                "url": "http://trimet.org"
+              },
+              "bikesAllowed": "UNKNOWN",
+              "id": {
+                "feedId": "prt",
+                "id": "77"
+              },
+              "longName": "Broadway/Halsey",
+              "mode": "BUS",
+              "shortName": "77",
+              "sortOrder": -999,
+              "sortOrderSet": false,
+              "type": 3,
+              "url": "http://trimet.org/schedules/r077.htm"
+            },
+            "serviceId": {
+              "feedId": "prt",
+              "id": "W"
+            },
+            "shapeId": {
+              "feedId": "prt",
+              "id": "77.0.2"
+            },
+            "wheelchairAccessible": 0
+          },
+          "walkSteps": [ ],
+          "walkingLeg": false
+        },
+        {
+          "agencyTimeZoneOffset": -25200000,
+          "arrivalDelay": 0,
+          "departureDelay": 0,
+          "distanceMeters": 49.938,
+          "endTime": "2009-10-21T23:56:10.000+00:00",
+          "flexibleTrip": false,
+          "from": {
+            "coordinate": {
+              "latitude": 45.525183,
+              "longitude": -122.674607
+            },
+            "name": "NW Everett & 4th",
+            "stop": {
+              "code": "9546",
+              "coordinate": {
+                "latitude": 45.525183,
+                "longitude": -122.674607
+              },
+              "description": "Eastbound stop in Portland (Stop ID 9546)",
+              "fareZones": [
+                {
+                  "id": {
+                    "feedId": "prt",
+                    "id": "0"
+                  }
+                }
+              ],
+              "id": {
+                "feedId": "prt",
+                "id": "9546"
+              },
+              "name": "NW Everett & 4th",
+              "partOfStation": false,
+              "wheelchairBoarding": "NO_INFORMATION"
+            },
+            "stopIndex": 14,
+            "stopSequence": 15,
+            "vertexType": "TRANSIT"
+          },
+          "generalizedCost": 77,
+          "interlinedWithPreviousLeg": false,
+          "legGeometry": {
+            "length": 3,
+            "points": "ksztGh{vkVI?@~B"
+          },
+          "mode": "WALK",
+          "onStreetNonTransit": true,
+          "pathway": false,
+          "realTime": false,
+          "rentedVehicle": false,
+          "scheduled": false,
+          "startTime": "2009-10-21T23:55:32.000+00:00",
+          "streetNotes": [ ],
+          "to": {
+            "coordinate": {
+              "latitude": 45.52523,
+              "longitude": -122.67525
+            },
+            "name": "NW Everett St. & NW 5th Ave. (P3)",
+            "vertexType": "NORMAL"
+          },
+          "transitAlerts": [ ],
+          "transitLeg": false,
+          "walkSteps": [
+            {
+              "absoluteDirection": "WEST",
+              "angle": -1.5968688222706109,
+              "area": false,
+              "bogusName": false,
+              "distance": 49.938,
+              "edges": [ ],
+              "elevation": [ ],
+              "relativeDirection": "DEPART",
+              "startLocation": {
+                "latitude": 45.525239650875925,
+                "longitude": -122.67460910872424
+              },
+              "stayOn": false,
+              "streetName": "Northwest Everett Street",
+              "streetNotes": [ ]
+            }
+          ],
+          "walkingBike": false,
+          "walkingLeg": true
+        }
+      ],
+      "nTransfers": 0,
+      "nonTransitDistanceMeters": 270.084,
+      "nonTransitTimeSeconds": 210,
+      "onStreetAllTheWay": false,
+      "streetOnly": false,
+      "systemNotices": [ ],
+      "tooSloped": false,
+      "transferPriorityCost": 0,
+      "transitTimeSeconds": 791,
+      "waitTimeOptimizedCost": 0,
       "waitingTimeSeconds": 0,
       "walkOnly": false,
       "walkingAllTheWay": false
@@ -3444,6 +3480,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
         "details": { },
         "fare": { }
       },
+      "flaggedForDeletion": false,
       "generalizedCost": 915,
       "legs": [
         {
@@ -3463,7 +3500,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
             "vertexType": "NORMAL"
           },
           "generalizedCost": 288,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 4,
             "points": "}f{tGv}{kVjCA?e@WA"
@@ -3477,29 +3514,39 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
           "startTime": "2009-10-21T23:10:00.000+00:00",
           "streetNotes": [ ],
           "to": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5277374,
+              "longitude": -122.7003879
+            },
+            "name": "-102309",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102309"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
               "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5277374,
-              "longitude": -122.7003879
-            },
-            "name": "-102309",
             "vertexType": "BIKESHARE"
           },
           "transitAlerts": [ ],
@@ -3574,33 +3621,43 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
           "endTime": "2009-10-21T23:12:42.000+00:00",
           "flexibleTrip": false,
           "from": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5277374,
+              "longitude": -122.7003879
+            },
+            "name": "-102309",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102309"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
               "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5277374,
-              "longitude": -122.7003879
-            },
-            "name": "-102309",
             "vertexType": "BIKESHARE"
           },
           "generalizedCost": 51,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 2,
             "points": "ic{tGl|{kVV@"
@@ -3662,7 +3719,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
             "vertexType": "NORMAL"
           },
           "generalizedCost": 236,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 6,
             "points": "qb{tGn|{kVGsJEuKE}HAwAAo@"
@@ -3676,29 +3733,39 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
           "startTime": "2009-10-21T23:12:42.000+00:00",
           "streetNotes": [ ],
           "to": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5278491,
+              "longitude": -122.6942362
+            },
+            "name": "-102323",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102323"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5278491,
               "longitude": -122.6942362,
               "name": {
                 "name": "-102323"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5278491,
-              "longitude": -122.6942362
-            },
-            "name": "-102323",
             "vertexType": "BIKESHARE"
           },
           "transitAlerts": [ ],
@@ -3734,33 +3801,43 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
           "endTime": "2009-10-21T23:17:57.000+00:00",
           "flexibleTrip": false,
           "from": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5278491,
+              "longitude": -122.6942362
+            },
+            "name": "-102323",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102323"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5278491,
               "longitude": -122.6942362,
               "name": {
                 "name": "-102323"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5278491,
-              "longitude": -122.6942362
-            },
-            "name": "-102323",
             "vertexType": "BIKESHARE"
           },
           "generalizedCost": 338,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 4,
             "points": "ic{tG~uzkVEcJlCE?C"
@@ -3854,8 +3931,9 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
       "streetOnly": true,
       "systemNotices": [ ],
       "tooSloped": false,
+      "transferPriorityCost": -1,
       "transitTimeSeconds": 0,
-      "waitTimeAdjustedGeneralizedCost": -1,
+      "waitTimeOptimizedCost": -1,
       "waitingTimeSeconds": 0,
       "walkOnly": false,
       "walkingAllTheWay": false
@@ -3875,6 +3953,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
         "details": { },
         "fare": { }
       },
+      "flaggedForDeletion": false,
       "generalizedCost": 652,
       "legs": [
         {
@@ -3894,7 +3973,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
             "vertexType": "NORMAL"
           },
           "generalizedCost": 288,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 4,
             "points": "}f{tGv}{kVjCA?e@WA"
@@ -3908,29 +3987,39 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
           "startTime": "2009-10-21T23:04:22.000+00:00",
           "streetNotes": [ ],
           "to": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5277374,
+              "longitude": -122.7003879
+            },
+            "name": "-102309",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102309"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
               "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5277374,
-              "longitude": -122.7003879
-            },
-            "name": "-102309",
             "vertexType": "BIKESHARE"
           },
           "transitAlerts": [ ],
@@ -4005,33 +4094,43 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
           "endTime": "2009-10-21T23:07:18.000+00:00",
           "flexibleTrip": false,
           "from": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5277374,
+              "longitude": -122.7003879
+            },
+            "name": "-102309",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102309"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
               "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5277374,
-              "longitude": -122.7003879
-            },
-            "name": "-102309",
             "vertexType": "BIKESHARE"
           },
           "generalizedCost": 65,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 2,
             "points": "ic{tGl|{kVV@"
@@ -4093,7 +4192,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
             "vertexType": "NORMAL"
           },
           "generalizedCost": 298,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 10,
             "points": "qb{tGn|{kVGsJL?F?tBCEuK?g@GmJEuK?C"
@@ -4182,8 +4281,9 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
       "streetOnly": true,
       "systemNotices": [ ],
       "tooSloped": false,
+      "transferPriorityCost": -1,
       "transitTimeSeconds": 0,
-      "waitTimeAdjustedGeneralizedCost": -1,
+      "waitTimeOptimizedCost": -1,
       "waitingTimeSeconds": 0,
       "walkOnly": false,
       "walkingAllTheWay": false
@@ -4203,6 +4303,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
         "details": { },
         "fare": { }
       },
+      "flaggedForDeletion": false,
       "generalizedCost": 652,
       "legs": [
         {
@@ -4222,7 +4323,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
             "vertexType": "NORMAL"
           },
           "generalizedCost": 288,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 4,
             "points": "}f{tGv}{kVjCA?e@WA"
@@ -4236,29 +4337,39 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
           "startTime": "2009-10-21T23:10:00.000+00:00",
           "streetNotes": [ ],
           "to": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5277374,
+              "longitude": -122.7003879
+            },
+            "name": "-102309",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102309"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
               "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5277374,
-              "longitude": -122.7003879
-            },
-            "name": "-102309",
             "vertexType": "BIKESHARE"
           },
           "transitAlerts": [ ],
@@ -4333,33 +4444,43 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
           "endTime": "2009-10-21T23:12:42.000+00:00",
           "flexibleTrip": false,
           "from": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5277374,
+              "longitude": -122.7003879
+            },
+            "name": "-102309",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102309"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
               "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5277374,
-              "longitude": -122.7003879
-            },
-            "name": "-102309",
             "vertexType": "BIKESHARE"
           },
           "generalizedCost": 51,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 2,
             "points": "ic{tGl|{kVV@"
@@ -4421,7 +4542,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
             "vertexType": "NORMAL"
           },
           "generalizedCost": 312,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 9,
             "points": "qb{tGn|{kVGsJEuKE}HAwAAo@EcJlCE?C"
@@ -4510,8 +4631,9 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.directBikeR
       "streetOnly": true,
       "systemNotices": [ ],
       "tooSloped": false,
+      "transferPriorityCost": -1,
       "transitTimeSeconds": 0,
-      "waitTimeAdjustedGeneralizedCost": -1,
+      "waitTimeOptimizedCost": -1,
       "waitingTimeSeconds": 0,
       "walkOnly": false,
       "walkingAllTheWay": false
@@ -4559,6 +4681,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
           }
         }
       },
+      "flaggedForDeletion": false,
       "generalizedCost": 1998,
       "legs": [
         {
@@ -4577,7 +4700,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
             "vertexType": "NORMAL"
           },
           "generalizedCost": 261,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 10,
             "points": "ssztGh_wkV?`@?LK?uBBK??F?JBbDN?"
@@ -4723,6 +4846,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
           },
           "generalizedCost": 1122,
           "headsign": "Sauvie Is. via St.Johns",
+          "interlinedWithPreviousLeg": false,
           "intermediateStops": [ ],
           "legGeometry": {
             "length": 39,
@@ -4866,7 +4990,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
             "vertexType": "TRANSIT"
           },
           "generalizedCost": 167,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 4,
             "points": "wb{tG`wzkV?LO?Ao@"
@@ -4880,29 +5004,39 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
           "startTime": "2009-10-21T23:23:32.000+00:00",
           "streetNotes": [ ],
           "to": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5278491,
+              "longitude": -122.6942362
+            },
+            "name": "-102323",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102323"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5278491,
               "longitude": -122.6942362,
               "name": {
                 "name": "-102323"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5278491,
-              "longitude": -122.6942362
-            },
-            "name": "-102323",
             "vertexType": "BIKESHARE"
           },
           "transitAlerts": [ ],
@@ -4960,33 +5094,43 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
           "endTime": "2009-10-21T23:26:39.000+00:00",
           "flexibleTrip": false,
           "from": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5278491,
+              "longitude": -122.6942362
+            },
+            "name": "-102323",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102323"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5278491,
               "longitude": -122.6942362,
               "name": {
                 "name": "-102323"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5278491,
-              "longitude": -122.6942362
-            },
-            "name": "-102323",
             "vertexType": "BIKESHARE"
           },
           "generalizedCost": 196,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 6,
             "points": "ic{tG~uzkV@n@@vAD|HDtKFrJ"
@@ -5048,7 +5192,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
             "vertexType": "NORMAL"
           },
           "generalizedCost": 81,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 2,
             "points": "qb{tGn|{kVWA"
@@ -5062,29 +5206,39 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
           "startTime": "2009-10-21T23:26:39.000+00:00",
           "streetNotes": [ ],
           "to": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5277374,
+              "longitude": -122.7003879
+            },
+            "name": "-102309",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102309"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
               "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5277374,
-              "longitude": -122.7003879
-            },
-            "name": "-102309",
             "vertexType": "BIKESHARE"
           },
           "transitAlerts": [ ],
@@ -5120,33 +5274,43 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
           "endTime": "2009-10-21T23:28:51.000+00:00",
           "flexibleTrip": false,
           "from": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5277374,
+              "longitude": -122.7003879
+            },
+            "name": "-102309",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102309"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
               "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5277374,
-              "longitude": -122.7003879
-            },
-            "name": "-102309",
             "vertexType": "BIKESHARE"
           },
           "generalizedCost": 168,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 4,
             "points": "ic{tGl|{kVV@?d@kC@"
@@ -5239,8 +5403,9 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
       "streetOnly": false,
       "systemNotices": [ ],
       "tooSloped": false,
+      "transferPriorityCost": 0,
       "transitTimeSeconds": 522,
-      "waitTimeAdjustedGeneralizedCost": 0,
+      "waitTimeOptimizedCost": 0,
       "waitingTimeSeconds": 0,
       "walkOnly": false,
       "walkingAllTheWay": false
@@ -5282,6 +5447,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
           }
         }
       },
+      "flaggedForDeletion": false,
       "generalizedCost": 2503,
       "legs": [
         {
@@ -5300,7 +5466,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
             "vertexType": "NORMAL"
           },
           "generalizedCost": 442,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 17,
             "points": "ssztGh_wkV?`@?LJAlBCH?J?H?vBCJ?H?jBCJA?D@L?lAE?"
@@ -5446,6 +5612,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
           },
           "generalizedCost": 1203,
           "headsign": "Beaverton TC",
+          "interlinedWithPreviousLeg": false,
           "intermediateStops": [ ],
           "legGeometry": {
             "length": 56,
@@ -5589,7 +5756,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
             "vertexType": "TRANSIT"
           },
           "generalizedCost": 858,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 34,
             "points": "ikztGh~{kVNDEVUzACPOUQO_@Yc@[QMMEOKOIECGCIAMCGCGAECECECOOMOGKIFMLk@BsABGDGBoCBkCDkC@"
@@ -5693,8 +5860,9 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
       "streetOnly": false,
       "systemNotices": [ ],
       "tooSloped": false,
+      "transferPriorityCost": 0,
       "transitTimeSeconds": 603,
-      "waitTimeAdjustedGeneralizedCost": 0,
+      "waitTimeOptimizedCost": 0,
       "waitingTimeSeconds": 0,
       "walkOnly": false,
       "walkingAllTheWay": false
@@ -5736,6 +5904,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
           }
         }
       },
+      "flaggedForDeletion": false,
       "generalizedCost": 2351,
       "legs": [
         {
@@ -5754,7 +5923,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
             "vertexType": "NORMAL"
           },
           "generalizedCost": 392,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 15,
             "points": "ssztGh_wkV?`@?LK?uBBK?K@sBBM??D?L@\\?lCC??E"
@@ -5917,6 +6086,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
           },
           "generalizedCost": 1077,
           "headsign": "Montgomery Park",
+          "interlinedWithPreviousLeg": false,
           "intermediateStops": [ ],
           "legGeometry": {
             "length": 53,
@@ -6060,7 +6230,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
             "vertexType": "TRANSIT"
           },
           "generalizedCost": 881,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 12,
             "points": "}~{tGnq{kV?LVAF?J?FtKlCClCEnCElCElCCB?"
@@ -6147,8 +6317,9 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
       "streetOnly": false,
       "systemNotices": [ ],
       "tooSloped": false,
+      "transferPriorityCost": 0,
       "transitTimeSeconds": 477,
-      "waitTimeAdjustedGeneralizedCost": 0,
+      "waitTimeOptimizedCost": 0,
       "waitingTimeSeconds": 0,
       "walkOnly": false,
       "walkingAllTheWay": false
@@ -6190,6 +6361,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
           }
         }
       },
+      "flaggedForDeletion": false,
       "generalizedCost": 1998,
       "legs": [
         {
@@ -6208,7 +6380,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
             "vertexType": "NORMAL"
           },
           "generalizedCost": 261,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 10,
             "points": "ssztGh_wkV?`@?LK?uBBK??F?JBbDN?"
@@ -6354,6 +6526,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
           },
           "generalizedCost": 1122,
           "headsign": "31st & Industrial",
+          "interlinedWithPreviousLeg": false,
           "intermediateStops": [ ],
           "legGeometry": {
             "length": 39,
@@ -6497,7 +6670,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
             "vertexType": "TRANSIT"
           },
           "generalizedCost": 167,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 4,
             "points": "wb{tG`wzkV?LO?Ao@"
@@ -6511,29 +6684,39 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
           "startTime": "2009-10-21T23:38:32.000+00:00",
           "streetNotes": [ ],
           "to": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5278491,
+              "longitude": -122.6942362
+            },
+            "name": "-102323",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102323"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5278491,
               "longitude": -122.6942362,
               "name": {
                 "name": "-102323"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5278491,
-              "longitude": -122.6942362
-            },
-            "name": "-102323",
             "vertexType": "BIKESHARE"
           },
           "transitAlerts": [ ],
@@ -6591,33 +6774,43 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
           "endTime": "2009-10-21T23:41:39.000+00:00",
           "flexibleTrip": false,
           "from": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5278491,
+              "longitude": -122.6942362
+            },
+            "name": "-102323",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102323"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5278491,
               "longitude": -122.6942362,
               "name": {
                 "name": "-102323"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5278491,
-              "longitude": -122.6942362
-            },
-            "name": "-102323",
             "vertexType": "BIKESHARE"
           },
           "generalizedCost": 196,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 6,
             "points": "ic{tG~uzkV@n@@vAD|HDtKFrJ"
@@ -6679,7 +6872,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
             "vertexType": "NORMAL"
           },
           "generalizedCost": 81,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 2,
             "points": "qb{tGn|{kVWA"
@@ -6693,29 +6886,39 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
           "startTime": "2009-10-21T23:41:39.000+00:00",
           "streetNotes": [ ],
           "to": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5277374,
+              "longitude": -122.7003879
+            },
+            "name": "-102309",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102309"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
               "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5277374,
-              "longitude": -122.7003879
-            },
-            "name": "-102309",
             "vertexType": "BIKESHARE"
           },
           "transitAlerts": [ ],
@@ -6751,33 +6954,43 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
           "endTime": "2009-10-21T23:43:51.000+00:00",
           "flexibleTrip": false,
           "from": {
-            "bikeRentalStation": {
+            "coordinate": {
+              "latitude": 45.5277374,
+              "longitude": -122.7003879
+            },
+            "name": "-102309",
+            "vehicleRentalStation": {
               "allowDropoff": true,
+              "carStation": false,
+              "floatingBike": false,
               "id": {
                 "feedId": "test-network",
                 "id": "-102309"
               },
-              "isCarStation": false,
-              "isFloatingBike": false,
+              "isInstalled": true,
               "isKeepingVehicleRentalAtDestinationAllowed": true,
+              "isRenting": true,
+              "isReturning": true,
+              "isValetStation": false,
+              "isVirtualStation": false,
+              "keepingVehicleRentalAtDestinationAllowed": true,
               "latitude": 45.5277374,
               "longitude": -122.7003879,
               "name": {
                 "name": "-102309"
               },
               "realTimeData": false,
-              "spacesAvailable": 2147483647,
-              "vehiclesAvailable": 2147483647
+              "spacesAvailable": 0,
+              "spacesDisabled": 0,
+              "vehicleSpacesAvailable": { },
+              "vehicleTypesAvailable": { },
+              "vehiclesAvailable": 0,
+              "vehiclesDisabled": 0
             },
-            "coordinate": {
-              "latitude": 45.5277374,
-              "longitude": -122.7003879
-            },
-            "name": "-102309",
             "vertexType": "BIKESHARE"
           },
           "generalizedCost": 168,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 4,
             "points": "ic{tGl|{kVV@?d@kC@"
@@ -6870,8 +7083,9 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
       "streetOnly": false,
       "systemNotices": [ ],
       "tooSloped": false,
+      "transferPriorityCost": 0,
       "transitTimeSeconds": 522,
-      "waitTimeAdjustedGeneralizedCost": 0,
+      "waitTimeOptimizedCost": 0,
       "waitingTimeSeconds": 0,
       "walkOnly": false,
       "walkingAllTheWay": false
@@ -6913,6 +7127,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
           }
         }
       },
+      "flaggedForDeletion": false,
       "generalizedCost": 2563,
       "legs": [
         {
@@ -6931,7 +7146,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
             "vertexType": "NORMAL"
           },
           "generalizedCost": 442,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 17,
             "points": "ssztGh_wkV?`@?LJAlBCH?J?H?vBCJ?H?jBCJA?D@L?lAE?"
@@ -7077,6 +7292,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
           },
           "generalizedCost": 1263,
           "headsign": "Beaverton TC",
+          "interlinedWithPreviousLeg": false,
           "intermediateStops": [ ],
           "legGeometry": {
             "length": 56,
@@ -7220,7 +7436,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
             "vertexType": "TRANSIT"
           },
           "generalizedCost": 858,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 34,
             "points": "ikztGh~{kVNDEVUzACPOUQO_@Yc@[QMMEOKOIECGCIAMCGCGAECECECOOMOGKIFMLk@BsABGDGBoCBkCDkC@"
@@ -7324,8 +7540,9 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
       "streetOnly": false,
       "systemNotices": [ ],
       "tooSloped": false,
+      "transferPriorityCost": 0,
       "transitTimeSeconds": 663,
-      "waitTimeAdjustedGeneralizedCost": 0,
+      "waitTimeOptimizedCost": 0,
       "waitingTimeSeconds": 0,
       "walkOnly": false,
       "walkingAllTheWay": false
@@ -7367,6 +7584,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
           }
         }
       },
+      "flaggedForDeletion": false,
       "generalizedCost": 2351,
       "legs": [
         {
@@ -7385,7 +7603,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
             "vertexType": "NORMAL"
           },
           "generalizedCost": 392,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 15,
             "points": "ssztGh_wkV?`@?LK?uBBK?K@sBBM??D?L@\\?lCC??E"
@@ -7548,6 +7766,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
           },
           "generalizedCost": 1077,
           "headsign": "Montgomery Park",
+          "interlinedWithPreviousLeg": false,
           "intermediateStops": [ ],
           "legGeometry": {
             "length": 53,
@@ -7691,7 +7910,7 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
             "vertexType": "TRANSIT"
           },
           "generalizedCost": 881,
-          "interlineWithPreviousLeg": false,
+          "interlinedWithPreviousLeg": false,
           "legGeometry": {
             "length": 12,
             "points": "}~{tGnq{kV?LVAF?J?FtKlCClCEnCElCElCCB?"
@@ -7778,8 +7997,9 @@ org.opentripplanner.routing.algorithm.mapping.BikeRentalSnapshotTest.egressBikeR
       "streetOnly": false,
       "systemNotices": [ ],
       "tooSloped": false,
+      "transferPriorityCost": 0,
       "transitTimeSeconds": 477,
-      "waitTimeAdjustedGeneralizedCost": 0,
+      "waitTimeOptimizedCost": 0,
       "waitingTimeSeconds": 0,
       "walkOnly": false,
       "walkingAllTheWay": false
