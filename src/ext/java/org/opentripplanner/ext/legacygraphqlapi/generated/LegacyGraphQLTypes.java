@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 public class LegacyGraphQLTypes {
   
+  
   /** Cause of a alert */
   public enum LegacyGraphQLAlertCauseType {
     UnknownCause("UNKNOWN_CAUSE"),
@@ -102,33 +103,6 @@ public class LegacyGraphQLTypes {
   
   
   
-  public enum LegacyGraphQLVehicleParkingState {
-    Operational("OPERATIONAL"),
-    TemporarilyClosed("TEMPORARILY_CLOSED"),
-    Closed("CLOSED");
-    
-    public final String label;
-     
-    LegacyGraphQLVehicleParkingState(String label) {
-      this.label = label;
-    }
-    
-    private static final Map<String, LegacyGraphQLVehicleParkingState> BY_LABEL = new HashMap<>();
-      
-    static {
-        for (LegacyGraphQLVehicleParkingState e : values()) {
-            BY_LABEL.put(e.label, e);
-        }
-    }
-    
-    public static LegacyGraphQLVehicleParkingState valueOfLabel(String label) {
-      return BY_LABEL.get(label);
-    }
-  }
-  
-  
-  
-  
   
   public enum LegacyGraphQLBikesAllowed {
     NoInformation("NO_INFORMATION"),
@@ -158,6 +132,8 @@ public class LegacyGraphQLTypes {
   
   
   
+  
+  
   public static class LegacyGraphQLDepartureRowStoptimesArgs {
     private Long _startTime;
     private Integer _timeRange;
@@ -181,9 +157,6 @@ public class LegacyGraphQLTypes {
     public Boolean getLegacyGraphQLOmitNonPickups() { return this._omitNonPickups; }
     public Boolean getLegacyGraphQLOmitCanceled() { return this._omitCanceled; }
   }
-  
-  
-  
   
   public enum LegacyGraphQLFilterPlaceType {
     Stop("STOP"),
@@ -391,6 +364,44 @@ public class LegacyGraphQLTypes {
     }
   }
   
+  public enum LegacyGraphQLMode {
+    Airplane("AIRPLANE"),
+    Bicycle("BICYCLE"),
+    Bus("BUS"),
+    CableCar("CABLE_CAR"),
+    Car("CAR"),
+    Coach("COACH"),
+    Carpool("CARPOOL"),
+    Ferry("FERRY"),
+    Flex("FLEX"),
+    Flexible("FLEXIBLE"),
+    Funicular("FUNICULAR"),
+    Gondola("GONDOLA"),
+    LegSwitch("LEG_SWITCH"),
+    Rail("RAIL"),
+    Subway("SUBWAY"),
+    Tram("TRAM"),
+    Transit("TRANSIT"),
+    Walk("WALK");
+    
+    public final String label;
+     
+    LegacyGraphQLMode(String label) {
+      this.label = label;
+    }
+    
+    private static final Map<String, LegacyGraphQLMode> BY_LABEL = new HashMap<>();
+      
+    static {
+        for (LegacyGraphQLMode e : values()) {
+            BY_LABEL.put(e.label, e);
+        }
+    }
+    
+    public static LegacyGraphQLMode valueOfLabel(String label) {
+      return BY_LABEL.get(label);
+    }
+  }
   
   /** Optimization type for bicycling legs */
   public enum LegacyGraphQLOptimizeType {
@@ -455,12 +466,6 @@ public class LegacyGraphQLTypes {
       return BY_LABEL.get(label);
     }
   }
-  
-  
-  
-  
-  
-  
   
   
   
@@ -1061,9 +1066,9 @@ public class LegacyGraphQLTypes {
         this._vehicleParkingClosesSoonSeconds = (Integer) args.get("vehicleParkingClosesSoonSeconds");
         this._bannedBikeRentalNetworks = (Iterable<String>) args.get("bannedBikeRentalNetworks");
         this._bannedVehicleParkingTags = (Iterable<String>) args.get("bannedVehicleParkingTags");
+        this._requiredVehicleParkingTags = (Iterable<String>) args.get("requiredVehicleParkingTags");
         this._preferredVehicleParkingTags = (Iterable<String>) args.get("preferredVehicleParkingTags");
         this._unpreferredVehicleParkingTagPenalty = (Double) args.get("unpreferredVehicleParkingTagPenalty");
-        this._requiredVehicleParkingTags = (Iterable<String>) args.get("requiredVehicleParkingTags");
         this._useVehicleParkingAvailabilityInformation = (Boolean) args.get("useVehicleParkingAvailabilityInformation");
       }
     }
@@ -1159,8 +1164,6 @@ public class LegacyGraphQLTypes {
       return BY_LABEL.get(label);
     }
   }
-  
-  
   
   
   public static class LegacyGraphQLStopStopTimesForPatternArgs {
@@ -1268,8 +1271,6 @@ public class LegacyGraphQLTypes {
   
   
   
-  
-  
   public static class LegacyGraphQLTransportModeInput {
     private LegacyGraphQLMode _mode;
     private LegacyGraphQLQualifier _qualifier;
@@ -1326,6 +1327,32 @@ public class LegacyGraphQLTypes {
     public String getLegacyGraphQLServiceDate() { return this._serviceDate; }
   }
   
+  public enum LegacyGraphQLVehicleParkingState {
+    Operational("OPERATIONAL"),
+    TemporarilyClosed("TEMPORARILY_CLOSED"),
+    Closed("CLOSED");
+    
+    public final String label;
+     
+    LegacyGraphQLVehicleParkingState(String label) {
+      this.label = label;
+    }
+    
+    private static final Map<String, LegacyGraphQLVehicleParkingState> BY_LABEL = new HashMap<>();
+      
+    static {
+        for (LegacyGraphQLVehicleParkingState e : values()) {
+            BY_LABEL.put(e.label, e);
+        }
+    }
+    
+    public static LegacyGraphQLVehicleParkingState valueOfLabel(String label) {
+      return BY_LABEL.get(label);
+    }
+  }
+  
+  
+  
   public enum LegacyGraphQLVertexType {
     Normal("NORMAL"),
     Transit("TRANSIT"),
@@ -1376,43 +1403,16 @@ public class LegacyGraphQLTypes {
     }
   }
   
-  public enum LegacyGraphQLMode {
-    Airplane("AIRPLANE"),
-    Bicycle("BICYCLE"),
-    Bus("BUS"),
-    CableCar("CABLE_CAR"),
-    Car("CAR"),
-    Coach("COACH"),
-    Carpool("CARPOOL"),
-    Ferry("FERRY"),
-    Flex("FLEX"),
-    Flexible("FLEXIBLE"),
-    Funicular("FUNICULAR"),
-    Gondola("GONDOLA"),
-    LegSwitch("LEG_SWITCH"),
-    Rail("RAIL"),
-    Subway("SUBWAY"),
-    Tram("TRAM"),
-    Transit("TRANSIT"),
-    Walk("WALK");
-    
-    public final String label;
-     
-    LegacyGraphQLMode(String label) {
-      this.label = label;
-    }
-    
-    private static final Map<String, LegacyGraphQLMode> BY_LABEL = new HashMap<>();
-      
-    static {
-        for (LegacyGraphQLMode e : values()) {
-            BY_LABEL.put(e.label, e);
-        }
-    }
-    
-    public static LegacyGraphQLMode valueOfLabel(String label) {
-      return BY_LABEL.get(label);
-    }
-  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
 }
