@@ -1,5 +1,6 @@
 package org.opentripplanner.standalone.config.updaters;
 
+import java.util.Set;
 import org.opentripplanner.standalone.config.NodeAdapter;
 import org.opentripplanner.updater.DataSourceType;
 import org.opentripplanner.updater.vehicle_parking.VehicleParkingUpdaterParameters;
@@ -37,7 +38,7 @@ public class VehicleParkingUpdaterConfig {
         c.asInt("frequencySec", 60),
         c.asBoolean("zip", false),
         mapStringToSourceType(c.asText("sourceType")),
-        new ArrayList<>(c.asTextSet("tags", null))
+        c.asTextSet("tags", Set.of()).stream().collect(Collectors.toList())
     );
   }
 }
