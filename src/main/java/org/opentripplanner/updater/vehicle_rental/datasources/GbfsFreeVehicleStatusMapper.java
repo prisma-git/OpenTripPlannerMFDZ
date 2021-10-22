@@ -30,6 +30,7 @@ public class GbfsFreeVehicleStatusMapper {
             VehicleRentalVehicle rentalVehicle = new VehicleRentalVehicle();
             rentalVehicle.id = new FeedScopedId(system.systemId, vehicle.getBikeId());
             rentalVehicle.system = system;
+            rentalVehicle.name = new NonLocalizedString("");
             rentalVehicle.longitude = vehicle.getLon();
             rentalVehicle.latitude = vehicle.getLat();
             rentalVehicle.vehicleType = vehicleTypes == null
