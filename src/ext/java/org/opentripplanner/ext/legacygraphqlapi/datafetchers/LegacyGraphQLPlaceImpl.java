@@ -4,6 +4,7 @@ import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
 import org.opentripplanner.ext.legacygraphqlapi.LegacyGraphQLRequestContext;
 import org.opentripplanner.ext.legacygraphqlapi.generated.LegacyGraphQLDataFetchers;
+import org.opentripplanner.model.Stop;
 import org.opentripplanner.model.plan.Place;
 import org.opentripplanner.model.plan.StopArrival;
 import org.opentripplanner.model.plan.VehicleParkingWithEntrance;
@@ -46,7 +47,18 @@ public class LegacyGraphQLPlaceImpl implements LegacyGraphQLDataFetchers.LegacyG
 
   @Override
   public DataFetcher<Object> stop() {
-    return environment -> getSource(environment).place.stop;
+    return environment -> {
+      var stop = getSource(environment).place.stop;
+      if(stop instanceof Stop) {
+        return stop;
+      }
+      else {
+        // TODO: also make it possible to return StopLocations. this however requires some rework
+        // as much of the API and internals assume that you're always passing around instances
+        // of Stop
+        return null;
+      }
+    };
   }
 
   @Override
