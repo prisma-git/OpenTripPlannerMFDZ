@@ -55,7 +55,7 @@ public interface TimeRestrictedEdge {
             TimeRestriction timeRestriction,
             Object source
     ) {
-        if (timeRestriction == null) {
+        if (timeRestriction == null || timeRestriction.isAlwaysOpen()) {
             return;
         }
 

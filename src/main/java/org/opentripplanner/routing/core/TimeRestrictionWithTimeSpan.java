@@ -58,4 +58,9 @@ public class TimeRestrictionWithTimeSpan implements TimeRestriction {
             }
         } while (true);
     }
+
+    @Override
+    public boolean isAlwaysOpen() {
+        return timeRestriction.isAlwaysOpen();
+    }
 }

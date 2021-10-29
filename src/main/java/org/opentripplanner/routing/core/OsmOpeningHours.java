@@ -46,6 +46,11 @@ public class OsmOpeningHours implements I18NString, TimeRestriction, Serializabl
         }
     }
 
+    @Override
+    public boolean isAlwaysOpen() {
+        return rules.stream().allMatch(Rule::isTwentyfourseven);
+    }
+
     public static OsmOpeningHours parseFromOsm(String openingHours)
     throws OpeningHoursParseException {
         var parser = new OpeningHoursParser(new ByteArrayInputStream(openingHours.getBytes()));

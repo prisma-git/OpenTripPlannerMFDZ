@@ -10,4 +10,5 @@ public interface TimeRestriction {
     boolean isTraverseableAt(LocalDateTime now);
     Optional<LocalDateTime> earliestDepartureTime(LocalDateTime now);
     Optional<LocalDateTime> latestArrivalTime(LocalDateTime now);
+    boolean isAlwaysOpen();
 }
