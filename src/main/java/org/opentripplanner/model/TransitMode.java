@@ -1,5 +1,7 @@
 package org.opentripplanner.model;
 
+import java.util.EnumSet;
+
 public enum TransitMode {
   RAIL,
   COACH,
@@ -11,5 +13,16 @@ public enum TransitMode {
   CABLE_CAR,
   GONDOLA,
   FUNICULAR,
-  CARPOOL
+  CARPOOL,
+  TROLLEYBUS,
+  MONORAIL;
+
+  private static final EnumSet<TransitMode> ON_STREET_MODES = EnumSet.of(
+          COACH, BUS, TROLLEYBUS
+  );
+
+
+  public boolean onStreet() {
+    return ON_STREET_MODES.contains(this);
+  }
 }

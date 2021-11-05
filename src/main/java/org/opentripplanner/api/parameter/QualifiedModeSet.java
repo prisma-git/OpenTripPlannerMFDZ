@@ -72,6 +72,9 @@ public class QualifiedModeSet implements Serializable {
                  case FUNICULAR:
                      transitModes.add(TransitMode.FUNICULAR);
                      break;
+                 case TROLLEYBUS:
+                     transitModes.add(TransitMode.TROLLEYBUS);
+                     break;
                  case CARPOOL:
                      transitModes.add(TransitMode.CARPOOL);
                      break;

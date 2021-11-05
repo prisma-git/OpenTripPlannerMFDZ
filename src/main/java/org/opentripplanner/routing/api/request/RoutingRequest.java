@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -278,7 +279,7 @@ public class RoutingRequest implements AutoCloseable, Cloneable, Serializable {
 
 
     /** Configure the transfer optimization */
-    public final TransferOptimizationParameters transferOptimization = new TransferOptimizationRequest(this);
+    public final TransferOptimizationParameters transferOptimization = new TransferOptimizationRequest();
 
     /**
      * Transit reluctance per mode. Use this to add a advantage(<1.0) to specific modes, or to add
@@ -541,7 +542,7 @@ public class RoutingRequest implements AutoCloseable, Cloneable, Serializable {
      * <p>
      * Unit is seconds. Default value is not-set(empty map).
      */
-    public Map<TraverseMode, Integer> boardSlackForMode = new HashMap<>();
+    public Map<TransitMode, Integer> boardSlackForMode = new EnumMap<>(TransitMode.class);
 
     /**
      * The number of seconds to add after alighting a transit leg. It is recommended to use the
@@ -561,7 +562,7 @@ public class RoutingRequest implements AutoCloseable, Cloneable, Serializable {
      * <p>
      * Unit is seconds. Default value is not-set(empty map).
      */
-    public Map<TraverseMode, Integer> alightSlackForMode = new HashMap<>();
+    public Map<TransitMode, Integer> alightSlackForMode = new EnumMap<>(TransitMode.class);
 
     /**
      * Ideally maxTransfers should be set in the router config, not here. Instead the client should
@@ -1463,7 +1464,7 @@ public class RoutingRequest implements AutoCloseable, Cloneable, Serializable {
      *
      * If you encounter a case of this, you can adjust this code to take this into account.
      *
-     * @see RoutingRequest.MAX_CLOSENESS_METERS
+     * @see RoutingRequest#MAX_CLOSENESS_METERS
      * @see DominanceFunction#betterOrEqualAndComparable(State, State)
      */
     public boolean isCloseToStartOrEnd(Vertex vertex) {

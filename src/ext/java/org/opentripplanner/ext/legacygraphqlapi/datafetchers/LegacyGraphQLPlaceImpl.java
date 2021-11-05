@@ -11,6 +11,8 @@ import org.opentripplanner.model.plan.VehicleParkingWithEntrance;
 import org.opentripplanner.model.plan.VertexType;
 import org.opentripplanner.routing.RoutingService;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalPlace;
+import org.opentripplanner.routing.vehicle_rental.VehicleRentalStation;
+import org.opentripplanner.routing.vehicle_rental.VehicleRentalVehicle;
 import org.opentripplanner.routing.vehicle_parking.VehicleParking;
 
 public class LegacyGraphQLPlaceImpl implements LegacyGraphQLDataFetchers.LegacyGraphQLPlace {
@@ -72,6 +74,35 @@ public class LegacyGraphQLPlaceImpl implements LegacyGraphQLDataFetchers.LegacyG
     };
   }
 
+  @Override
+  public DataFetcher<VehicleRentalStation> vehicleRentalStation() {
+    return environment -> {
+      Place place = getSource(environment).place;
+
+      if (!place.vertexType.equals(VertexType.BIKESHARE)
+              || !(place.vehicleRentalStation instanceof VehicleRentalStation)) {
+        return null;
+      }
+
+      return (VehicleRentalStation) place.vehicleRentalStation;
+    };
+  }
+
+  @Override
+  public DataFetcher<VehicleRentalVehicle> rentalVehicle() {
+    return environment -> {
+      Place place = getSource(environment).place;
+
+      if (!place.vertexType.equals(VertexType.BIKESHARE)
+              || !(place.vehicleRentalStation instanceof VehicleRentalVehicle)) {
+        return null;
+      }
+
+      return (VehicleRentalVehicle) place.vehicleRentalStation;
+    };
+  }
+
+  // TODO
   @Override
   public DataFetcher<Object> bikePark() {
     return this::getVehicleParking;

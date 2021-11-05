@@ -5,6 +5,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -33,7 +35,12 @@ public class TestUnconnectedAreas {
       DataImportIssueStore issueStore = new DataImportIssueStore(true);
       Graph gg = buildOSMGraph("P+R.osm.pbf", issueStore);
 
-      assertEquals(2, issueStore.getIssues().size());
+        OpenStreetMapModule loader = new OpenStreetMapModule();
+        loader.setDefaultWayPropertySetSource(new DefaultWayPropertySetSource());
+        File file = new File(getClass().getResource("P+R.osm.pbf").toURI());
+        BinaryOpenStreetMapProvider provider = new BinaryOpenStreetMapProvider(file, false);
+        loader.setProvider(provider);
+        loader.buildGraph(gg, new HashMap<Class<?>, Object>(), issueStore);
 
       var vehicleParkingVertices = gg.getVerticesOfType(VehicleParkingEntranceVertex.class);
       int nParkAndRide = vehicleParkingVertices.size();
@@ -60,7 +67,7 @@ public class TestUnconnectedAreas {
         assertEquals(13, nParkAndRideEntrances);
         assertEquals(32, nParkAndRideLink);
         assertEquals(33, nParkAndRideEdge);
-        
+
     }
 
     /**
@@ -69,8 +76,62 @@ public class TestUnconnectedAreas {
      * Hackettstown, NJ, which demonstrates this behavior. See discussion in ticket 1605.
      */
     @Test
-    public void testCoincidentNodeUnconnectedParkAndRide () {
-      List<String> connections = testGeometricGraphWithClasspathFile("hackett_pr.osm.pbf", 4, 8);
+    public void testCoincidentNodeUnconnectedParkAndRide () throws URISyntaxException {
+
+    	Graph g = new Graph();
+
+        OpenStreetMapModule loader = new OpenStreetMapModule();
+        loader.setDefaultWayPropertySetSource(new DefaultWayPropertySetSource());
+        File file = new File(getClass().getResource("hackett_pr.osm.pbf").toURI());
+        BinaryOpenStreetMapProvider provider = new BinaryOpenStreetMapProvider(file, false);
+        loader.setProvider(provider);
+        loader.buildGraph(g, new HashMap<Class<?>, Object>());
+    	
+        Vertex washTwp = null;
+        
+        int nParkAndRide = 0;
+        int nParkAndRideLink = 0;
+        for (Vertex v : g.getVertices()) {
+        	if (v instanceof ParkAndRideVertex) {
+        		nParkAndRide++;
+        		washTwp = v;
+        	}
+        }
+        
+        for (Edge e : g.getEdges()) {
+            if (e instanceof ParkAndRideLinkEdge) {
+                nParkAndRideLink++;
+            }
+        }
+        
+        assertEquals(1, nParkAndRide);
+        // the P+R should get four connections, since the entrance road is duplicated as well, and crosses twice
+        // since there are in and out edges, that brings the total to 8 per P+R.
+        // Even though the park and rides get merged, duplicate edges remain from when they were separate.
+        // FIXME: we shouldn't have duplicate edges.
+        assertEquals(16, nParkAndRideLink);
+        
+        assertNotNull(washTwp);
+        
+        List<String> connections = new ArrayList<String>();
+        
+        for (Edge e : washTwp.getOutgoing()) {
+        	if (e instanceof ParkAndRideEdge)
+        		continue;
+        	
+        	assertTrue(e instanceof ParkAndRideLinkEdge);
+        	
+        	connections.add(e.getToVertex().getLabel());
+        }
+        
+        // symmetry
+        for (Edge e : washTwp.getIncoming()) {
+        	if (e instanceof ParkAndRideEdge)
+        		continue;
+        	
+        	assertTrue(e instanceof ParkAndRideLinkEdge);
+        	assertTrue(connections.contains(e.getFromVertex().getLabel()));
+        }
 
       assertTrue(connections.contains("osm:node:3096570222"));
       assertTrue(connections.contains("osm:node:3094264704"));
@@ -102,7 +163,7 @@ public class TestUnconnectedAreas {
       * Additionally, the node of the ring is duplicated to test this corner case.
       */
      @Test
-     public void testRoadPassingOverDuplicatedNode () {
+     public void testRoadPassingOverDuplicatedNode () throws URISyntaxException {
     	 List<String> connections = testGeometricGraphWithClasspathFile("coincident_pr_dupl.osm.pbf", 1, 2);
     	 
     	 // depending on what order everything comes out of the spatial index, we will inject one of
@@ -115,17 +176,7 @@ public class TestUnconnectedAreas {
      * Test the situation where a road passes over an edge of the park and ride. Both ends of the
      * way are connected to the park and ride.
      */
-    @Test
-    public void testRoadPassingOverParkRide() {
-        List<String> connections = testGeometricGraphWithClasspathFile("coincident_pr_overlap.osm.pbf", 2, 4);
-
-        assertTrue(connections.contains("osm:node:-102283"));
-        assertTrue(connections.contains("osm:node:-102284"));
-    }
-
-    private Graph buildOSMGraph(String osmFileName) {
-        return buildOSMGraph(osmFileName, new DataImportIssueStore(false));
-      }
+     public List<String> testGeometricGraphWithClasspathFile(String fn, int prCount, int prlCount) throws URISyntaxException {
 
       private Graph buildOSMGraph(String osmFileName, DataImportIssueStore issueStore) {
         Graph graph = new Graph();
@@ -137,8 +188,7 @@ public class TestUnconnectedAreas {
 
         var fileUrl = getClass().getResource(osmFileName);
         assertNotNull(fileUrl);
-        File file = new File(fileUrl.getFile());
-
+        File file = new File(fileUrl.toURI());
         BinaryOpenStreetMapProvider provider = new BinaryOpenStreetMapProvider(file, false);
         loader.setProvider(provider);
         loader.buildGraph(graph, new HashMap<>(), issueStore);
@@ -148,7 +198,7 @@ public class TestUnconnectedAreas {
 
         return graph;
       }
-     
+
      /**
       * We've written several OSM files that exhibit different situations but should show the same results. Test with this code.
       */

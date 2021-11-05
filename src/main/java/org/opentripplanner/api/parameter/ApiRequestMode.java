@@ -6,7 +6,8 @@ public enum ApiRequestMode {
     WALK, BICYCLE, CAR,
     TRAM, SUBWAY, RAIL, BUS, COACH, FERRY,
     CABLE_CAR, GONDOLA, FUNICULAR,
-    TRANSIT, AIRPLANE, FLEX, CARPOOL;
+    TRANSIT, AIRPLANE, FLEX, TROLLEYBUS,
+    CARPOOL;
 
     public static ApiRequestMode fromTransitMode(TransitMode transitMode) {
         switch (transitMode) {
@@ -30,6 +31,8 @@ public enum ApiRequestMode {
                 return GONDOLA;
             case FUNICULAR:
                 return FUNICULAR;
+            case TROLLEYBUS:
+                return TROLLEYBUS;
             default:
                 throw new IllegalArgumentException("Can't convert to ApiRequestMode: " + transitMode);
         }

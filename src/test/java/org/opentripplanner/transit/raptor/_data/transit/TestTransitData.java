@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import lombok.val;
@@ -23,8 +22,11 @@ import org.opentripplanner.transit.raptor.api.transit.IntIterator;
 import org.opentripplanner.transit.raptor.api.transit.RaptorConstrainedTransfer;
 import org.opentripplanner.transit.raptor.api.transit.RaptorPathConstrainedTransferSearch;
 import org.opentripplanner.transit.raptor.api.transit.RaptorRoute;
+import org.opentripplanner.transit.raptor.api.transit.RaptorStopNameResolver;
+import org.opentripplanner.transit.raptor.api.transit.RaptorTimeTable;
 import org.opentripplanner.transit.raptor.api.transit.RaptorTransfer;
 import org.opentripplanner.transit.raptor.api.transit.RaptorTransitDataProvider;
+import org.opentripplanner.transit.raptor.api.transit.RaptorTripPattern;
 import org.opentripplanner.transit.raptor.util.ReversedRaptorTransfer;
 
 @SuppressWarnings("UnusedReturnValue")
@@ -100,9 +102,30 @@ public class TestTransitData implements RaptorTransitDataProvider<TestTripSchedu
   }
 
   @Override
-  public IntFunction<String> stopIndexTranslatorForDebugging() {
+  public RaptorStopNameResolver stopNameResolver() {
     // Index is translated: 1->'A', 2->'B', 3->'C' ...
     return this::stopIndexToName;
+  }
+
+  @Override
+  public int getValidTransitDataStartTime() {
+    return this.routes.stream()
+        .mapToInt(route -> route.timetable().getTripSchedule(0).departure(0))
+        .min()
+        .getAsInt();
+  }
+
+  @Override
+  public int getValidTransitDataEndTime() {
+    return this.routes.stream()
+        .mapToInt(route -> {
+          RaptorTimeTable<TestTripSchedule> timetable = route.timetable();
+          RaptorTripPattern pattern = route.pattern();
+          return timetable.getTripSchedule(timetable.numberOfTripSchedules() - 1)
+                  .departure(pattern.numberOfStopsInPattern() - 1);
+        })
+        .max()
+        .getAsInt();
   }
 
   public TestRoute getRoute(int index) {

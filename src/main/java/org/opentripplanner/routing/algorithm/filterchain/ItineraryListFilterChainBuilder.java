@@ -10,10 +10,17 @@ import java.util.stream.Collectors;
 import org.opentripplanner.model.plan.Itinerary;
 import org.opentripplanner.routing.algorithm.filterchain.comparator.OtpDefaultSortOrder;
 import org.opentripplanner.routing.algorithm.filterchain.comparator.SortOnGeneralizedCost;
+import org.opentripplanner.routing.algorithm.filterchain.filter.AddMinSafeTransferCostFilter;
+import org.opentripplanner.routing.algorithm.filterchain.filter.DeletionFlaggingFilter;
+import org.opentripplanner.routing.algorithm.filterchain.filter.GroupByFilter;
+import org.opentripplanner.routing.algorithm.filterchain.filter.SortingFilter;
+import org.opentripplanner.routing.algorithm.filterchain.groupids.GroupByAllSameStations;
+import org.opentripplanner.routing.algorithm.filterchain.groupids.GroupByTripIdAndDistance;
 import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.FlexOnlyToDestinationFilter;
 import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.LatestDepartureTimeFilter;
 import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.MaxLimitFilter;
 import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.NonTransitGeneralizedCostFilter;
+import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.OtherThanSameLegsMaxGeneralizedCostFilter;
 import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.ParkAndRideDirectBikeItineraryFilter;
 import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.RemoveBikeParkWithShortBikingFilter;
 import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.RemoveBikerentalWithMostlyWalkingFilter;
@@ -338,13 +345,35 @@ public class ItineraryListFilterChainBuilder {
             String name = "similar-legs-filter-" +
                     (int)(100d * it.groupByP) + "p-" + it.maxNumOfItinerariesPerGroup + "x";
 
+            List<ItineraryListFilter> nested = new ArrayList<>();
+
+            if (it.nestedGroupingByAllSameStations) {
+                final String innerGroupName = name + "-group-by-all-same-stations";
+                nested.add(new GroupByFilter<>(
+                    GroupByAllSameStations::new,
+                    List.of(
+                        new SortingFilter(new SortOnGeneralizedCost()),
+                        new DeletionFlaggingFilter( new MaxLimitFilter(innerGroupName, 1))
+                    )
+                ));
+            }
+
+            if (it.maxCostOtherLegsFactor > 1.0) {
+                nested.add(new DeletionFlaggingFilter(new OtherThanSameLegsMaxGeneralizedCostFilter(
+                    it.maxCostOtherLegsFactor
+                )));
+            }
+
+            nested.add(new SortingFilter(new SortOnGeneralizedCost()));
+            nested.add(new DeletionFlaggingFilter(new MaxLimitFilter(
+                name,
+                it.maxNumOfItinerariesPerGroup
+            )));
+
             groupByFilters.add(
                 new GroupByFilter<>(
                     itinerary -> new GroupByTripIdAndDistance(itinerary, it.groupByP),
-                    List.of(
-                        new SortingFilter(new SortOnGeneralizedCost()),
-                        new DeletionFlaggingFilter(new MaxLimitFilter(name, it.maxNumOfItinerariesPerGroup))
-                    )
+                    nested
                 )
             );
         }

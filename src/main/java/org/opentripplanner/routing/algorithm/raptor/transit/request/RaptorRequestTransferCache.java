@@ -23,6 +23,10 @@ public class RaptorRequestTransferCache {
             .build(cacheLoader());
     }
 
+    public LoadingCache<CacheKey, RaptorTransferIndex> getTransferCache() {
+        return transferCache;
+    }
+
     @SneakyThrows
     public RaptorTransferIndex get(
         List<List<Transfer>> transfersByStopIndex,
