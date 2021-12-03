@@ -1,5 +1,6 @@
 package org.opentripplanner.routing.vehicle_parking;
 
+import com.google.common.base.MoreObjects;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -53,6 +54,15 @@ public class VehicleParkingSpaces implements Serializable {
         return Objects.equals(bicycleSpaces, that.bicycleSpaces)
                 && Objects.equals(carSpaces, that.carSpaces)
                 && Objects.equals(wheelchairAccessibleCarSpaces, that.wheelchairAccessibleCarSpaces);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("bicycleSpaces", bicycleSpaces)
+                .add("carSpaces", carSpaces)
+                .add("wheelchairAccessibleCarSpaces", wheelchairAccessibleCarSpaces)
+                .toString();
     }
 
     @Override

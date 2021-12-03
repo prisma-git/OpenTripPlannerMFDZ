@@ -1,5 +1,9 @@
 package org.opentripplanner.updater.vehicle_parking;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -9,17 +13,12 @@ import org.opentripplanner.routing.graph.Graph;
 import org.opentripplanner.routing.vehicle_parking.VehicleParking;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingService;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingSpaces;
+import org.opentripplanner.routing.vehicle_parking.VehicleParkingState;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingTestBase;
 import org.opentripplanner.routing.vertextype.VehicleParkingEntranceVertex;
-import org.opentripplanner.updater.DataSource;
 import org.opentripplanner.updater.GraphUpdater;
 import org.opentripplanner.updater.GraphUpdaterManager;
 import org.opentripplanner.updater.GraphWriterRunnable;
-
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 class VehicleParkingUpdaterTest extends VehicleParkingTestBase {
 
@@ -31,7 +30,7 @@ class VehicleParkingUpdaterTest extends VehicleParkingTestBase {
   public void setup() {
     initGraph();
 
-    dataSource = (VehicleParkingDataSource) Mockito.mock(DataSource.class);
+    dataSource = Mockito.mock(VehicleParkingDataSource.class);
     when(dataSource.update()).thenReturn(true);
 
     var parameters = new VehicleParkingUpdaterParameters(null, null, null, null, -1, false, null, null);
@@ -123,7 +122,7 @@ class VehicleParkingUpdaterTest extends VehicleParkingTestBase {
     assertEquals(vehiclePlaces, vehicleParkingInGraph.getAvailability());
     assertEquals(vehiclePlaces, vehicleParkingInGraph.getCapacity());
 
-    vehiclePlaces = VehicleParking.VehiclePlaces.builder()
+    vehiclePlaces = VehicleParkingSpaces.builder()
         .bicycleSpaces(2)
         .build();
     vehicleParkings = List.of(
@@ -163,7 +162,7 @@ class VehicleParkingUpdaterTest extends VehicleParkingTestBase {
   @Test
   public void addNotOperatingVehicleParkingTest() {
     var vehicleParking = VehicleParking.builder()
-        .state(VehicleParking.VehicleParkingState.CLOSED)
+        .state(VehicleParkingState.CLOSED)
         .build();
 
     when(dataSource.getVehicleParkings()).thenReturn(List.of(vehicleParking));
@@ -181,13 +180,13 @@ class VehicleParkingUpdaterTest extends VehicleParkingTestBase {
 
   @Test
   public void updateNotOperatingVehicleParkingTest() {
-    var vehiclePlaces = VehicleParking.VehiclePlaces.builder()
+    var vehiclePlaces = VehicleParkingSpaces.builder()
         .bicycleSpaces(1)
         .build();
 
     var vehicleParking = VehicleParking.builder()
         .availability(vehiclePlaces)
-        .state(VehicleParking.VehicleParkingState.CLOSED)
+        .state(VehicleParkingState.CLOSED)
         .build();
 
     when(dataSource.getVehicleParkings()).thenReturn(List.of(vehicleParking));
@@ -198,13 +197,13 @@ class VehicleParkingUpdaterTest extends VehicleParkingTestBase {
     assertEquals(vehiclePlaces, vehicleParkingService.getVehicleParkings().findFirst().orElseThrow().getAvailability());
     assertVehicleParkingNotLinked();
 
-    vehiclePlaces = VehicleParking.VehiclePlaces.builder()
+    vehiclePlaces = VehicleParkingSpaces.builder()
         .bicycleSpaces(2)
         .build();
 
     vehicleParking = VehicleParking.builder()
         .availability(vehiclePlaces)
-        .state(VehicleParking.VehicleParkingState.CLOSED)
+        .state(VehicleParkingState.CLOSED)
         .build();
 
     when(dataSource.getVehicleParkings()).thenReturn(List.of(vehicleParking));
@@ -218,7 +217,7 @@ class VehicleParkingUpdaterTest extends VehicleParkingTestBase {
   @Test
   public void deleteNotOperatingVehicleParkingTest() {
     var vehicleParking = VehicleParking.builder()
-        .state(VehicleParking.VehicleParkingState.CLOSED)
+        .state(VehicleParkingState.CLOSED)
         .build();
 
     when(dataSource.getVehicleParkings()).thenReturn(List.of(vehicleParking));

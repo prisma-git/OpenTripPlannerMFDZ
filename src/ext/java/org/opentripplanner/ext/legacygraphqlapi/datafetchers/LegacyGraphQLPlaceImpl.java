@@ -5,6 +5,7 @@ import graphql.schema.DataFetchingEnvironment;
 import org.opentripplanner.ext.legacygraphqlapi.LegacyGraphQLRequestContext;
 import org.opentripplanner.ext.legacygraphqlapi.generated.LegacyGraphQLDataFetchers;
 import org.opentripplanner.ext.legacygraphqlapi.generated.LegacyGraphQLTypes.LegacyGraphQLVertexType;
+import org.opentripplanner.model.Stop;
 import org.opentripplanner.model.plan.Place;
 import org.opentripplanner.model.plan.StopArrival;
 import org.opentripplanner.model.plan.VehicleParkingWithEntrance;
@@ -34,7 +35,7 @@ public class LegacyGraphQLPlaceImpl implements LegacyGraphQLDataFetchers.LegacyG
         case VEHICLERENTAL:
           return LegacyGraphQLVertexType.Bikeshare.label;
         case VEHICLEPARKING:
-          return LegacyGraphQLVertexType.Bikepark.label;
+          return LegacyGraphQLVertexType.Vehicleparking.label;
         default:
           throw new IllegalStateException("Unhandled vertexType: " + place.getVertexType().name());
       }

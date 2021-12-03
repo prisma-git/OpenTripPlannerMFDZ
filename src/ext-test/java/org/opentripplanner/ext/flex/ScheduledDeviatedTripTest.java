@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import java.net.URISyntaxException;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -109,7 +110,7 @@ public class ScheduledDeviatedTripTest extends FlexTest {
                 List.of(to)
         );
 
-        var itineraries = router.createFlexOnlyItineraries();
+        var itineraries = router.createFlexOnlyItineraries(Locale.ENGLISH);
 
         var itinerary = itineraries.iterator().next();
         assertFalse(itinerary.fare.fare.isEmpty());

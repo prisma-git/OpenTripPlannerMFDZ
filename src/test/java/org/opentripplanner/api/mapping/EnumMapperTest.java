@@ -48,7 +48,7 @@ public class EnumMapperTest {
                 Map.of(
                         VertexType.NORMAL, ApiVertexType.NORMAL,
                         VertexType.TRANSIT, ApiVertexType.TRANSIT,
-                        VertexType.VEHICLEPARKING, ApiVertexType.BIKEPARK,
+                        VertexType.VEHICLEPARKING, ApiVertexType.VEHICLEPARKING,
                         VertexType.VEHICLERENTAL, ApiVertexType.BIKESHARE
                 ),
                 VertexTypeMapper::mapVertexType

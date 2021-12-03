@@ -93,6 +93,8 @@ public class LegacyGraphQLDataFetchers {
 
         public DataFetcher<Iterable<Map.Entry<String, String>>> alertHeaderTextTranslations();
 
+        public DataFetcher<String> alertId();
+
         public DataFetcher<String> alertSeverityLevel();
 
         public DataFetcher<String> alertUrl();
@@ -356,6 +358,8 @@ public class LegacyGraphQLDataFetchers {
 
         public DataFetcher<Agency> agency();
 
+        public DataFetcher<Iterable<TransitAlert>> alerts();
+
         public DataFetcher<Integer> arrivalDelay();
 
         public DataFetcher<Integer> departureDelay();
@@ -490,7 +494,7 @@ public class LegacyGraphQLDataFetchers {
 
         public DataFetcher<Object> stop();
 
-        public DataFetcher<VehicleParking> vehicleParking();
+        public DataFetcher<org.opentripplanner.model.plan.VehicleParkingWithEntrance> vehicleParkingWithEntrance();
 
         public DataFetcher<VehicleRentalStation> vehicleRentalStation();
 
@@ -916,6 +920,8 @@ public class LegacyGraphQLDataFetchers {
 
         public DataFetcher<String> detailsUrl();
 
+        public DataFetcher<String> feeHours();
+
         public DataFetcher<graphql.relay.Relay.ResolvedGlobalId> id();
 
         public DataFetcher<String> imageUrl();
@@ -927,6 +933,8 @@ public class LegacyGraphQLDataFetchers {
         public DataFetcher<String> name();
 
         public DataFetcher<String> note();
+
+        public DataFetcher<String> openingHours();
 
         public DataFetcher<Boolean> realtime();
 
@@ -949,6 +957,15 @@ public class LegacyGraphQLDataFetchers {
         public DataFetcher<Integer> carSpaces();
 
         public DataFetcher<Integer> wheelchairAccessibleCarSpaces();
+    }
+
+    public interface LegacyGraphQLVehicleParkingWithEntrance {
+
+        public DataFetcher<Boolean> closesSoon();
+
+        public DataFetcher<Boolean> realtime();
+
+        public DataFetcher<VehicleParking> vehicleParking();
     }
 
     /**

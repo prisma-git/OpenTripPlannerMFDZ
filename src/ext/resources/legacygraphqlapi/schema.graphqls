@@ -434,23 +434,15 @@ type VehicleParking implements Node & PlaceInterface {
 
     wheelchairAccessibleCarPlaces: Boolean
 
-    capacity: VehiclePlaces
+    capacity: VehicleParkingSpaces
 
-    availability: VehiclePlaces
+    availability: VehicleParkingSpaces
 }
 
 enum VehicleParkingState {
     OPERATIONAL
     TEMPORARILY_CLOSED
     CLOSED
-}
-
-type VehiclePlaces {
-    bicycleSpaces: Int
-
-    carSpaces: Int
-
-    wheelchairAccessibleCarSpaces: Int
 }
 
 type VehicleParkingWithEntrance {

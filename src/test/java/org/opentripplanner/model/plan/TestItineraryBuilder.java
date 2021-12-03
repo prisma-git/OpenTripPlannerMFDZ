@@ -149,17 +149,17 @@ public class TestItineraryBuilder implements PlanTestConstants {
     int legCost = 0;
     legCost += cost(WAIT_RELUCTANCE_FACTOR, waitTime);
     legCost += cost(1.0f, end - start) + BOARD_COST;
-    Leg leg = leg(new Leg(trip(tripId, route)), start, end, fromStopIndex, toStopIndex, to, fromStopIndex, toStopIndex, legCost);
+    Leg leg = leg(new Leg(trip(tripId, route)), start, end, fromStopIndex, toStopIndex, to, legCost);
     leg.serviceDate = SERVICE_DATE;
     return this;
   }
 
   private Leg streetLeg(TraverseMode mode, int startTime, int endTime, Place to, int legCost) {
-    return leg(new Leg(mode), startTime, endTime, null, null, to, null, null, legCost);
+    return leg(new Leg(mode), startTime, endTime, null, null, to, legCost);
   }
 
   private Leg leg(
-          Leg leg, int startTime, int endTime, Integer fromStopIndex, Integer toStopIndex, Place to, Integer fromStopIndex, Integer toStopIndex, int legCost
+          Leg leg, int startTime, int endTime, Integer fromStopIndex, Integer toStopIndex, Place to, int legCost
   ) {
     leg.from = stop(lastPlace, fromStopIndex);
     leg.startTime = GregorianCalendar.from(newTime(startTime));
