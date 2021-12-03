@@ -41,9 +41,7 @@ public class BikeRentalTest extends GraphRoutingTest {
     private VehicleRentalStationVertex B1, B2;
     private StreetEdge SE1, SE2, SE3;
 
-    private String NETWORK1 = "network-1";
-    private String NETWORK2 = "network-2";
-    private String NETWORK3 = "network-3";
+    private String NON_NETWORK = "non network";
 
     @BeforeEach
     public void setUp() {
@@ -69,8 +67,8 @@ public class BikeRentalTest extends GraphRoutingTest {
                 T1 = streetLocation("T1", 47.500, 18.999, false);
                 T2 = streetLocation("T1", 47.530, 18.999, true);
 
-                B1 = vehicleRentalStation("B1", 47.510, 19.001, NETWORK1);
-                B2 = vehicleRentalStation("B2", 47.520, 19.001, NETWORK1);
+                B1 = vehicleRentalStation("B1", 47.510, 19.001);
+                B2 = vehicleRentalStation("B2", 47.520, 19.001);
 
                 biLink(A, S1);
                 biLink(D, E1);
@@ -364,33 +362,33 @@ public class BikeRentalTest extends GraphRoutingTest {
 
     @Test
     public void noPathIfNoAllowedNetworks() {
-        assertNoRental(B, C, Set.of(NETWORK3, NETWORK2, NETWORK1), Set.of());
+        assertNoRental(B, C, Set.of(), Set.of(NON_NETWORK));
+    }
+
+    @Test
+    public void noPathIfBannedAndAllowedNetwork() {
+        assertNoRental(B, C, Set.of(TEST_VEHICLE_RENTAL_NETWORK), Set.of(TEST_VEHICLE_RENTAL_NETWORK));
     }
 
     @Test
     public void pathIfWithOnlyAllowedNetworks() {
-        assertPathWithNetwork(B, C, Set.of(), Set.of(NETWORK1), Set.of(NETWORK1));
+        assertPathWithNetwork(B, C, Set.of(), Set.of(TEST_VEHICLE_RENTAL_NETWORK), Set.of(TEST_VEHICLE_RENTAL_NETWORK));
     }
 
     @Test
-    public void noPathIfAllNetworksBanned() {
-        assertNoRental(B, C, Set.of(NETWORK1, NETWORK2), Set.of());
+    public void noPathIfNetworkIsBanned() {
+        assertNoRental(B, C, Set.of(TEST_VEHICLE_RENTAL_NETWORK), Set.of());
     }
 
     @Test
     public void pathIfWithoutBannedNetworks() {
-        assertPathWithNetwork(B, C, Set.of(NETWORK3), Set.of(), Set.of(NETWORK1, NETWORK2));
-    }
-
-    @Test
-    public void pathWithoutBannedWithAllowedNetworks() {
-        assertPathWithNetwork(B, C, Set.of(), Set.of(NETWORK1, NETWORK2), Set.of(NETWORK2));
+        assertPathWithNetwork(B, C, Set.of(NON_NETWORK), Set.of(), Set.of(TEST_VEHICLE_RENTAL_NETWORK));
     }
 
     private void assertNoRental(StreetVertex fromVertex, StreetVertex toVertex, Set<String> bannedNetworks, Set<String> allowedNetworks) {
         Consumer<RoutingRequest> setter = options -> {
-            options.allowedBikeRentalNetworks = allowedNetworks;
-            options.bannedBikeRentalNetworks = bannedNetworks;
+            options.allowedVehicleRentalNetworks = allowedNetworks;
+            options.bannedVehicleRentalNetworks = bannedNetworks;
         };
 
         assertEquals(
@@ -412,8 +410,8 @@ public class BikeRentalTest extends GraphRoutingTest {
 
     private void assertPathWithNetwork(StreetVertex fromVertex, StreetVertex toVertex, Set<String> bannedNetworks, Set<String> allowedNetworks, Set<String> usedNetworks) {
         Consumer<RoutingRequest> setter = options -> {
-            options.allowedBikeRentalNetworks = allowedNetworks;
-            options.bannedBikeRentalNetworks = bannedNetworks;
+            options.allowedVehicleRentalNetworks = allowedNetworks;
+            options.bannedVehicleRentalNetworks = bannedNetworks;
         };
 
         assertEquals(
@@ -522,10 +520,10 @@ public class BikeRentalTest extends GraphRoutingTest {
     ) {
         var options = new RoutingRequest();
         options.arriveBy = arriveBy;
-        options.bikeRentalPickupTime = 42;
-        options.bikeRentalPickupCost = 62;
-        options.bikeRentalDropoffCost = 33;
-        options.bikeRentalDropoffTime = 15;
+        options.vehicleRentalPickupTime = 42;
+        options.vehicleRentalPickupCost = 62;
+        options.vehicleRentalDropoffCost = 33;
+        options.vehicleRentalDropoffTime = 15;
 
         optionsSetter.accept(options);
 

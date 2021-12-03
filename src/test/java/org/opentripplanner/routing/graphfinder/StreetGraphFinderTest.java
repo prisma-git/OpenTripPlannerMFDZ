@@ -19,6 +19,7 @@ import org.opentripplanner.routing.graph.GraphIndex;
 import org.opentripplanner.routing.vertextype.VehicleRentalStationVertex;
 import org.opentripplanner.routing.vertextype.IntersectionVertex;
 import org.opentripplanner.routing.vertextype.TransitStopVertex;
+import org.opentripplanner.routing.vertextype.VehicleRentalStationVertex;
 
 class StreetGraphFinderTest extends GraphRoutingTest {
 
@@ -52,17 +53,23 @@ class StreetGraphFinderTest extends GraphRoutingTest {
                 C = intersection("C", 47.520, 19.00);
                 D = intersection("D", 47.530, 19.00);
 
-                vehicleParking("BP1", 47.520, 18.999, true, false, List.of(
-                        vehicleParkingEntrance(A, "All Park Entrance", true, true)
-                ));
+                vehicleParking("BP1", 47.520, 18.999, true, false,
+                        List.of(
+                                vehicleParkingEntrance(C, "BP1 Entrance", false, true)
+                        )
+                );
 
-                vehicleParking("PR1", 47.510, 18.999, false, true, List.of(
-                        vehicleParkingEntrance(A, "All Park Entrance", true, true)
-                ));
-                vehicleParking("PR2", 47.530, 18.999, false, true, List.of(
-                        vehicleParkingEntrance(A, "All Park Entrance", true, true)
-                ));
+                vehicleParking("PR1", 47.510, 18.999, false, true,
+                        List.of(
+                                vehicleParkingEntrance(B, "PR1 Entrance", true, true)
+                        )
+                );
 
+                vehicleParking("PR2", 47.530, 18.999, false, true,
+                        List.of(
+                                vehicleParkingEntrance(D, "PR2 Entrance", true, true)
+                        )
+                );
 
                 biLink(A, S1);
                 biLink(A, BR1);

@@ -33,6 +33,11 @@ import org.opentripplanner.routing.algorithm.filterchain.filter.DeletionFlagging
 import org.opentripplanner.routing.algorithm.filterchain.filter.GroupByFilter;
 import org.opentripplanner.routing.algorithm.filterchain.filter.SortingFilter;
 import org.opentripplanner.routing.algorithm.filterchain.groupids.GroupByTripIdAndDistance;
+import org.opentripplanner.routing.algorithm.filterchain.filter.DeletionFlaggingFilter;
+import org.opentripplanner.routing.algorithm.filterchain.filter.GroupByFilter;
+import org.opentripplanner.routing.algorithm.filterchain.filter.SortingFilter;
+import org.opentripplanner.routing.algorithm.filterchain.groupids.GroupByAllSameStations;
+import org.opentripplanner.routing.algorithm.filterchain.groupids.GroupByTripIdAndDistance;
 
 
 /**
@@ -47,7 +52,6 @@ public class ItineraryListFilterChainBuilder {
     private boolean debug = false;
     private int maxNumberOfItineraries = NOT_SET;
     private boolean removeTransitWithHigherCostThanBestOnStreetOnly = true;
-    private double minSafeTransferTimeFactor;
     private boolean removeWalkAllTheWayResults;
     private boolean flexOnlyToDestination;
     private DoubleFunction<Double> transitGeneralizedCostLimit;
@@ -76,17 +80,6 @@ public class ItineraryListFilterChainBuilder {
      */
     public ItineraryListFilterChainBuilder withMaxNumberOfItineraries(int value) {
         this.maxNumberOfItineraries = value;
-        return this;
-    }
-
-    /**
-     * If the transfer-time for an itinerary is less than the min-safe-transfer-time-limit, then
-     * the difference is multiplied with this factor and added to the itinerary generalized-cost.
-     * <p>
-     * Default is off {@code 0.0}.
-     */
-    public ItineraryListFilterChainBuilder withMinSafeTransferTimeFactor(double minSafeTransferTimeFactor) {
-        this.minSafeTransferTimeFactor = minSafeTransferTimeFactor;
         return this;
     }
 

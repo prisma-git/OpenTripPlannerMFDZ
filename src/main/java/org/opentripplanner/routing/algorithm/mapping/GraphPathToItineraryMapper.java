@@ -35,6 +35,7 @@ import org.opentripplanner.routing.edgetype.ElevatorAlightEdge;
 import org.opentripplanner.routing.edgetype.FreeEdge;
 import org.opentripplanner.routing.edgetype.PathwayEdge;
 import org.opentripplanner.routing.edgetype.StreetEdge;
+import org.opentripplanner.routing.edgetype.VehicleParkingEdge;
 import org.opentripplanner.routing.edgetype.VehicleRentalEdge;
 import org.opentripplanner.routing.edgetype.VehicleParkingEdge;
 import org.opentripplanner.routing.graph.Edge;
@@ -46,6 +47,7 @@ import org.opentripplanner.routing.vertextype.VehicleRentalStationVertex;
 import org.opentripplanner.routing.vertextype.ExitVertex;
 import org.opentripplanner.routing.vertextype.StreetVertex;
 import org.opentripplanner.routing.vertextype.TransitStopVertex;
+import org.opentripplanner.routing.vertextype.VehicleParkingEntranceVertex;
 import org.opentripplanner.routing.vertextype.VehicleParkingEntranceVertex;
 import org.opentripplanner.util.OTPFeature;
 import org.opentripplanner.util.PolylineEncoder;
@@ -123,7 +125,7 @@ public abstract class GraphPathToItineraryMapper {
         calculateElevations(itinerary, edges);
 
         itinerary.generalizedCost = (int) lastState.weight;
-        itinerary.arrivedAtDestinationWithRentedVehicle = lastState.isBikeRentingFromStation();
+        itinerary.arrivedAtDestinationWithRentedVehicle = lastState.isRentingVehicleFromStation();
 
         return itinerary;
     }
@@ -302,7 +304,7 @@ public abstract class GraphPathToItineraryMapper {
 
         leg.walkingBike = states[states.length - 1].isBackWalkingBike();
 
-        leg.rentedVehicle = states[0].isBikeRenting();
+        leg.rentedVehicle = states[0].isRentingVehicle();
 
         if (leg.rentedVehicle) {
             String vehicleRentalNetwork = states[0].getVehicleRentalNetwork();
@@ -431,6 +433,22 @@ public abstract class GraphPathToItineraryMapper {
             TraverseMode mode = state.getBackMode();
 
             if (mode != null) {
+                // Resolve correct mode if renting vehicle, and is not walking with it
+                if (state.isRentingVehicle() && !state.isBackWalkingBike()) {
+                    switch (state.stateData.rentalVehicleFormFactor) {
+                        case BICYCLE:
+                        case OTHER:
+                            returnMode = TraverseMode.BICYCLE;
+                            continue;
+                        case SCOOTER:
+                        case MOPED:
+                            returnMode = TraverseMode.SCOOTER;
+                            continue;
+                        case CAR:
+                            returnMode = TraverseMode.CAR;
+                            continue;
+                    }
+                }
                 returnMode = mode;
             }
         }
@@ -809,11 +827,11 @@ public abstract class GraphPathToItineraryMapper {
 
     private static boolean isRentalPickUp(State state) {
         return state.getBackEdge() instanceof VehicleRentalEdge && (state.getBackState() == null || !state.getBackState()
-                .isBikeRenting());
+                .isRentingVehicle());
     }
 
     private static boolean isRentalDropOff(State state) {
-        return state.getBackEdge() instanceof VehicleRentalEdge && state.getBackState().isBikeRenting();
+        return state.getBackEdge() instanceof VehicleRentalEdge && state.getBackState().isRentingVehicle();
     }
 
     private static boolean isLink(Edge edge) {

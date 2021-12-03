@@ -1,8 +1,8 @@
 package org.opentripplanner.ext.legacygraphqlapi.datafetchers;
 
+import static org.opentripplanner.ext.legacygraphqlapi.datafetchers.LegacyGraphQLNodeTypeResolver.queryContainsFragment;
+
 import graphql.TypeResolutionEnvironment;
-import graphql.language.InlineFragment;
-import graphql.language.SelectionSet;
 import graphql.schema.GraphQLObjectType;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.TypeResolver;
@@ -19,18 +19,21 @@ public class LegacyGraphQLPlaceInterfaceTypeResolver implements TypeResolver {
     Object o = environment.getObject();
     GraphQLSchema schema = environment.getSchema();
 
+    if (o instanceof VehicleParking) {
+      var vehicleParking = (VehicleParking) o;
+      if (queryContainsFragment("BikePark", environment) && vehicleParking.hasBicyclePlaces()) {
+        return schema.getObjectType("BikePark");
+      }
+      if (queryContainsFragment("CarPark", environment) && vehicleParking.hasAnyCarPlaces()) {
+        return schema.getObjectType("CarPark");
+      }
+      return schema.getObjectType("VehicleParking");
+    }
     if (o instanceof VehicleRentalStation) {
-      SelectionSet set = environment.getField().getFields().get(0).getSelectionSet();
-      boolean queryHasBikeRentalStationFragment = set != null && set.getSelections()
-              .stream()
-              .filter(selection -> selection instanceof InlineFragment)
-              .map(InlineFragment.class::cast)
-              .anyMatch(fragment -> fragment.getTypeCondition()
-                      .getName()
-                      .equals("BikeRentalStation"));
-      return queryHasBikeRentalStationFragment
-              ? schema.getObjectType("BikeRentalStation")
-              : schema.getObjectType("VehicleRentalStation");
+      if (queryContainsFragment("BikeRentalStation", environment)) {
+        return schema.getObjectType("BikeRentalStation");
+      }
+      return schema.getObjectType("VehicleRentalStation");
     }
     if (o instanceof VehicleRentalVehicle) {
       return schema.getObjectType("RentalVehicle");

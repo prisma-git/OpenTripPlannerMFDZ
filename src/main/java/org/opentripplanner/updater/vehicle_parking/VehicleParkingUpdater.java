@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.opentripplanner.graph_builder.linking.DisposableEdgeCollection;
 import org.opentripplanner.graph_builder.linking.LinkingDirection;
@@ -18,49 +18,46 @@ import org.opentripplanner.routing.edgetype.StreetVehicleParkingLink;
 import org.opentripplanner.routing.edgetype.VehicleParkingEdge;
 import org.opentripplanner.routing.graph.Graph;
 import org.opentripplanner.routing.vehicle_parking.VehicleParking;
-import org.opentripplanner.routing.vehicle_parking.VehicleParking.VehicleParkingState;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingHelper;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingService;
 import org.opentripplanner.routing.vertextype.VehicleParkingEntranceVertex;
-import org.opentripplanner.updater.DataSource;
-import org.opentripplanner.updater.GraphUpdaterManager;
 import org.opentripplanner.updater.GraphWriterRunnable;
 import org.opentripplanner.updater.PollingGraphUpdater;
+import org.opentripplanner.updater.WriteToGraphCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Graph updater that dynamically sets availability information on vehicle parking lots.
- * This updater fetches data from a single {@link DataSource}.
+ * This updater fetches data from a single {@link VehicleParkingDataSource}.
  */
 public class VehicleParkingUpdater extends PollingGraphUpdater {
 
     private static final Logger LOG = LoggerFactory.getLogger(VehicleParkingUpdater.class);
 
-    private GraphUpdaterManager updaterManager;
+    private WriteToGraphCallback saveResultOnGraph;
 
     private final Map<VehicleParking, List<VehicleParkingEntranceVertex>> verticesByPark = new HashMap<>();
 
     private final Map<VehicleParking, List<DisposableEdgeCollection>> tempEdgesByPark = new HashMap<>();
 
-    private final DataSource<VehicleParking> source;
+    private final VehicleParkingDataSource source;
 
     private VertexLinker linker;
 
     private VehicleParkingService vehicleParkingService;
 
-    private List<VehicleParking> oldVehicleParkings = new ArrayList<>();
-
-    public VehicleParkingUpdater(VehicleParkingUpdaterParameters parameters, DataSource<VehicleParking> source) {
+    public VehicleParkingUpdater(VehicleParkingUpdaterParameters parameters) {
         super(parameters);
-        this.source = source;
+        // Set source from preferences
+        source = new KmlBikeParkDataSource(parameters.sourceParameters());
 
-        LOG.info("Creating vehicle-parking updater running every {} seconds : {}", pollingPeriodSeconds, source);
+        LOG.info("Creating bike-park updater running every {} seconds : {}", pollingPeriodSeconds, source);
     }
 
     @Override
-    public void setGraphUpdaterManager(GraphUpdaterManager updaterManager) {
-        this.updaterManager = updaterManager;
+    public void setGraphUpdaterManager(WriteToGraphCallback saveResultOnGraph) {
+        this.saveResultOnGraph = saveResultOnGraph;
     }
 
     @Override
@@ -78,11 +75,11 @@ public class VehicleParkingUpdater extends PollingGraphUpdater {
             LOG.debug("No updates");
             return;
         }
-        List<VehicleParking> vehicleParkings = source.getUpdates();
+        List<VehicleParking> vehicleParkings = source.getVehicleParkings();
 
         // Create graph writer runnable to apply these stations to the graph
-        VehicleParkingGraphWriterRunnable graphWriterRunnable = new VehicleParkingGraphWriterRunnable(vehicleParkings);
-        updaterManager.execute(graphWriterRunnable);
+        VehicleParkingGraphWriterRunnable graphWriterRunnable = new VehicleParkingGraphWriterRunnable(vehicleParkings, verticesByPark.keySet());
+        saveResultOnGraph.execute(graphWriterRunnable);
     }
 
     @Override
@@ -91,73 +88,52 @@ public class VehicleParkingUpdater extends PollingGraphUpdater {
 
     private class VehicleParkingGraphWriterRunnable implements GraphWriterRunnable {
 
-        private final Map<FeedScopedId, VehicleParking> oldVehicleParkingsById;
-        private final Set<VehicleParking> updatedVehicleParkings;
+        private final List<VehicleParking> updatedVehicleParkings;
+        private final Map<FeedScopedId, VehicleParking> oldVehicleParkings;
 
-        private VehicleParkingGraphWriterRunnable(List<VehicleParking> updatedVehicleParkings) {
-            this.oldVehicleParkingsById = oldVehicleParkings.stream()
-                    .collect(Collectors.toMap(VehicleParking::getId, Function.identity()));
-            this.updatedVehicleParkings = new HashSet<>(updatedVehicleParkings);
+        private VehicleParkingGraphWriterRunnable(List<VehicleParking> updatedVehicleParkings, Set<VehicleParking> oldVehicleParkings) {
+            this.updatedVehicleParkings = updatedVehicleParkings;
+            this.oldVehicleParkings = oldVehicleParkings.stream()
+                .collect(Collectors.toMap(VehicleParking::getId, v -> v));
         }
 
         @Override
         public void run(Graph graph) {
             // Apply stations to graph
+            Set<VehicleParking> vehicleParkingSet = new HashSet<>();
             /* Add any new park and update space available for existing parks */
-            Set<VehicleParking> toAdd = new HashSet<>();
-            Set<VehicleParking> toLink = new HashSet<>();
-            Set<VehicleParking> toRemove = new HashSet<>();
-
             for (VehicleParking updatedVehicleParking : updatedVehicleParkings) {
-                var operational = updatedVehicleParking.getState().equals(VehicleParkingState.OPERATIONAL);
-                var alreadyExists = oldVehicleParkings.contains(updatedVehicleParking);
+                vehicleParkingService.addVehicleParking(updatedVehicleParking);
+                vehicleParkingSet.add(updatedVehicleParking);
+                List<VehicleParkingEntranceVertex> vehicleParkingVertices = verticesByPark.get(updatedVehicleParking);
+                if (vehicleParkingVertices == null || vehicleParkingVertices.isEmpty()) {
+                    vehicleParkingVertices = VehicleParkingHelper.createVehicleParkingVertices(graph, updatedVehicleParking);
 
-                if (alreadyExists) {
-                    oldVehicleParkingsById.get(updatedVehicleParking.getId())
-                            .updateAvailability(updatedVehicleParking.getAvailability());
+                    var disposableEdgeCollectionsForVertex = linkVehicleParkingVertexToStreets(vehicleParkingVertices);
+
+                    VehicleParkingHelper.linkVehicleParkingEntrances(vehicleParkingVertices);
+                    verticesByPark.put(updatedVehicleParking, vehicleParkingVertices);
+                    tempEdgesByPark.put(updatedVehicleParking, disposableEdgeCollectionsForVertex);
                 } else {
-                    toAdd.add(updatedVehicleParking);
-                    if (operational) {
-                        toLink.add(updatedVehicleParking);
-                    }
+                    oldVehicleParkings.get(updatedVehicleParking.getId()).updateAvailability(updatedVehicleParking.getAvailability());
                 }
             }
-
             /* Remove existing parks that were not present in the update */
-            for (var oldVehicleParking : oldVehicleParkings) {
-                if (updatedVehicleParkings.contains(oldVehicleParking)) {
+            List<VehicleParking> toRemove = new ArrayList<>();
+            for (Entry<VehicleParking, List<VehicleParkingEntranceVertex>> entry : verticesByPark.entrySet()) {
+                VehicleParking vehicleParking = entry.getKey();
+                if (vehicleParkingSet.contains(vehicleParking))
                     continue;
-                }
-
-                vehicleParkingService.removeVehicleParking(oldVehicleParking);
-
-                if (verticesByPark.containsKey(oldVehicleParking)) {
-                    verticesByPark.get(oldVehicleParking).forEach(v -> removeVehicleParkingEdgesFromGraph(v, graph));
-                    verticesByPark.remove(oldVehicleParking);
-                    tempEdgesByPark.get(oldVehicleParking).forEach(DisposableEdgeCollection::disposeEdges);
-                    tempEdgesByPark.remove(oldVehicleParking);
-                }
-
-                toRemove.add(oldVehicleParking);
+                toRemove.add(vehicleParking);
+                vehicleParkingService.removeVehicleParking(vehicleParking);
+                entry.getValue().forEach(v -> removeVehicleParkingEdgesFromGraph(v, graph));
             }
-
-            /* Add new parks, after removing, so that there are no duplicate vertices for removed and re-added parks.*/
-            for (final VehicleParking updatedVehicleParking : toLink) {
-                var vehicleParkingVertices = VehicleParkingHelper.createVehicleParkingVertices(graph, updatedVehicleParking);
-                var disposableEdgeCollectionsForVertex = linkVehicleParkingVertexToStreets(vehicleParkingVertices);
-
-                VehicleParkingHelper.linkVehicleParkingEntrances(vehicleParkingVertices);
-
-                verticesByPark.put(updatedVehicleParking, vehicleParkingVertices);
-                tempEdgesByPark.put(updatedVehicleParking, disposableEdgeCollectionsForVertex);
+            for (VehicleParking vehicleParking : toRemove) {
+                // post-iteration removal to avoid concurrent modification
+                verticesByPark.remove(vehicleParking);
+                tempEdgesByPark.get(vehicleParking).forEach(DisposableEdgeCollection::disposeEdges);
+                tempEdgesByPark.remove(vehicleParking);
             }
-
-            for (final VehicleParking vehicleParking : toAdd) {
-                vehicleParkingService.addVehicleParking(vehicleParking);
-            }
-
-            oldVehicleParkings.removeAll(toRemove);
-            oldVehicleParkings.addAll(toAdd);
         }
 
         private List<DisposableEdgeCollection> linkVehicleParkingVertexToStreets(List<VehicleParkingEntranceVertex> vehicleParkingVertices) {

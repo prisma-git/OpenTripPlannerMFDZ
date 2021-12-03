@@ -51,10 +51,6 @@ public class StreetVehicleParkingLink extends Edge {
     public State traverse(State s0) {
         final var options = s0.getOptions();
 
-        // Do not even consider bike park vertices unless bike P+R is enabled.
-        if (!options.parkAndRide) {
-            return null;
-        }
         // Disallow traversing two StreetBikeParkLinks in a row.
         // Prevents router using bike rental stations as shortcuts to get around
         // turn restrictions.

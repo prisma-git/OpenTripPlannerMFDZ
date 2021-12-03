@@ -5,15 +5,25 @@ import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
 import org.opentripplanner.ext.legacygraphqlapi.generated.LegacyGraphQLDataFetchers;
 import org.opentripplanner.routing.vehicle_parking.VehicleParking;
+<<<<<<< HEAD
 import org.opentripplanner.util.I18NString;
+=======
+import org.opentripplanner.routing.vehicle_parking.VehicleParkingSpaces;
+import org.opentripplanner.routing.vehicle_parking.VehicleParkingState;
+>>>>>>> upstream/dev-2.x
 
 public class LegacyGraphQLVehicleParkingImpl implements LegacyGraphQLDataFetchers.LegacyGraphQLVehicleParking {
     @Override
     public DataFetcher<Relay.ResolvedGlobalId> id() {
+<<<<<<< HEAD
         return environment -> new Relay.ResolvedGlobalId(
                 "VehicleParking",
                 getSource(environment).getId().toString()
         );
+=======
+        return environment -> new Relay.ResolvedGlobalId("VehicleParking",
+            getSource(environment).getId().toString());
+>>>>>>> upstream/dev-2.x
     }
 
     @Override
@@ -23,7 +33,11 @@ public class LegacyGraphQLVehicleParkingImpl implements LegacyGraphQLDataFetcher
 
     @Override
     public DataFetcher<String> name() {
+<<<<<<< HEAD
         return environment -> getSource(environment).getName().toString(environment.getLocale());
+=======
+        return environment -> getSource(environment).getName().toString();
+>>>>>>> upstream/dev-2.x
     }
 
     @Override
@@ -108,12 +122,12 @@ public class LegacyGraphQLVehicleParkingImpl implements LegacyGraphQLDataFetcher
     }
 
     @Override
-    public DataFetcher<VehicleParking.VehiclePlaces> capacity() {
+    public DataFetcher<VehicleParkingSpaces> capacity() {
         return environment -> getSource(environment).getCapacity();
     }
 
     @Override
-    public DataFetcher<VehicleParking.VehiclePlaces> availability() {
+    public DataFetcher<VehicleParkingSpaces> availability() {
         return environment -> getSource(environment).getAvailability();
     }
 

@@ -4,12 +4,12 @@ import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
 import org.opentripplanner.ext.legacygraphqlapi.LegacyGraphQLRequestContext;
 import org.opentripplanner.ext.legacygraphqlapi.generated.LegacyGraphQLDataFetchers;
-import org.opentripplanner.model.Stop;
 import org.opentripplanner.model.plan.Place;
 import org.opentripplanner.model.plan.StopArrival;
 import org.opentripplanner.model.plan.VehicleParkingWithEntrance;
 import org.opentripplanner.model.plan.VertexType;
 import org.opentripplanner.routing.RoutingService;
+import org.opentripplanner.routing.bike_park.BikePark;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalPlace;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalStation;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalVehicle;
@@ -24,7 +24,21 @@ public class LegacyGraphQLPlaceImpl implements LegacyGraphQLDataFetchers.LegacyG
 
   @Override
   public DataFetcher<String> vertexType() {
-    return environment -> getSource(environment).place.getVertexType().name();
+    return environment -> {
+      var place = getSource(environment).place;
+      switch (place.vertexType) {
+        case NORMAL:
+          return LegacyGraphQLVertexType.Normal.label;
+        case TRANSIT:
+          return LegacyGraphQLVertexType.Transit.label;
+        case VEHICLERENTAL:
+          return LegacyGraphQLVertexType.Bikeshare.label;
+        case VEHICLEPARKING:
+          return LegacyGraphQLVertexType.Bikepark.label;
+        default:
+          throw new IllegalStateException("Unhandled vertexType: " + place.getVertexType().name());
+      }
+    };
   }
 
   @Override
@@ -68,9 +82,9 @@ public class LegacyGraphQLPlaceImpl implements LegacyGraphQLDataFetchers.LegacyG
     return environment -> {
       Place place = getSource(environment).place;
 
-      if (!place.getVertexType().equals(VertexType.BIKESHARE)) { return null; }
+      if (!place.getVertexType().equals(VertexType.VEHICLERENTAL)) { return null; }
 
-      return place.vehicleRentalStation;
+      return place.vehicleRentalPlace;
     };
   }
 
@@ -79,12 +93,12 @@ public class LegacyGraphQLPlaceImpl implements LegacyGraphQLDataFetchers.LegacyG
     return environment -> {
       Place place = getSource(environment).place;
 
-      if (!place.vertexType.equals(VertexType.BIKESHARE)
-              || !(place.vehicleRentalStation instanceof VehicleRentalStation)) {
+      if (!place.vertexType.equals(VertexType.VEHICLERENTAL)
+              || !(place.vehicleRentalPlace instanceof VehicleRentalStation)) {
         return null;
       }
 
-      return (VehicleRentalStation) place.vehicleRentalStation;
+      return (VehicleRentalStation) place.vehicleRentalPlace;
     };
   }
 
@@ -93,16 +107,15 @@ public class LegacyGraphQLPlaceImpl implements LegacyGraphQLDataFetchers.LegacyG
     return environment -> {
       Place place = getSource(environment).place;
 
-      if (!place.vertexType.equals(VertexType.BIKESHARE)
-              || !(place.vehicleRentalStation instanceof VehicleRentalVehicle)) {
+      if (!place.vertexType.equals(VertexType.VEHICLERENTAL)
+              || !(place.vehicleRentalPlace instanceof VehicleRentalVehicle)) {
         return null;
       }
 
-      return (VehicleRentalVehicle) place.vehicleRentalStation;
+      return (VehicleRentalVehicle) place.vehicleRentalPlace;
     };
   }
 
-  // TODO
   @Override
   public DataFetcher<Object> bikePark() {
     return this::getVehicleParking;

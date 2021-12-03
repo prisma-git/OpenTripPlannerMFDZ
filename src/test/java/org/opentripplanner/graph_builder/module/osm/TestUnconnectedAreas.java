@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -40,9 +41,9 @@ public class TestUnconnectedAreas {
       int nParkAndRideLink = gg.getEdgesOfType(StreetVehicleParkingLink.class).size();
       int nParkAndRideEdge = gg.getEdgesOfType(VehicleParkingEdge.class).size();
 
-      assertEquals(12, nParkAndRide);
-      assertEquals(38, nParkAndRideLink);
-      assertEquals(42, nParkAndRideEdge);
+      assertEquals(11, nParkAndRide);
+      assertEquals(30, nParkAndRideLink);
+      assertEquals(41, nParkAndRideEdge);
     }
 
     @Test
@@ -57,10 +58,9 @@ public class TestUnconnectedAreas {
         int nParkAndRideLink = gg.getEdgesOfType(StreetVehicleParkingLink.class).size();
         int nParkAndRideEdge = gg.getEdgesOfType(VehicleParkingEdge.class).size();
 
-        assertEquals(13, nParkAndRideEntrances);
-        assertEquals(32, nParkAndRideLink);
-        assertEquals(33, nParkAndRideEdge);
-        
+        assertEquals(11, nParkAndRideEntrances);
+        assertEquals(24, nParkAndRideLink);
+        assertEquals(31, nParkAndRideEdge);
     }
 
     /**
@@ -102,9 +102,9 @@ public class TestUnconnectedAreas {
       * Additionally, the node of the ring is duplicated to test this corner case.
       */
      @Test
-     public void testRoadPassingOverDuplicatedNode () {
-    	 List<String> connections = testGeometricGraphWithClasspathFile("coincident_pr_dupl.osm.pbf", 1, 2);
-    	 
+     public void testRoadPassingOverDuplicatedNode () throws URISyntaxException {
+         List<String> connections = testGeometricGraphWithClasspathFile("coincident_pr_dupl.osm.pbf", 1, 2);
+
     	 // depending on what order everything comes out of the spatial index, we will inject one of
     	 // the duplicated nodes into the way. When we get to the other ringsegments, we will just inject
     	 // the node that has already been injected into the way. So either of these cases are valid.

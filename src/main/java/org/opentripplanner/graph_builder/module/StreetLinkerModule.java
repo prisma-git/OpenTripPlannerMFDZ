@@ -9,8 +9,8 @@ import org.opentripplanner.graph_builder.linking.LinkingDirection;
 import org.opentripplanner.graph_builder.services.GraphBuilderModule;
 import org.opentripplanner.routing.core.TraverseMode;
 import org.opentripplanner.routing.core.TraverseModeSet;
-import org.opentripplanner.routing.edgetype.StreetTransitStopLink;
 import org.opentripplanner.routing.edgetype.StreetTransitEntranceLink;
+import org.opentripplanner.routing.edgetype.StreetTransitStopLink;
 import org.opentripplanner.routing.edgetype.StreetVehicleParkingLink;
 import org.opentripplanner.routing.edgetype.VehicleParkingEdge;
 import org.opentripplanner.routing.graph.Graph;
@@ -124,14 +124,17 @@ public class StreetLinkerModule implements GraphBuilderModule {
   }
 
   private void linkVehicleParks(Graph graph, DataImportIssueStore issueStore) {
-    // If bike parks have already been linked on the previous round, skip them
     if (graph.hasLinkedBikeParks) {
-      LOG.info("Bike parks have already been linked to the graph, skipping.");
+      LOG.info("Already linked vehicle parks to graph...");
       return;
     }
     LOG.info("Linking vehicle parks to graph...");
     for (VehicleParkingEntranceVertex vehicleParkingEntranceVertex : graph.getVerticesOfType(
         VehicleParkingEntranceVertex.class)) {
+
+      if (vehicleParkingEntranceHasLinks(vehicleParkingEntranceVertex)) {
+        continue;
+      }
 
       if (vehicleParkingEntranceVertex.getParkingEntrance().getVertex() == null) {
         linkVehicleParkingWithLinker(graph, vehicleParkingEntranceVertex);
@@ -140,7 +143,6 @@ public class StreetLinkerModule implements GraphBuilderModule {
 
       if (graph.containsVertex(vehicleParkingEntranceVertex.getParkingEntrance().getVertex())) {
         VehicleParkingHelper.linkToGraph(vehicleParkingEntranceVertex);
-        vehicleParkingEntranceVertex.getParkingEntrance().setVertex(null);
         continue;
       }
 
@@ -148,6 +150,12 @@ public class StreetLinkerModule implements GraphBuilderModule {
       removeVehicleParkingEntranceVertexFromGraph(vehicleParkingEntranceVertex, graph);
 
     }
+    graph.hasLinkedBikeParks = true;
+  }
+
+  private boolean vehicleParkingEntranceHasLinks(VehicleParkingEntranceVertex vehicleParkingEntranceVertex) {
+    return !(vehicleParkingEntranceVertex.getIncoming().stream().allMatch(VehicleParkingEdge.class::isInstance)
+            && vehicleParkingEntranceVertex.getOutgoing().stream().allMatch(VehicleParkingEdge.class::isInstance));
   }
 
   private static void linkVehicleParkingWithLinker(Graph graph, VehicleParkingEntranceVertex vehicleParkingVertex) {
@@ -177,7 +185,6 @@ public class StreetLinkerModule implements GraphBuilderModule {
               )
       );
     }
-    graph.hasLinkedBikeParks = true;
   }
 
   private void removeVehicleParkingEntranceVertexFromGraph(VehicleParkingEntranceVertex vehicleParkingEntranceVertex, Graph graph) {
