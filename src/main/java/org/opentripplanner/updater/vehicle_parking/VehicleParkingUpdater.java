@@ -21,6 +21,7 @@ import org.opentripplanner.routing.vehicle_parking.VehicleParking;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingHelper;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingService;
 import org.opentripplanner.routing.vertextype.VehicleParkingEntranceVertex;
+import org.opentripplanner.updater.DataSource;
 import org.opentripplanner.updater.GraphWriterRunnable;
 import org.opentripplanner.updater.PollingGraphUpdater;
 import org.opentripplanner.updater.WriteToGraphCallback;
@@ -47,10 +48,9 @@ public class VehicleParkingUpdater extends PollingGraphUpdater {
 
     private VehicleParkingService vehicleParkingService;
 
-    public VehicleParkingUpdater(VehicleParkingUpdaterParameters parameters) {
+    public VehicleParkingUpdater(VehicleParkingUpdaterParameters parameters, VehicleParkingDataSource source) {
         super(parameters);
-        // Set source from preferences
-        source = new KmlBikeParkDataSource(parameters.sourceParameters());
+        this.source = source;
 
         LOG.info("Creating bike-park updater running every {} seconds : {}", pollingPeriodSeconds, source);
     }

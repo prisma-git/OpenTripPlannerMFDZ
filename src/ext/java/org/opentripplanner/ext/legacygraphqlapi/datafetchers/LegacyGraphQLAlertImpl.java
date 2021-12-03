@@ -38,7 +38,6 @@ public class LegacyGraphQLAlertImpl implements LegacyGraphQLDataFetchers.LegacyG
     );
   }
 
-  @Override
   public DataFetcher<String> alertId() {
     return environment -> getSource(environment).getId();
   }

@@ -1,17 +1,11 @@
 package org.opentripplanner.model.plan;
 
+import lombok.Getter;
 import org.opentripplanner.model.StopLocation;
 import org.opentripplanner.model.WgsCoordinate;
 import org.opentripplanner.model.base.ToStringBuilder;
-import org.opentripplanner.routing.api.request.RoutingRequest;
-import org.opentripplanner.routing.core.TraverseMode;
 import org.opentripplanner.routing.graph.Vertex;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalPlace;
-import org.opentripplanner.routing.vehicle_rental.VehicleRentalStation;
-import org.opentripplanner.routing.vertextype.TransitStopVertex;
-import org.opentripplanner.routing.vertextype.VehicleParkingEntranceVertex;
-import org.opentripplanner.routing.vertextype.VehicleRentalStationVertex;
-import org.opentripplanner.routing.graph.Vertex;
 import org.opentripplanner.routing.vertextype.TransitStopVertex;
 import org.opentripplanner.routing.vertextype.VehicleParkingEntranceVertex;
 import org.opentripplanner.routing.vertextype.VehicleRentalStationVertex;
@@ -20,8 +14,6 @@ import org.opentripplanner.routing.vertextype.VehicleRentalStationVertex;
 * A Place is where a journey starts or ends, or a transit stop along the way.
 */
 @Getter
-@Builder(toBuilder = true)
-@AllArgsConstructor
 public class Place {
 
     /** 
@@ -60,17 +52,12 @@ public class Place {
     /**
      * The vehicle parking entrance if the type is {@link VertexType#VEHICLEPARKING}.
      */
-    private VehicleParkingWithEntrance vehicleParkingWithEntrance;
+    public final VehicleParkingWithEntrance vehicleParkingWithEntrance;
 
     /**
      * The vehicle rental place if the type is {@link VertexType#VEHICLERENTAL}.
      */
     public final VehicleRentalPlace vehicleRentalPlace;
-
-    /**
-     * The vehicle parking entrance if the type is {@link VertexType#VEHICLEPARKING}.
-     */
-    public final VehicleParkingWithEntrance vehicleParkingWithEntrance;
 
     private Place(
             String name,
@@ -146,7 +133,11 @@ public class Place {
                 null,
                 WgsCoordinate.creatOptionalCoordinate(lat, lon),
                 VertexType.NORMAL,
-                null, null, null, null, null
+                null,
+                null,
+                null,
+                null,
+                null
         );
     }
 
@@ -223,7 +214,7 @@ public class Place {
         );
     }
 
-    public static Place forVehicleParkingEntrance(VehicleParkingEntranceVertex vertex, String name) {
+    public static Place forVehicleParkingEntrance(VehicleParkingEntranceVertex vertex, String name, boolean closesSoon) {
         return new Place(
                 name,
                 null,
@@ -236,6 +227,7 @@ public class Place {
                 VehicleParkingWithEntrance.builder()
                         .vehicleParking(vertex.getVehicleParking())
                         .entrance(vertex.getParkingEntrance())
+                        .closesSoon(closesSoon)
                         .build()
         );
     }

@@ -5,7 +5,6 @@ import java.util.Locale;
 import org.opentripplanner.ext.flex.edgetype.FlexTripEdge;
 import org.opentripplanner.model.plan.Leg;
 import org.opentripplanner.model.plan.Place;
-import org.opentripplanner.model.plan.Place;
 import org.opentripplanner.routing.algorithm.mapping.GraphPathToItineraryMapper;
 
 public class FlexLegMapper {
@@ -25,11 +24,6 @@ public class FlexLegMapper {
         leg.pickupBookingInfo = flexTripEdge.getFlexTrip().getPickupBookingInfo(leg.from.getStopIndex());
 
         leg.generalizedCost = flexTripEdge.getTimeInSeconds();
-    }
-
-    public static void addFlexPlaces(Leg leg, FlexTripEdge flexEdge, Locale requestedLocale) {
-        leg.from = Place.forFlexStop(flexEdge.s1, flexEdge.getFromVertex(), flexEdge.flexTemplate.fromStopIndex, null);
-        leg.to = Place.forFlexStop(flexEdge.s2, flexEdge.getToVertex(), flexEdge.flexTemplate.toStopIndex, null);
     }
 
     public static void addFlexPlaces(Leg leg, FlexTripEdge flexEdge, Locale requestedLocale) {

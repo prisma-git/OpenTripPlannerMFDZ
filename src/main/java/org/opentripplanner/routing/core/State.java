@@ -463,7 +463,6 @@ public class State implements Cloneable {
         State newState = new State(this.vertex, getTimeSeconds(), stateData.opt.reversedClone());
         // TODO Check if those two lines are needed:
         newState.stateData.vehicleRentalState = stateData.vehicleRentalState;
-        newState.stateData.vehicleParked = stateData.vehicleParked;
         newState.stateData.carPickupState = stateData.carPickupState;
         newState.stateData.vehicleParked = stateData.vehicleParked;
         newState.stateData.timeRestrictions = new ArrayList<>(getTimeRestrictions());

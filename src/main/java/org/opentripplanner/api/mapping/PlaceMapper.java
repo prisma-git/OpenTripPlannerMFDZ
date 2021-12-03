@@ -1,7 +1,6 @@
 package org.opentripplanner.api.mapping;
 
 import java.util.ArrayList;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;

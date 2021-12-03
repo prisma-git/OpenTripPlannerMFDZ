@@ -394,18 +394,6 @@ public class RoutingRequest implements AutoCloseable, Cloneable, Serializable {
      */
     public int vehicleParkingClosesSoonSeconds = 30 * 60;
 
-    /** Time to park a car */
-    public int carParkTime = 60;
-
-    /** Cost of parking a car. */
-    public int carParkCost = 120;
-
-    /** Tags which are required to use a vehicle parking. If empty, no tags are required. */
-    public Set<String> requiredVehicleParkingTags = Set.of();
-
-    /** Tags with which a vehicle parking will not be used. If empty, no tags are banned. */
-    public Set<String> bannedVehicleParkingTags = Set.of();
-
     /**
      * Time to park a car in a park and ride, w/o taking into account driving and walking cost
      * (time to park, switch off, pick your stuff, lock the car, etc...)
@@ -703,6 +691,18 @@ public class RoutingRequest implements AutoCloseable, Cloneable, Serializable {
     public boolean carPickup = false;
 
     public Set<FormFactor> allowedRentalFormFactors = new HashSet<>();
+
+    /**
+     * If {@code true}, then {@link org.opentripplanner.routing.core.TimeRestriction} on edges will
+     * be ignored and collected using {@link org.opentripplanner.routing.core.StateEditor#addTimeRestriction(TimeRestrictionWithOffset, Object)}.
+     * This is used to construct {@link org.opentripplanner.routing.algorithm.raptor.transit.AccessEgress} objects for RAPTOR.
+     */
+    public boolean ignoreAndCollectTimeRestrictions = false;
+
+    /**
+     * If true vehicle parking availability information will be used to plan park and ride trips where it exists.
+     */
+    public boolean useVehicleParkingAvailabilityInformation = false;
 
     /** The function that compares paths converging on the same vertex to decide which ones continue to be explored. */
     public DominanceFunction dominanceFunction = new DominanceFunction.Pareto();
@@ -1116,7 +1116,6 @@ public class RoutingRequest implements AutoCloseable, Cloneable, Serializable {
 
             clone.requiredVehicleParkingTags = Set.copyOf(requiredVehicleParkingTags);
             clone.bannedVehicleParkingTags = Set.copyOf(bannedVehicleParkingTags);
-
             clone.preferredVehicleParkingTags = Set.copyOf(preferredVehicleParkingTags);
             clone.unpreferredVehicleParkingTagPenalty = unpreferredVehicleParkingTagPenalty;
 

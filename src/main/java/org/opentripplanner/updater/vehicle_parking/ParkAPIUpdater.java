@@ -12,13 +12,14 @@ import org.opentripplanner.model.FeedScopedId;
 import org.opentripplanner.routing.core.OsmOpeningHours;
 import org.opentripplanner.routing.core.TimeRestriction;
 import org.opentripplanner.routing.vehicle_parking.VehicleParking;
-import org.opentripplanner.routing.vehicle_parking.VehicleParking.VehiclePlaces;
+import org.opentripplanner.routing.vehicle_parking.VehicleParkingSpaces;
+import org.opentripplanner.routing.vehicle_parking.VehicleParkingState;
 import org.opentripplanner.updater.GenericJsonDataSource;
 import org.opentripplanner.util.I18NString;
 import org.opentripplanner.util.NonLocalizedString;
 import org.opentripplanner.util.TranslatedString;
 
-abstract class ParkAPIUpdater extends GenericJsonDataSource<VehicleParking> {
+abstract class ParkAPIUpdater extends GenericJsonDataSource<VehicleParking> implements VehicleParkingDataSource {
 
     private static final String JSON_PARSE_PATH = "lots";
 
@@ -29,6 +30,11 @@ abstract class ParkAPIUpdater extends GenericJsonDataSource<VehicleParking> {
         super(url, JSON_PARSE_PATH);
         this.feedId = feedId;
         this.staticTags = staticTags;
+    }
+
+    @Override
+    public List<VehicleParking> getVehicleParkings() {
+        return getUpdates();
     }
 
     @Override
@@ -62,8 +68,8 @@ abstract class ParkAPIUpdater extends GenericJsonDataSource<VehicleParking> {
 
         var stateText = jsonNode.get("state").asText();
         var state = stateText.equals("closed")
-                ? VehicleParking.VehicleParkingState.CLOSED
-                : VehicleParking.VehicleParkingState.OPERATIONAL;
+                ? VehicleParkingState.CLOSED
+                : VehicleParkingState.OPERATIONAL;
 
         var tags = parseTags(jsonNode, "lot_type", "address", "forecast", "state");
         tags.addAll(staticTags);
@@ -94,11 +100,11 @@ abstract class ParkAPIUpdater extends GenericJsonDataSource<VehicleParking> {
                 .build();
     }
 
-    abstract VehiclePlaces parseCapacity(JsonNode jsonNode);
+    abstract VehicleParkingSpaces parseCapacity(JsonNode jsonNode);
 
-    abstract VehiclePlaces parseAvailability(JsonNode jsonNode);
+    abstract VehicleParkingSpaces parseAvailability(JsonNode jsonNode);
 
-    protected VehiclePlaces parseVehiclePlaces(
+    protected VehicleParkingSpaces parseVehicleParkingSpaces(
             JsonNode node,
             String bicycleTag,
             String carTag,
@@ -112,15 +118,15 @@ abstract class ParkAPIUpdater extends GenericJsonDataSource<VehicleParking> {
             return null;
         }
 
-        return createVehiclePlaces(carSpaces, wheelchairAccessibleCarSpaces, bicycleSpaces);
+        return createVehicleParkingSpaces(carSpaces, wheelchairAccessibleCarSpaces, bicycleSpaces);
     }
 
-    private VehicleParking.VehiclePlaces createVehiclePlaces(
+    private VehicleParkingSpaces createVehicleParkingSpaces(
             Integer carSpaces,
             Integer wheelchairAccessibleCarSpaces,
             Integer bicycleSpaces
     ) {
-        return VehicleParking.VehiclePlaces.builder()
+        return VehicleParkingSpaces.builder()
                 .bicycleSpaces(bicycleSpaces)
                 .carSpaces(carSpaces)
                 .wheelchairAccessibleCarSpaces(wheelchairAccessibleCarSpaces)

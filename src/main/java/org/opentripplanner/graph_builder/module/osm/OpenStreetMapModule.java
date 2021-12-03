@@ -514,9 +514,9 @@ public class OpenStreetMapModule implements GraphBuilderModule {
                 wheelchairAccessibleCapacity = OptionalInt.empty();
             }
 
-            VehicleParking.VehiclePlaces vehiclePlaces = null;
+            VehicleParkingSpaces vehiclePlaces = null;
             if (bicycleCapacity.isPresent() || carCapacity.isPresent() || wheelchairAccessibleCapacity.isPresent()) {
-                vehiclePlaces = VehicleParking.VehiclePlaces.builder()
+                vehiclePlaces = VehicleParkingSpaces.builder()
                     .bicycleSpaces(bicycleCapacity.isPresent() ? bicycleCapacity.getAsInt() : null)
                     .carSpaces(carCapacity.isPresent() ? carCapacity.getAsInt() : null)
                     .wheelchairAccessibleCarSpaces(wheelchairAccessibleCapacity.isPresent() ? wheelchairAccessibleCapacity.getAsInt() : null)
@@ -608,6 +608,7 @@ public class OpenStreetMapModule implements GraphBuilderModule {
                     .collect(Collectors.toList());
         }
 
+
         private List<VertexAndName> processVehicleParkingArea(Ring ring, OSMWithTags entity, Envelope envelope) {
             List<VertexAndName> accessVertices = new ArrayList<>();
             for (OSMNode node : ring.nodes) {
@@ -616,11 +617,11 @@ public class OpenStreetMapModule implements GraphBuilderModule {
                 if (accessVertex.getIncoming().isEmpty()
                         || accessVertex.getOutgoing().isEmpty())
                     continue;
-                accessVertices.add(VertexAndName.of(node.getAssumedName(), accessVertex));
+                accessVertices.add(new VertexAndName(node.getAssumedName(), accessVertex));
             }
 
             accessVertices.addAll(
-                    ring.holes.stream()
+                    ring.getHoles().stream()
                             .flatMap(innerRing -> processVehicleParkingArea(innerRing, entity, envelope).stream())
                             .collect(Collectors.toList())
             );
@@ -636,7 +637,7 @@ public class OpenStreetMapModule implements GraphBuilderModule {
         ) {
             LOG.warn("Adding artificial entrance to centroid of vehicle parking {}, because it is not connected to the street network.", entity.getOpenStreetMapLink());
 
-            var centroid = area.outermostRings.get(0).toJtsPolygon().getCentroid();
+            var centroid = area.outermostRings.get(0).jtsPolygon.getCentroid();
 
             return List.of((builder) -> builder
                         .entranceId(new FeedScopedId(VEHICLE_PARKING_OSM_FEED_ID, String.format("%s/%d/centroid", entity.getClass().getSimpleName(), entity.getId())))

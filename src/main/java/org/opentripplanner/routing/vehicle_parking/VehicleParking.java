@@ -14,6 +14,7 @@ import lombok.Setter;
 import org.opentripplanner.model.FeedScopedId;
 import org.opentripplanner.routing.core.TimeRestriction;
 import org.opentripplanner.routing.core.TraverseMode;
+import org.opentripplanner.routing.vehicle_parking.VehicleParkingEntrance.VehicleParkingEntranceBuilder;
 import org.opentripplanner.routing.vertextype.StreetVertex;
 import org.opentripplanner.util.I18NString;
 
@@ -68,40 +69,16 @@ public class VehicleParking implements Serializable {
   @Getter(AccessLevel.NONE)
   private final boolean wheelchairAccessibleCarPlaces;
 
-  private final VehiclePlaces capacity;
+  private final VehicleParkingSpaces capacity;
 
   @EqualsAndHashCode.Exclude
-  private VehiclePlaces availability;
+  private VehicleParkingSpaces availability;
 
   @Builder.Default
   private final List<VehicleParkingEntrance> entrances = new ArrayList<>();
 
   public String toString() {
     return String.format(Locale.US, "VehicleParking(%s at %.6f, %.6f)", name, y, x);
-  }
-
-  /**
-   * The number of spaces by type. {@code null} if unknown.
-   */
-  @Data
-  @Builder
-  public static class VehiclePlaces implements Serializable {
-
-    private final Integer bicycleSpaces;
-
-    private final Integer carSpaces;
-
-    private final Integer wheelchairAccessibleCarSpaces;
-  }
-
-  /**
-   * The state of the vehicle parking. TEMPORARILY_CLOSED and CLOSED are distinct states so that
-   * they may be represented differently to the user.
-   */
-  public enum VehicleParkingState {
-    OPERATIONAL,
-    TEMPORARILY_CLOSED,
-    CLOSED
   }
 
   public boolean hasSpacesAvailable(TraverseMode traverseMode, boolean wheelchairAccessible, boolean useAvailability) {
@@ -168,7 +145,7 @@ public class VehicleParking implements Serializable {
     }
   }
 
-  public void updateAvailability(VehiclePlaces availability) {
+  public void updateAvailability(VehicleParkingSpaces availability) {
     this.availability = availability;
   }
 
@@ -180,35 +157,9 @@ public class VehicleParking implements Serializable {
     entrances.add(entrance);
   }
 
-  @Getter
-  @Builder
-  @EqualsAndHashCode
-  public static class VehicleParkingEntrance implements Serializable {
-
-    @EqualsAndHashCode.Exclude
-    private final VehicleParking vehicleParking;
-
-    private final FeedScopedId entranceId;
-
-    private final double x, y;
-
-    private final I18NString name;
-
-    // Used to explicitly specify the intersection to link to instead of using (x, y)
-    @EqualsAndHashCode.Exclude
-    @Setter
-    private transient StreetVertex vertex;
-
-    // If this entrance should be linked to car accessible streets
-    private final boolean carAccessible;
-
-    // If this entrance should be linked to walk/bike accessible streets
-    private final boolean walkAccessible;
-  }
-
   @FunctionalInterface
   public interface VehicleParkingEntranceCreator {
-    VehicleParkingEntrance.VehicleParkingEntranceBuilder updateValues(VehicleParkingEntrance.VehicleParkingEntranceBuilder builder);
+    VehicleParkingEntranceBuilder updateValues(VehicleParkingEntranceBuilder builder);
   }
 
   /*

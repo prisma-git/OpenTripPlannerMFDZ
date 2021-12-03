@@ -8,7 +8,7 @@ import org.opentripplanner.common.model.T2;
 import org.opentripplanner.ext.vectortiles.PropertyMapper;
 import org.opentripplanner.routing.graph.Graph;
 import org.opentripplanner.routing.vehicle_parking.VehicleParking;
-import org.opentripplanner.routing.vehicle_parking.VehicleParking.VehiclePlaces;
+import org.opentripplanner.routing.vehicle_parking.VehicleParkingSpaces;
 import org.opentripplanner.util.I18NString;
 import org.opentripplanner.util.TranslatedString;
 
@@ -74,7 +74,7 @@ public class DigitransitVehicleParkingPropertyMapper extends PropertyMapper<Vehi
         return items;
     }
 
-    private static List<T2<String, Object>> mapPlaces(String key, VehiclePlaces places) {
+    private static List<T2<String, Object>> mapPlaces(String key, VehicleParkingSpaces places) {
         if (places == null) {
             return List.of();
         }

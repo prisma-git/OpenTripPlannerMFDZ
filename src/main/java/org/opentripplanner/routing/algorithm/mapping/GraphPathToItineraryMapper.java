@@ -506,7 +506,7 @@ public abstract class GraphPathToItineraryMapper {
         if (vertex instanceof TransitStopVertex) {
             return Place.forStop((TransitStopVertex) vertex, name);
         } else if(vertex instanceof VehicleRentalStationVertex) {
-            return Place.forBikeRentalStation((VehicleRentalStationVertex) vertex, name);
+            return Place.forVehicleRentalPlace((VehicleRentalStationVertex) vertex, name);
         } else if (vertex instanceof VehicleParkingEntranceVertex) {
             var vehicleParking = ((VehicleParkingEntranceVertex) vertex).getVehicleParking();
             var limit = state.getTimeAsZonedDateTime()
@@ -517,7 +517,7 @@ public abstract class GraphPathToItineraryMapper {
                 closesSoon = !vehicleParking.getOpeningHours()
                         .isTraverseableAt(limit.toLocalDateTime());
             }
-            return Place.forVehicleParkingEntrance((VehicleParkingEntranceVertex) vertex, name, closesSoon, state.getOptions());
+            return Place.forVehicleParkingEntrance((VehicleParkingEntranceVertex) vertex, name, closesSoon);
         } else {
             return Place.normal(vertex, name);
         }

@@ -8,6 +8,7 @@ import org.opentripplanner.routing.edgetype.VehicleParkingEdge;
 import org.opentripplanner.routing.graph.Graph;
 import org.opentripplanner.routing.vehicle_parking.VehicleParking;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingService;
+import org.opentripplanner.routing.vehicle_parking.VehicleParkingSpaces;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingTestBase;
 import org.opentripplanner.routing.vertextype.VehicleParkingEntranceVertex;
 import org.opentripplanner.updater.DataSource;
@@ -22,7 +23,7 @@ import static org.mockito.Mockito.when;
 
 class VehicleParkingUpdaterTest extends VehicleParkingTestBase {
 
-  private DataSource<VehicleParking> dataSource;
+  private VehicleParkingDataSource dataSource;
   private VehicleParkingUpdater vehicleParkingUpdater;
 
   @BeforeEach
@@ -30,7 +31,7 @@ class VehicleParkingUpdaterTest extends VehicleParkingTestBase {
   public void setup() {
     initGraph();
 
-    dataSource = (DataSource<VehicleParking>) Mockito.mock(DataSource.class);
+    dataSource = (VehicleParkingDataSource) Mockito.mock(DataSource.class);
     when(dataSource.update()).thenReturn(true);
 
     var parameters = new VehicleParkingUpdaterParameters(null, null, null, null, -1, false, null, null);
@@ -44,7 +45,7 @@ class VehicleParkingUpdaterTest extends VehicleParkingTestBase {
         createParingWithEntrances("1", 0.0001, 0)
     );
 
-    when(dataSource.getUpdates()).thenReturn(vehicleParkings);
+    when(dataSource.getVehicleParkings()).thenReturn(vehicleParkings);
     runUpdaterOnce();
 
     assertVehicleParkingsInGraph(1);
@@ -105,7 +106,7 @@ class VehicleParkingUpdaterTest extends VehicleParkingTestBase {
 
   @Test
   public void updateVehicleParkingTest() {
-    var vehiclePlaces = VehicleParking.VehiclePlaces.builder()
+    var vehiclePlaces = VehicleParkingSpaces.builder()
         .bicycleSpaces(1)
         .build();
 
@@ -113,7 +114,7 @@ class VehicleParkingUpdaterTest extends VehicleParkingTestBase {
         createParingWithEntrances("1", 0.0001, 0, vehiclePlaces)
     );
 
-    when(dataSource.getUpdates()).thenReturn(vehicleParkings);
+    when(dataSource.getVehicleParkings()).thenReturn(vehicleParkings);
     runUpdaterOnce();
 
     assertVehicleParkingsInGraph(1);
@@ -129,7 +130,7 @@ class VehicleParkingUpdaterTest extends VehicleParkingTestBase {
         createParingWithEntrances("1", 0.0001, 0, vehiclePlaces)
     );
 
-    when(dataSource.getUpdates()).thenReturn(vehicleParkings);
+    when(dataSource.getVehicleParkings()).thenReturn(vehicleParkings);
     runUpdaterOnce();
 
     assertVehicleParkingsInGraph(1);
@@ -146,14 +147,14 @@ class VehicleParkingUpdaterTest extends VehicleParkingTestBase {
         createParingWithEntrances("2", -0.0001, 0)
     );
 
-    when(dataSource.getUpdates()).thenReturn(vehicleParkings);
+    when(dataSource.getVehicleParkings()).thenReturn(vehicleParkings);
     runUpdaterOnce();
 
     assertVehicleParkingsInGraph(2);
 
     vehicleParkings = List.of(createParingWithEntrances("1", 0.0001, 0));
 
-    when(dataSource.getUpdates()).thenReturn(vehicleParkings);
+    when(dataSource.getVehicleParkings()).thenReturn(vehicleParkings);
     runUpdaterOnce();
 
     assertVehicleParkingsInGraph(1);
@@ -165,7 +166,7 @@ class VehicleParkingUpdaterTest extends VehicleParkingTestBase {
         .state(VehicleParking.VehicleParkingState.CLOSED)
         .build();
 
-    when(dataSource.getUpdates()).thenReturn(List.of(vehicleParking));
+    when(dataSource.getVehicleParkings()).thenReturn(List.of(vehicleParking));
     runUpdaterOnce();
 
     assertEquals(1, graph.getService(VehicleParkingService.class).getVehicleParkings().count());
@@ -189,7 +190,7 @@ class VehicleParkingUpdaterTest extends VehicleParkingTestBase {
         .state(VehicleParking.VehicleParkingState.CLOSED)
         .build();
 
-    when(dataSource.getUpdates()).thenReturn(List.of(vehicleParking));
+    when(dataSource.getVehicleParkings()).thenReturn(List.of(vehicleParking));
     runUpdaterOnce();
 
     var vehicleParkingService =  graph.getService(VehicleParkingService.class);
@@ -206,7 +207,7 @@ class VehicleParkingUpdaterTest extends VehicleParkingTestBase {
         .state(VehicleParking.VehicleParkingState.CLOSED)
         .build();
 
-    when(dataSource.getUpdates()).thenReturn(List.of(vehicleParking));
+    when(dataSource.getVehicleParkings()).thenReturn(List.of(vehicleParking));
     runUpdaterOnce();
 
     assertEquals(1, vehicleParkingService.getVehicleParkings().count());
@@ -220,13 +221,13 @@ class VehicleParkingUpdaterTest extends VehicleParkingTestBase {
         .state(VehicleParking.VehicleParkingState.CLOSED)
         .build();
 
-    when(dataSource.getUpdates()).thenReturn(List.of(vehicleParking));
+    when(dataSource.getVehicleParkings()).thenReturn(List.of(vehicleParking));
     runUpdaterOnce();
 
     var vehicleParkingService =  graph.getService(VehicleParkingService.class);
     assertEquals(1, vehicleParkingService.getVehicleParkings().count());
 
-    when(dataSource.getUpdates()).thenReturn(List.of());
+    when(dataSource.getVehicleParkings()).thenReturn(List.of());
     runUpdaterOnce();
 
     assertEquals(0, vehicleParkingService.getVehicleParkings().count());
