@@ -75,8 +75,7 @@ public class ApiPlace {
     public String bikeShareId;
 
     /**
-     *
+     * In case the vertex is of type VEHICLEPARKING.
      */
     public ApiVehicleParkingWithEntrance vehicleParking;
-
 }

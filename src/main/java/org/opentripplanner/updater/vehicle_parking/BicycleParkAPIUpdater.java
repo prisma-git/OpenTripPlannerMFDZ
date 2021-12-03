@@ -2,7 +2,7 @@ package org.opentripplanner.updater.vehicle_parking;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.Collection;
-import org.opentripplanner.routing.vehicle_parking.VehicleParking.VehiclePlaces;
+import org.opentripplanner.routing.vehicle_parking.VehicleParkingSpaces;
 
 public class BicycleParkAPIUpdater extends ParkAPIUpdater {
 
@@ -11,12 +11,12 @@ public class BicycleParkAPIUpdater extends ParkAPIUpdater {
     }
 
     @Override
-    protected VehiclePlaces parseCapacity(JsonNode jsonNode) {
-        return parseVehiclePlaces(jsonNode, "total", null, null);
+    protected VehicleParkingSpaces parseCapacity(JsonNode jsonNode) {
+        return parseVehicleParkingSpaces(jsonNode, "total", null, null);
     }
 
     @Override
-    protected VehiclePlaces parseAvailability(JsonNode jsonNode) {
-        return parseVehiclePlaces(jsonNode, "free", null, null);
+    protected VehicleParkingSpaces parseAvailability(JsonNode jsonNode) {
+        return parseVehicleParkingSpaces(jsonNode, "free", null, null);
     }
 }

@@ -23,8 +23,9 @@ import org.opentripplanner.model.FeedScopedId;
 import org.opentripplanner.routing.core.OsmOpeningHours;
 import org.opentripplanner.routing.graph.Graph;
 import org.opentripplanner.routing.vehicle_parking.VehicleParking;
-import org.opentripplanner.routing.vehicle_parking.VehicleParking.VehiclePlaces;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingService;
+import org.opentripplanner.routing.vehicle_parking.VehicleParkingSpaces;
+import org.opentripplanner.routing.vehicle_parking.VehicleParkingState;
 import org.opentripplanner.util.NonLocalizedString;
 import org.opentripplanner.util.TranslatedString;
 
@@ -59,9 +60,9 @@ public class VehicleParkingsLayerTest {
                 .tags(List.of("tag1", "tag2"))
                 .openingHours(OsmOpeningHours.parseFromOsm("Mo-Fr 07:30-9:30"))
                 .feeHours(null)
-                .state(VehicleParking.VehicleParkingState.OPERATIONAL)
-                .capacity(VehiclePlaces.builder().bicycleSpaces(5).carSpaces(6).build())
-                .availability(VehiclePlaces.builder().wheelchairAccessibleCarSpaces(1).bicycleSpaces(1).build())
+                .state(VehicleParkingState.OPERATIONAL)
+                .capacity(VehicleParkingSpaces.builder().bicycleSpaces(5).carSpaces(6).build())
+                .availability(VehicleParkingSpaces.builder().wheelchairAccessibleCarSpaces(1).bicycleSpaces(1).build())
                 .build();
     }
 

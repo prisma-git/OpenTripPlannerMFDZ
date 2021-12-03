@@ -1,16 +1,15 @@
 package org.opentripplanner.routing.edgetype;
 
 import java.util.Set;
+import java.util.Locale;
 import org.locationtech.jts.geom.LineString;
 import org.opentripplanner.routing.api.request.RoutingRequest;
 import org.opentripplanner.routing.core.State;
 import org.opentripplanner.routing.core.StateEditor;
 import org.opentripplanner.routing.graph.Edge;
 import org.opentripplanner.routing.graph.Vertex;
-import org.opentripplanner.routing.vertextype.VehicleRentalStationVertex;
 import org.opentripplanner.routing.vertextype.StreetVertex;
-
-import java.util.Locale;
+import org.opentripplanner.routing.vertextype.VehicleRentalStationVertex;
 
 /**
  * This represents the connection between a street vertex and a bike rental station vertex.
@@ -58,6 +57,10 @@ public class StreetVehicleRentalLink extends Edge {
         // This prevents the router from using bike rental stations as shortcuts to get around
         // turn restrictions.
         if (s0.getBackEdge() instanceof StreetVehicleRentalLink) {
+            return null;
+        }
+
+        if (vehicleRentalStationVertex.getStation().networkIsNotAllowed(s0.getOptions())) {
             return null;
         }
 

@@ -2,6 +2,7 @@ package org.opentripplanner.routing.core;
 
 import java.util.List;
 import java.util.Set;
+import org.opentripplanner.routing.vehicle_rental.RentalVehicleType.FormFactor;
 import org.opentripplanner.routing.api.request.RoutingRequest;
 
 /**
@@ -56,6 +57,8 @@ public class StateData implements Cloneable {
     protected boolean backWalkingBike;
 
     public String vehicleRentalNetwork;
+
+    public FormFactor rentalVehicleFormFactor;
 
     /* This boolean is set to true upon transition from a normal street to a no-through-traffic street. */
     protected boolean enteredNoThroughTrafficArea;

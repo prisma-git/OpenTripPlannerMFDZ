@@ -74,6 +74,6 @@ public class OSMNode extends OSMWithTags {
 
     @Override
     public String getOpenStreetMapLink() {
-        return String.format("http://www.openstreetmap.org/node/%d", getId());
+        return String.format("https://www.openstreetmap.org/node/%d", getId());
     }
 }

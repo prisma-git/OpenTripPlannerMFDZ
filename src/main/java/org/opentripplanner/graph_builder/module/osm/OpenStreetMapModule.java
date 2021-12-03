@@ -12,6 +12,18 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.OptionalInt;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.OptionalInt;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -29,6 +41,7 @@ import org.opentripplanner.graph_builder.DataImportIssueStore;
 import org.opentripplanner.graph_builder.issues.Graphwide;
 import org.opentripplanner.graph_builder.issues.InvalidVehicleParkingCapacity;
 import org.opentripplanner.graph_builder.issues.ParkAndRideOpeningHoursUnparsed;
+import org.opentripplanner.graph_builder.issues.InvalidVehicleParkingCapacity;
 import org.opentripplanner.graph_builder.issues.ParkAndRideUnlinked;
 import org.opentripplanner.graph_builder.issues.StreetCarSpeedZero;
 import org.opentripplanner.graph_builder.issues.TurnRestrictionBad;
@@ -68,6 +81,11 @@ import org.opentripplanner.routing.vehicle_parking.VehicleParking;
 import org.opentripplanner.routing.vehicle_parking.VehicleParking.VehicleParkingEntranceCreator;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingHelper;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingService;
+import org.opentripplanner.routing.vehicle_parking.VehicleParking;
+import org.opentripplanner.routing.vehicle_parking.VehicleParking.VehicleParkingEntranceCreator;
+import org.opentripplanner.routing.vehicle_parking.VehicleParkingHelper;
+import org.opentripplanner.routing.vehicle_parking.VehicleParkingService;
+import org.opentripplanner.routing.vehicle_parking.VehicleParkingSpaces;
 import org.opentripplanner.routing.vertextype.BarrierVertex;
 import org.opentripplanner.routing.vertextype.ElevatorOffboardVertex;
 import org.opentripplanner.routing.vertextype.ElevatorOnboardVertex;
@@ -287,10 +305,6 @@ public class OpenStreetMapModule implements GraphBuilderModule {
             buildBasicGraph();
             buildWalkableAreas(skipVisibility, platformEntriesLinking);
 
-            if(platformEntriesLinking){
-                linkPlatformEntries(edgeFactory, customNamer);
-            }
-
             if (staticParkAndRide) {
                 buildParkAndRideAreas();
             }
@@ -333,7 +347,8 @@ public class OpenStreetMapModule implements GraphBuilderModule {
             LOG.info("Processing {} P+R nodes.", isCarParkAndRide ? "car" : "bike");
             int n = 0;
             VehicleParkingService vehicleParkingService = graph.getService(
-                    VehicleParkingService.class, true);
+                VehicleParkingService.class, true);
+
             for (OSMNode node : nodes) {
                 n++;
 
@@ -499,9 +514,9 @@ public class OpenStreetMapModule implements GraphBuilderModule {
                 wheelchairAccessibleCapacity = OptionalInt.empty();
             }
 
-            VehicleParking.VehiclePlaces vehiclePlaces = null;
+            VehicleParkingSpaces vehiclePlaces = null;
             if (bicycleCapacity.isPresent() || carCapacity.isPresent() || wheelchairAccessibleCapacity.isPresent()) {
-                vehiclePlaces = VehicleParking.VehiclePlaces.builder()
+                vehiclePlaces = VehicleParkingSpaces.builder()
                     .bicycleSpaces(bicycleCapacity.isPresent() ? bicycleCapacity.getAsInt() : null)
                     .carSpaces(carCapacity.isPresent() ? carCapacity.getAsInt() : null)
                     .wheelchairAccessibleCarSpaces(wheelchairAccessibleCapacity.isPresent() ? wheelchairAccessibleCapacity.getAsInt() : null)
@@ -593,6 +608,7 @@ public class OpenStreetMapModule implements GraphBuilderModule {
                     .collect(Collectors.toList());
         }
 
+
         private List<VertexAndName> processVehicleParkingArea(Ring ring, OSMWithTags entity, Envelope envelope) {
             List<VertexAndName> accessVertices = new ArrayList<>();
             for (OSMNode node : ring.nodes) {
@@ -601,11 +617,11 @@ public class OpenStreetMapModule implements GraphBuilderModule {
                 if (accessVertex.getIncoming().isEmpty()
                         || accessVertex.getOutgoing().isEmpty())
                     continue;
-                accessVertices.add(VertexAndName.of(node.getAssumedName(), accessVertex));
+                accessVertices.add(new VertexAndName(node.getAssumedName(), accessVertex));
             }
 
             accessVertices.addAll(
-                    ring.holes.stream()
+                    ring.getHoles().stream()
                             .flatMap(innerRing -> processVehicleParkingArea(innerRing, entity, envelope).stream())
                             .collect(Collectors.toList())
             );
@@ -621,7 +637,7 @@ public class OpenStreetMapModule implements GraphBuilderModule {
         ) {
             LOG.warn("Adding artificial entrance to centroid of vehicle parking {}, because it is not connected to the street network.", entity.getOpenStreetMapLink());
 
-            var centroid = area.outermostRings.get(0).toJtsPolygon().getCentroid();
+            var centroid = area.outermostRings.get(0).jtsPolygon.getCentroid();
 
             return List.of((builder) -> builder
                         .entranceId(new FeedScopedId(VEHICLE_PARKING_OSM_FEED_ID, String.format("%s/%d/centroid", entity.getClass().getSimpleName(), entity.getId())))
@@ -675,7 +691,8 @@ public class OpenStreetMapModule implements GraphBuilderModule {
             }
             List<AreaGroup> areaGroups = groupAreas(osmdb.getWalkableAreas());
             WalkableAreaBuilder walkableAreaBuilder = new WalkableAreaBuilder(graph, osmdb,
-                    wayPropertySet, edgeFactory, this, issueStore, maxAreaNodes
+                    wayPropertySet, edgeFactory, this, issueStore, maxAreaNodes,
+                    platformEntriesLinking
             );
             if (skipVisibility) {
                 for (AreaGroup group : areaGroups) {
@@ -688,21 +705,11 @@ public class OpenStreetMapModule implements GraphBuilderModule {
                     areaGroups.size()
                 );
                 for (AreaGroup group : areaGroups) {
-                    walkableAreaBuilder.buildWithVisibility(group, platformEntriesLinking);
+                    walkableAreaBuilder.buildWithVisibility(group);
                     //Keep lambda! A method-ref would causes incorrect class and line number to be logged
                     progress.step(m -> LOG.info(m));
                 }
                 LOG.info(progress.completeMessage());
-
-                if(platformEntriesLinking){
-                    List<Area> platforms = osmdb.getWalkableAreas().stream().
-                            filter(area -> "platform".equals(area.parent.getTag("public_transport"))).
-                            collect(Collectors.toList());
-                    List<AreaGroup> platformGroups = groupAreas(platforms);
-                    for (AreaGroup group : platformGroups) {
-                        walkableAreaBuilder.buildWithoutVisibility(group);
-                    }
-                }
             }
 
             // running a request caches the timezone; we need to clear it now so that when agencies are loaded
@@ -929,12 +936,6 @@ public class OpenStreetMapModule implements GraphBuilderModule {
             }
         }
 
-        private void linkPlatformEntries(StreetEdgeFactory factory, CustomNamer customNamer) {
-            PlatformLinker platformLinker = new PlatformLinker(graph, osmdb, factory, customNamer);
-            platformLinker.linkEntriesToPlatforms();
-
-        }
-
         private void buildElevatorEdges(Graph graph) {
             /* build elevator edges */
             for (Long nodeId : multiLevelNodes.keySet()) {
@@ -1152,8 +1153,6 @@ public class OpenStreetMapModule implements GraphBuilderModule {
                     possibleIntersectionNodes.add(nodeId);
                 }
             }
-
-            outerRing.holes.forEach(hole -> intersectAreaRingNodes(possibleIntersectionNodes, hole));
         }
 
         /**
@@ -1461,9 +1460,35 @@ public class OpenStreetMapModule implements GraphBuilderModule {
         }
     }
 
-    @Data(staticConstructor = "of")
-    private static class VertexAndName {
+    static class VertexAndName {
+
         private final I18NString name;
         private final OsmVertex vertex;
+
+        VertexAndName(I18NString name, OsmVertex vertex) {
+            this.name = name;
+            this.vertex = vertex;
+        }
+
+        public I18NString getName() {
+            return this.name;
+        }
+
+        public OsmVertex getVertex() {
+            return this.vertex;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {return true;}
+            if (o == null || getClass() != o.getClass()) {return false;}
+            final VertexAndName that = (VertexAndName) o;
+            return Objects.equals(name, that.name) && vertex.equals(that.vertex);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, vertex);
+        }
     }
 }

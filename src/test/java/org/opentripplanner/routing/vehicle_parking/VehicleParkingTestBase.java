@@ -40,7 +40,7 @@ public abstract class VehicleParkingTestBase {
     return createParingWithEntrances(id, x, y, null);
   }
 
-  protected VehicleParking createParingWithEntrances(String id, double x, double y, VehicleParking.VehiclePlaces vehiclePlaces) {
+  protected VehicleParking createParingWithEntrances(String id, double x, double y, VehicleParkingSpaces vehiclePlaces) {
     VehicleParking.VehicleParkingEntranceCreator entrance = builder -> builder
         .entranceId(new FeedScopedId(TEST_FEED_ID, "Entrance " + id))
         .name(new NonLocalizedString("Entrance " + id))

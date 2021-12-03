@@ -2,6 +2,7 @@ package org.opentripplanner.updater.vehicle_parking;
 
 import java.util.Collection;
 import java.util.List;
+import org.opentripplanner.model.FeedScopedId;
 import org.opentripplanner.updater.DataSourceType;
 import org.opentripplanner.updater.PollingGraphUpdaterParameters;
 

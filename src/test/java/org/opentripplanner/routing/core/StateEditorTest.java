@@ -2,6 +2,7 @@ package org.opentripplanner.routing.core;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.opentripplanner.routing.api.request.RoutingRequest;
@@ -42,6 +43,7 @@ public class StateEditorTest {
         se.setNonTransitOptionsFromState(state);
         State updatedState = se.makeState();
         assertEquals(TraverseMode.WALK, updatedState.getNonTransitMode());
-        assertFalse(updatedState.isBikeRenting());
+        assertTrue(updatedState.isVehicleParked());
+        assertFalse(updatedState.isRentingVehicle());
     }
 }

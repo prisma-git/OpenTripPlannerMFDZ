@@ -132,6 +132,7 @@ public class CarParkAndRideTest extends ParkAndRideTest {
         );
     }
 
+    @Test
     public void noPathIfContainsBannedTags() {
         assertNoPathWithParking(A, B, StreetMode.CAR_TO_PARK, Set.of("tag1"), Set.of());
     }

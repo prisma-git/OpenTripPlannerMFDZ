@@ -50,8 +50,9 @@ public class ApiRouterInfo {
     public List<TravelOption> travelOptions;
 
 
+    /** TODO: Do not pass in the graph here, do this in a mapper instead. */
     public ApiRouterInfo(String routerId, Graph graph) {
-        VehicleRentalStationService service = graph.getService(
+        VehicleRentalStationService vehicleRentalService = graph.getService(
                 VehicleRentalStationService.class, false
         );
         VehicleParkingService vehicleParkingService = graph.getService(
@@ -66,7 +67,7 @@ public class ApiRouterInfo {
         this.transitModes = TraverseModeMapper.mapToApi(graph.getTransitModes());
         this.envelope = graph.getEnvelope();
         this.hasParkRide = graph.hasParkRide;
-        this.hasBikeSharing = mapHasBikeSharing(service);
+        this.hasBikeSharing = mapHasBikeSharing(vehicleRentalService);
         this.hasBikePark = mapHasBikePark(vehicleParkingService);
         this.hasCarPark = mapHasCarPark(vehicleParkingService);
         this.hasVehicleParking = mapHasVehicleParking(vehicleParkingService);

@@ -44,6 +44,10 @@ public class VehicleParkingEdge extends Edge implements TimeRestrictedEdge {
         );
     }
 
+    public VehicleParking getVehicleParking() {
+        return vehicleParking;
+    }
+
     @Override
     public State traverse(State s0) {
         RoutingRequest options = s0.getOptions();
@@ -106,7 +110,7 @@ public class VehicleParkingEdge extends Edge implements TimeRestrictedEdge {
 
         if (options.streetSubRequestModes.getBicycle()) {
             // Parking a rented bike is not allowed
-            if (s0.isBikeRenting()) {
+            if (s0.isRentingVehicle()) {
                 return null;
             }
 
@@ -140,6 +144,17 @@ public class VehicleParkingEdge extends Edge implements TimeRestrictedEdge {
         return s0e.makeState();
     }
 
+    private boolean isSpacesAvailable(TraverseMode traverseMode, boolean wheelchairAccessible) {
+        switch (traverseMode) {
+            case BICYCLE:
+                return vehicleParking.hasBicyclePlaces();
+            case CAR:
+                return wheelchairAccessible ? vehicleParking.hasWheelchairAccessibleCarPlaces() : vehicleParking.hasCarPlaces();
+            default:
+                return false;
+        }
+    }
+
     @Override
     public double getDistanceMeters() {
         return 0;
@@ -162,6 +177,14 @@ public class VehicleParkingEdge extends Edge implements TimeRestrictedEdge {
 
     @Override
     public boolean hasBogusName() {
+        return false;
+    }
+
+    public boolean equals(Object o) {
+        if (o instanceof VehicleParkingEdge) {
+            VehicleParkingEdge other = (VehicleParkingEdge) o;
+            return other.getFromVertex().equals(fromv) && other.getToVertex().equals(tov);
+        }
         return false;
     }
 

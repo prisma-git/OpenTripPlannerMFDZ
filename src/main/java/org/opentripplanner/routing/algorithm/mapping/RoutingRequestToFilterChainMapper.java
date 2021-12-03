@@ -4,8 +4,8 @@ import java.time.Instant;
 import java.util.function.Consumer;
 import org.opentripplanner.model.plan.Itinerary;
 import org.opentripplanner.routing.algorithm.filterchain.GroupBySimilarity;
-import org.opentripplanner.routing.algorithm.filterchain.ItineraryListFilterChainBuilder;
 import org.opentripplanner.routing.algorithm.filterchain.ItineraryListFilterChain;
+import org.opentripplanner.routing.algorithm.filterchain.ItineraryListFilterChainBuilder;
 import org.opentripplanner.routing.api.request.RoutingRequest;
 
 import java.time.Instant;
@@ -29,26 +29,21 @@ public class RoutingRequestToFilterChainMapper {
     var p = request.itineraryFilters;
 
     // Group by similar legs filter
-    if(request.itineraryFilters != null) {
+    if (p.groupSimilarityKeepOne >= 0.5) {
+      builder.addGroupBySimilarity(
+          GroupBySimilarity.createWithOneItineraryPerGroup(p.groupSimilarityKeepOne)
+      );
+    }
 
-      builder.withMinSafeTransferTimeFactor(p.minSafeTransferTimeFactor);
-
-      if (p.groupSimilarityKeepOne >= 0.5) {
-        builder.addGroupBySimilarity(
-            GroupBySimilarity.createWithOneItineraryPerGroup(p.groupSimilarityKeepOne)
-        );
-      }
-
-      if (p.groupSimilarityKeepThree >= 0.5) {
-        builder.addGroupBySimilarity(
-          GroupBySimilarity.createWithMoreThanOneItineraryPerGroup(
-              p.groupSimilarityKeepThree,
-              KEEP_THREE,
-              true,
-              p.groupedOtherThanSameLegsMaxCostMultiplier
-          )
-        );
-      }
+    if (p.groupSimilarityKeepThree >= 0.5) {
+      builder.addGroupBySimilarity(
+        GroupBySimilarity.createWithMoreThanOneItineraryPerGroup(
+            p.groupSimilarityKeepThree,
+            KEEP_THREE,
+            true,
+            p.groupedOtherThanSameLegsMaxCostMultiplier
+        )
+      );
     }
 
     if (request.modes.contains(StreetMode.BIKE_TO_PARK)) {
@@ -63,7 +58,6 @@ public class RoutingRequestToFilterChainMapper {
             request.modes.directMode == StreetMode.FLEXIBLE;
     builder
         .withMaxNumberOfItineraries(Math.min(request.numItineraries, MAX_NUMBER_OF_ITINERARIES))
-        .withMinSafeTransferTimeFactor(p.minSafeTransferTimeFactor)
         .withTransitGeneralizedCostLimit(p.transitGeneralizedCostLimit)
         .withBikeRentalDistanceRatio(p.bikeRentalDistanceRatio)
         .withParkAndRideDurationRatio(p.parkAndRideDurationRatio)

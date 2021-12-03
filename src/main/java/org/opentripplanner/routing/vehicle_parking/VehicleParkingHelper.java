@@ -60,5 +60,6 @@ public class VehicleParkingHelper {
   public static void linkToGraph(VehicleParkingEntranceVertex vehicleParkingEntrance) {
     new StreetVehicleParkingLink(vehicleParkingEntrance, vehicleParkingEntrance.getParkingEntrance().getVertex());
     new StreetVehicleParkingLink(vehicleParkingEntrance.getParkingEntrance().getVertex(), vehicleParkingEntrance);
+    vehicleParkingEntrance.getParkingEntrance().clearVertex();
   }
 }
