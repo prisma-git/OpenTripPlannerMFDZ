@@ -794,19 +794,19 @@ public class LegacyGraphQLQueryTypeImpl
   @Override
   public DataFetcher<VehicleParking> vehicleParking() {
     return environment -> {
-      var args = new LegacyGraphQLTypes.LegacyGraphQLQueryTypeCarParkArgs(environment.getArguments());
+      var args = new LegacyGraphQLTypes.LegacyGraphQLQueryTypeVehicleParkingArgs(environment.getArguments());
 
       VehicleParkingService vehicleParkingService = getRoutingService(environment)
-          .getVehicleParkingService();
+              .getVehicleParkingService();
 
       if (vehicleParkingService == null) { return null; }
 
-      var carParkId = FeedScopedId.parseId(args.getLegacyGraphQLId());
+      var vehicleParkingId = FeedScopedId.parseId(args.getLegacyGraphQLId());
       return vehicleParkingService
-          .getCarParks()
-          .filter(carPark -> carPark.getId().equals(carParkId))
-          .findAny()
-          .orElse(null);
+              .getVehicleParkings()
+              .filter(vehicleParking -> vehicleParking.getId().equals(vehicleParkingId))
+              .findAny()
+              .orElse(null);
     };
   }
 
