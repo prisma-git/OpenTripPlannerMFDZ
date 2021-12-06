@@ -90,7 +90,7 @@ class LegacyGraphQLIndex {
       .setNameFormat("GraphQLExecutor-%d")
       .build());
 
-  static private GraphQLSchema buildSchema() {
+  static protected GraphQLSchema buildSchema() {
     try {
       URL url = Resources.getResource("legacygraphqlapi/schema.graphqls");
       String sdl = Resources.toString(url, Charsets.UTF_8);
