@@ -37,8 +37,8 @@ public class FlexAccessEgressRouter {
         params,
         request.getDateTime().toInstant(),
         request.arriveBy,
-        request.additionalSearchDaysBeforeToday,
-        request.additionalSearchDaysAfterToday,
+        request.additionalDaysBeforeSearchTime,
+        request.additionalDaysAfterSearchTime,
         accessStops,
         egressStops
     );
