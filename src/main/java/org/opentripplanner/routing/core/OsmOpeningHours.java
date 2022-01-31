@@ -54,7 +54,7 @@ public class OsmOpeningHours implements I18NString, TimeRestriction, Serializabl
     public static OsmOpeningHours parseFromOsm(String openingHours)
     throws OpeningHoursParseException {
         var parser = new OpeningHoursParser(new ByteArrayInputStream(openingHours.getBytes()));
-        var rules = parser.rules(true);
+        var rules = parser.rules(true, false);
         return new OsmOpeningHours(rules);
     }
 
