@@ -33,7 +33,15 @@ public class GbfsStationInformationMapper {
         rentalStation.system = system;
         rentalStation.longitude = station.getLon();
         rentalStation.latitude = station.getLat();
-        rentalStation.name = new NonLocalizedString(station.getName());
+        if (station.getName() != null) {
+            rentalStation.name = new NonLocalizedString(station.getName());
+        } else {
+            // FIXME temporary workaround for TIER feeds providing station_name instead of name
+            Object stationName = station.getAdditionalProperties().get("station_name");
+            if (stationName instanceof String) {
+                rentalStation.name = new NonLocalizedString((String) stationName);
+            }
+        }
         rentalStation.shortName = station.getShortName();
         rentalStation.address = station.getAddress();
         rentalStation.crossStreet = station.getCrossStreet();
