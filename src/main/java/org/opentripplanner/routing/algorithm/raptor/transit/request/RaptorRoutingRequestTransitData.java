@@ -164,4 +164,7 @@ public class RaptorRoutingRequestTransitData implements RaptorTransitDataProvide
     return validTransitDataEndTime;
   }
 
+  public ZonedDateTime getStartOfTime() {
+    return startOfTime;
+  }
 }

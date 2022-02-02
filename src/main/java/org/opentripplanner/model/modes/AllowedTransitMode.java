@@ -1,5 +1,6 @@
 package org.opentripplanner.model.modes;
 
+import com.google.common.base.MoreObjects;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -52,5 +53,13 @@ public class AllowedTransitMode {
     return TransitMode.transitModesExceptAirplane().stream()
         .map(m -> new AllowedTransitMode(m, null))
         .collect(Collectors.toSet());
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+            .add("mainMode", mainMode)
+            .add("subMode", subMode)
+            .toString();
   }
 }

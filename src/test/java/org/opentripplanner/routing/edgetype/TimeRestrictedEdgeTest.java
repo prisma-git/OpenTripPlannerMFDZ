@@ -168,7 +168,7 @@ public class TimeRestrictedEdgeTest extends GraphRoutingTest {
 
     private Integer traversalDuration(boolean arriveBy) {
         var options = new RoutingRequest().getStreetSearchRequest(StreetMode.WALK);
-        options.dateTime = START_OF_TIME.toEpochSecond();
+        options.setDateTime(START_OF_TIME.toInstant());
         options.arriveBy = arriveBy;
         options.setRoutingContext(graph, A, C);
 

@@ -303,8 +303,6 @@ public abstract class GraphPathToItineraryMapper {
 
         leg.setWalkingBike(states[states.length - 1].isBackWalkingBike());
 
-        leg.walkingBike = states[states.length - 1].isBackWalkingBike();
-
         leg.setRentedVehicle(states[0].isRentingVehicle());
 
         if (leg.getRentedVehicle()) {

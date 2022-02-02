@@ -201,7 +201,7 @@ public class LegacyGraphQLLegImpl implements LegacyGraphQLDataFetchers.LegacyGra
 
   @Override
   public DataFetcher<Iterable<TransitAlert>> alerts() {
-    return environment -> getSource(environment).transitAlerts;
+    return environment -> getSource(environment).getTransitAlerts();
   }
 
   @Override

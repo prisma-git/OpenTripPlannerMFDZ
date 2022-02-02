@@ -29,8 +29,8 @@ public class RemoveBikeParkWithShortBikingFilter implements ItineraryListFilter 
         break;
       }
 
-      if (leg.mode == TraverseMode.BICYCLE) {
-        bikeParkingDistance += leg.distanceMeters;
+      if (leg.getMode() == TraverseMode.BICYCLE) {
+        bikeParkingDistance += leg.getDistanceMeters();
       }
     }
 

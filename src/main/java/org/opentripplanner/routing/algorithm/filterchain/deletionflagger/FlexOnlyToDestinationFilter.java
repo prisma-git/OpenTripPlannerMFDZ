@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.opentripplanner.model.plan.Itinerary;
+import org.opentripplanner.model.plan.Leg;
 import org.opentripplanner.routing.algorithm.filterchain.ItineraryListFilter;
 import org.opentripplanner.routing.core.TraverseMode;
 
@@ -19,14 +20,14 @@ public class FlexOnlyToDestinationFilter implements ItineraryListFilter {
         return itineraries
                 .stream().filter(it -> {
                     var lastLeg = it.lastLeg();
-                    boolean lastLegIsLongWalk = lastLeg.mode == TraverseMode.WALK
+                    boolean lastLegIsLongWalk = lastLeg.getMode() == TraverseMode.WALK
                             && lastLeg.getDuration() > maxWalkDuration;
 
                     var lastLegIsFlex = it.legs.stream()
-                            .filter(l -> l.isTransitLeg() || l.flexibleTrip)
+                            .filter(l -> l.isTransitLeg() || l.isFlexibleTrip())
                             // get last element of stream
                             .reduce((first, second) -> second)
-                            .map(l -> l.flexibleTrip)
+                            .map(Leg::isFlexibleTrip)
                             .orElse(false);
 
                     return !lastLegIsLongWalk && lastLegIsFlex;

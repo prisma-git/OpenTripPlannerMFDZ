@@ -13,6 +13,7 @@ import javax.ws.rs.BadRequestException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.opentripplanner.model.TransitMode;
+import org.opentripplanner.model.modes.AllowedTransitMode;
 import org.opentripplanner.routing.api.request.RequestModes;
 
 public class QualifiedModeSetTest {
@@ -85,7 +86,9 @@ public class QualifiedModeSetTest {
                 new QualifiedMode("RAIL")
         ), modeSet.qModes);
         assertEquals(new RequestModes(BIKE_TO_PARK, WALK, BIKE_RENTAL, BIKE, Set.of(
-                TransitMode.RAIL)), modeSet.getRequestModes());
+                AllowedTransitMode.fromMainModeEnum(TransitMode.RAIL))).toString(),
+
+                modeSet.getRequestModes().toString());
     }
 
     @Test

@@ -102,7 +102,7 @@ public class ParkAndRideOpeningHoursTest extends GraphRoutingTest {
 
     private Integer parkAndRideDuration(boolean arriveBy) {
         var options = new RoutingRequest().getStreetSearchRequest(StreetMode.CAR_TO_PARK);
-        options.dateTime = START_OF_TIME.toEpochSecond();
+        options.setDateTime(START_OF_TIME.toInstant());
         options.carParkTime = CAR_PARK_TIME;
         options.arriveBy = arriveBy;
         options.setRoutingContext(graph, A, S);
