@@ -18,8 +18,6 @@ import org.opentripplanner.routing.vehicle_parking.VehicleParkingTestUtil;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingTestGraphData;
 import org.opentripplanner.routing.vertextype.VehicleParkingEntranceVertex;
 import org.opentripplanner.updater.DataSource;
-import org.opentripplanner.routing.vehicle_parking.VehicleParkingTestBase;
-import org.opentripplanner.routing.vertextype.VehicleParkingEntranceVertex;
 import org.opentripplanner.updater.GraphUpdater;
 import org.opentripplanner.updater.GraphUpdaterManager;
 import org.opentripplanner.updater.GraphWriterRunnable;
