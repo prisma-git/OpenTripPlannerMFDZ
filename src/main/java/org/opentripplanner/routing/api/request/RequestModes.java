@@ -1,5 +1,6 @@
 package org.opentripplanner.routing.api.request;
 
+import com.google.common.base.MoreObjects;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.opentripplanner.model.modes.AllowedTransitMode;
 
@@ -65,11 +66,11 @@ public class RequestModes {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this)
-            .append("accessMode", accessMode)
-            .append("egressMode", egressMode)
-            .append("directMode", directMode)
-            .append("transitModes", transitModes)
+    return MoreObjects.toStringHelper(this)
+            .add("accessMode", accessMode)
+            .add("egressMode", egressMode)
+            .add("directMode", directMode)
+            .add("transitModes", transitModes)
             .toString();
   }
 }
