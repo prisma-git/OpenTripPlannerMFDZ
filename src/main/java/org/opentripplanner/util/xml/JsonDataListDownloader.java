@@ -3,39 +3,33 @@ package org.opentripplanner.util.xml;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Collections;
-import java.util.Map;
-import lombok.Setter;
-import org.opentripplanner.util.HttpUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
+import org.opentripplanner.util.HttpUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JsonDataListDownloader<T> {
 
   private static final Logger log = LoggerFactory.getLogger(JsonDataListDownloader.class);
 
-  @Setter
   private String url;
   private final String jsonParsePath;
-  private final String headerName;
-  private final String headerValue;
+  private final Map<String, String> headers;
   private final Function<JsonNode, T> elementParser;
 
   public JsonDataListDownloader(
-      String url, String jsonParsePath, Function<JsonNode, T> elementParser, String headerName, String headerValue
+      String url, String jsonParsePath, Function<JsonNode, T> elementParser, Map<String, String> headers
   ) {
     this.url = url;
     this.jsonParsePath = jsonParsePath;
-    this.headerName = headerName;
-    this.headerValue = headerValue;
+    this.headers = headers;
     this.elementParser = elementParser;
   }
 
@@ -65,7 +59,7 @@ public class JsonDataListDownloader<T> {
     URL downloadUrl = new URL(url);
     String proto = downloadUrl.getProtocol();
     if (proto.equals("http") || proto.equals("https")) {
-      return HttpUtils.getData(URI.create(url), Collections.emptyMap());
+      return HttpUtils.getData(URI.create(url), headers);
     } else {
       // Local file probably, try standard java
       return downloadUrl.openStream();
@@ -103,6 +97,10 @@ public class JsonDataListDownloader<T> {
       }
     }
     return out;
+  }
+
+  public void setUrl(String url) {
+    this.url = url;
   }
 
   private static String convertStreamToString(java.io.InputStream is) {

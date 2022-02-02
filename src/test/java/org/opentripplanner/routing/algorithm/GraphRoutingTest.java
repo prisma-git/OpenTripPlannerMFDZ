@@ -230,6 +230,7 @@ public abstract class GraphRoutingTest {
                     null,
                     null,
                     null,
+                    null,
                     null
             );
         }

@@ -169,8 +169,8 @@ public class TestIntermediatePlaces {
                     legIndex < itinerary.legs.size());
                 leg = itinerary.legs.get(legIndex);
                 legIndex++;
-            } while (Math.abs(leg.to.getCoordinate().latitude() - location.lat) > DELTA
-                || Math.abs(leg.to.getCoordinate().longitude() - location.lng) > DELTA);
+            } while (Math.abs(leg.getTo().getCoordinate().latitude() - location.lat) > DELTA
+                || Math.abs(leg.getTo().getCoordinate().longitude() - location.lng) > DELTA);
         }
     }
 
@@ -178,8 +178,8 @@ public class TestIntermediatePlaces {
     private void validateLegsSpatially(TripPlan plan, Itinerary itinerary) {
         Place place = plan.from;
         for (Leg leg : itinerary.legs) {
-            assertEquals(place.getCoordinate(), leg.from.getCoordinate());
-            place = leg.to;
+            assertEquals(place.getCoordinate(), leg.getFrom().getCoordinate());
+            place = leg.getTo();
         }
         assertEquals(place.getCoordinate(), plan.to.getCoordinate());
     }
@@ -189,18 +189,18 @@ public class TestIntermediatePlaces {
         Calendar departTime = Calendar.getInstance(timeZone);
         Calendar arriveTime = Calendar.getInstance(timeZone);
         if (request.arriveBy) {
-            departTime = itinerary.legs.get(0).startTime;
-            arriveTime.setTimeInMillis(request.dateTime * 1000);
+            departTime = itinerary.legs.get(0).getStartTime();
+            arriveTime.setTimeInMillis(request.getDateTimeOriginalSearch().toEpochMilli());
         } else {
-            departTime.setTimeInMillis(request.dateTime * 1000);
-            arriveTime = itinerary.legs.get(itinerary.legs.size() - 1).endTime;
+            departTime.setTimeInMillis(request.getDateTimeCurrentPage().toEpochMilli());
+            arriveTime = itinerary.legs.get(itinerary.legs.size() - 1).getEndTime();
         }
         long sumOfDuration = 0;
         for (Leg leg : itinerary.legs) {
-            assertFalse(departTime.after(leg.startTime));
-            assertFalse(leg.startTime.after(leg.endTime));
+            assertFalse(departTime.after(leg.getStartTime()));
+            assertFalse(leg.getStartTime().after(leg.getEndTime()));
 
-            departTime = leg.endTime;
+            departTime = leg.getEndTime();
             sumOfDuration += leg.getDuration();
         }
         sumOfDuration += itinerary.waitingTimeSeconds;

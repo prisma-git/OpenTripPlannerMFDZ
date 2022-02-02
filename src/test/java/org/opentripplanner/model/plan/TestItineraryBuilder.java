@@ -98,7 +98,7 @@ public class TestItineraryBuilder implements PlanTestConstants {
   public TestItineraryBuilder rentedBicycle(int startTime, int endTime, Place to) {
     int legCost = cost(BICYCLE_RELUCTANCE_FACTOR, endTime - startTime);
     streetLeg(BICYCLE, startTime, endTime, to, legCost);
-    this.legs.get(0).rentedVehicle = true;
+    this.legs.get(0).setRentedVehicle(true);
     return this;
   }
 
@@ -149,24 +149,32 @@ public class TestItineraryBuilder implements PlanTestConstants {
     int legCost = 0;
     legCost += cost(WAIT_RELUCTANCE_FACTOR, waitTime);
     legCost += cost(1.0f, end - start) + BOARD_COST;
-    Leg leg = leg(new Leg(trip(tripId, route)), start, end, fromStopIndex, toStopIndex, to, legCost);
-    leg.serviceDate = SERVICE_DATE;
+    Leg leg = leg(new Leg(trip(tripId, route)), start, end, to, fromStopIndex, toStopIndex, legCost);
+    leg.setServiceDate(SERVICE_DATE);
     return this;
   }
 
   private Leg streetLeg(TraverseMode mode, int startTime, int endTime, Place to, int legCost) {
-    return leg(new Leg(mode), startTime, endTime, null, null, to, legCost);
+    return leg(new Leg(mode), startTime, endTime, to, null, null, legCost);
   }
 
   private Leg leg(
-          Leg leg, int startTime, int endTime, Integer fromStopIndex, Integer toStopIndex, Place to, int legCost
+          Leg leg,
+          int startTime,
+          int endTime,
+          Place to,
+          Integer boardStopPosInPattern,
+          Integer alightStopPosInPattern,
+          int legCost
   ) {
-    leg.from = stop(lastPlace, fromStopIndex);
-    leg.startTime = GregorianCalendar.from(newTime(startTime));
-    leg.to = stop(to, toStopIndex);
-    leg.endTime = GregorianCalendar.from(newTime(endTime));
-    leg.distanceMeters = speed(leg.mode) * (endTime - startTime);
-    leg.generalizedCost = legCost;
+    leg.setFrom(stop(lastPlace));
+    leg.setStartTime(GregorianCalendar.from(newTime(startTime)));
+    leg.setTo(stop(to));
+    leg.setEndTime(GregorianCalendar.from(newTime(endTime)));
+    leg.setBoardStopPosInPattern(boardStopPosInPattern);
+    leg.setAlightStopPosInPattern(alightStopPosInPattern);
+    leg.setDistanceMeters(speed(leg.getMode()) * (endTime - startTime));
+    leg.setGeneralizedCost(legCost);
     legs.add(leg);
     cost += legCost;
 
@@ -210,11 +218,7 @@ public class TestItineraryBuilder implements PlanTestConstants {
     return route;
   }
 
-  private static Place stop(Place source, Integer stopIndex) {
-    return Place.forStop(
-            source.stop,
-            stopIndex,
-            null
-    );
+  private static Place stop(Place source) {
+    return Place.forStop(source.stop);
   }
 }

@@ -105,6 +105,7 @@ public class NodeAdapterTest {
         // Then
         assertEquals("Get existing property", AnEnum.A, subject.asEnum("key", AnEnum.B));
         assertEquals("Get default value", AnEnum.B, subject.asEnum("missing-key", AnEnum.B));
+        assertEquals("Get existing property", AnEnum.A, subject.asEnum("key", AnEnum.class));
     }
 
     @Test(expected = OtpAppException.class)
@@ -335,5 +336,14 @@ public class NodeAdapterTest {
                 Set.of("X"),
                 subject.asTextSet("nonExisting", Set.of("X"))
         );
+    }
+
+    @Test
+    public void isNonEmptyArray() {
+        NodeAdapter subject = newNodeAdapterForTest("{ foo : ['A'], bar: [], foobar: true }");
+        assertTrue(subject.path("foo").isNonEmptyArray());
+        assertFalse(subject.path("bar").isNonEmptyArray());
+        assertFalse(subject.path("foobar").isNonEmptyArray());
+        assertFalse(subject.path("missing").isNonEmptyArray());
     }
 }

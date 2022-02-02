@@ -2,6 +2,7 @@
 package org.opentripplanner.ext.legacygraphqlapi.generated;
 
 import org.opentripplanner.model.Agency;
+import org.opentripplanner.ext.legacygraphqlapi.model.LegacyGraphQLRouteTypeModel;
 import org.opentripplanner.routing.alertpatch.TransitAlert;
 import org.opentripplanner.routing.vehicle_parking.VehicleParking;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalPlace;
@@ -30,13 +31,14 @@ import org.opentripplanner.model.plan.WalkStep;
 import org.opentripplanner.routing.graphfinder.NearbyStop;
 import graphql.relay.Connection;
 import graphql.relay.Edge;
-import org.opentripplanner.ext.legacygraphqlapi.model.LegacyGraphQLStopOnRoute;
-import org.opentripplanner.ext.legacygraphqlapi.model.LegacyGraphQLStopOnTrip;
+import org.opentripplanner.ext.legacygraphqlapi.model.LegacyGraphQLStopOnRouteModel;
+import org.opentripplanner.ext.legacygraphqlapi.model.LegacyGraphQLStopOnTripModel;
 import org.opentripplanner.model.TripTimeOnDate;
 import org.opentripplanner.model.StopTimesInPattern;
 import org.opentripplanner.routing.core.FareRuleSet;
 import java.util.Map;
 import org.opentripplanner.model.Trip;
+import org.opentripplanner.ext.legacygraphqlapi.model.LegacyGraphQLUnknownModel;
 import org.opentripplanner.routing.vehicle_parking.VehicleParking;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingSpaces;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingState;
@@ -141,9 +143,13 @@ public class LegacyGraphQLDataFetchers {
 
         public DataFetcher<String> name();
 
+        public DataFetcher<Iterable<Object>> openingHours();
+
         public DataFetcher<Boolean> realtime();
 
         public DataFetcher<Integer> spacesAvailable();
+
+        public DataFetcher<Iterable<String>> tags();
     }
 
     /**
@@ -240,9 +246,13 @@ public class LegacyGraphQLDataFetchers {
 
         public DataFetcher<String> name();
 
+        public DataFetcher<Iterable<Object>> openingHours();
+
         public DataFetcher<Boolean> realtime();
 
         public DataFetcher<Integer> spacesAvailable();
+
+        public DataFetcher<Iterable<String>> tags();
     }
 
     /**
@@ -314,6 +324,8 @@ public class LegacyGraphQLDataFetchers {
     public interface LegacyGraphQLFeed {
 
         public DataFetcher<Iterable<Agency>> agencies();
+
+        public DataFetcher<Iterable<TransitAlert>> alerts();
 
         public DataFetcher<String> feedId();
     }
@@ -415,6 +427,26 @@ public class LegacyGraphQLDataFetchers {
         public DataFetcher<Trip> trip();
 
         public DataFetcher<Boolean> walkingBike();
+    }
+
+    /**
+     * A span of time.
+     */
+    public interface LegacyGraphQLLocalTimeSpan {
+
+        public DataFetcher<Integer> from();
+
+        public DataFetcher<Integer> to();
+    }
+
+    /**
+     * A date using the local timezone of the object that can contain timespans.
+     */
+    public interface LegacyGraphQLLocalTimeSpanDate {
+
+        public DataFetcher<String> date();
+
+        public DataFetcher<Iterable<Object>> timeSpans();
     }
 
     /**
@@ -529,7 +561,11 @@ public class LegacyGraphQLDataFetchers {
 
         public DataFetcher<Long> nextDateTime();
 
+        public DataFetcher<String> nextPageCursor();
+
         public DataFetcher<Long> prevDateTime();
+
+        public DataFetcher<String> previousPageCursor();
 
         public DataFetcher<Long> searchWindowUsed();
 
@@ -683,6 +719,19 @@ public class LegacyGraphQLDataFetchers {
     }
 
     /**
+     * Route type entity which covers all agencies if agency is null, otherwise only relevant for
+     * one agency.
+     */
+    public interface LegacyGraphQLRouteType {
+
+        public DataFetcher<Agency> agency();
+
+        public DataFetcher<Integer> routeType();
+
+        public DataFetcher<Iterable<Route>> routes();
+    }
+
+    /**
      * Stop can represent either a single public transport stop, where passengers can board and/or
      * disembark vehicles, or a station, which contains multiple stops. See field `locationType`.
      */
@@ -697,6 +746,8 @@ public class LegacyGraphQLDataFetchers {
         public DataFetcher<String> desc();
 
         public DataFetcher<String> direction();
+
+        public DataFetcher<Object> geometries();
 
         public DataFetcher<String> gtfsId();
 
@@ -741,6 +792,13 @@ public class LegacyGraphQLDataFetchers {
         public DataFetcher<Object> wheelchairBoarding();
 
         public DataFetcher<String> zoneId();
+    }
+
+    public interface LegacyGraphQLStopGeometries {
+
+        public DataFetcher<org.locationtech.jts.geom.Geometry> geoJson();
+
+        public DataFetcher<Iterable<EncodedPolylineBean>> googleEncoded();
     }
 
     /**
@@ -901,6 +959,14 @@ public class LegacyGraphQLDataFetchers {
         public DataFetcher<String> tripShortName();
 
         public DataFetcher<Object> wheelchairAccessible();
+    }
+
+    /**
+     * This is used for alert entities that we don't explicitly handle or they are missing.
+     */
+    public interface LegacyGraphQLUnknown {
+
+        public DataFetcher<String> description();
     }
 
     /**

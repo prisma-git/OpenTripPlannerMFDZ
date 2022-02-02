@@ -3,7 +3,6 @@ package org.opentripplanner.ext.flex;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,8 +23,6 @@ import org.opentripplanner.routing.graphfinder.NearbyStop;
  * Flex.
  */
 public class UnscheduledTripTest extends FlexTest {
-
-    static final String ASPEN_GTFS = "/flex/aspen-flex-on-demand.gtfs.zip";
 
     static Graph graph;
 
@@ -85,7 +82,7 @@ public class UnscheduledTripTest extends FlexTest {
     }
 
     @BeforeAll
-    static void setup() throws URISyntaxException {
+    static void setup() {
         graph = FlexTest.buildFlexGraph(ASPEN_GTFS);
     }
 

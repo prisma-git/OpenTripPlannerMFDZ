@@ -122,7 +122,7 @@ public class TimetableSnapshot {
      *
      * TODO Find a generic way to keep all realtime indexes.
      */
-    private SetMultimap<Stop, TripPattern> patternsForStop = HashMultimap.create();
+    private SetMultimap<StopLocation, TripPattern> patternsForStop = HashMultimap.create();
     
     /**
      * Boolean value indicating that timetable snapshot is read only if true. Once it is true, it shouldn't
@@ -158,6 +158,32 @@ public class TimetableSnapshot {
         }
 
         return pattern.getScheduledTimetable();
+    }
+
+    public void removeRealtimeUpdatedTripTimes(TripPattern tripPattern, FeedScopedId tripId, ServiceDate serviceDate) {
+        SortedSet<Timetable> sortedTimetables = this.timetables.get(tripPattern);
+        if (sortedTimetables != null) {
+
+            TripTimes tripTimesToRemove = null;
+            for (Timetable timetable : sortedTimetables) {
+                if (timetable.isValidFor(serviceDate)) {
+                    final int tripIndex = timetable.getTripIndex(tripId);
+                    if (tripIndex == -1) {
+                        LOG.debug("No triptimes to remove for trip {}", tripId);
+                    } else if (tripTimesToRemove != null) {
+                        LOG.debug("Found two triptimes to remove for trip {}", tripId);
+                    } else {
+                        tripTimesToRemove = timetable.getTripTimes(tripIndex);
+                    }
+                }
+            }
+
+            if (tripTimesToRemove != null) {
+                for (Timetable sortedTimetable : sortedTimetables) {
+                    sortedTimetable.getTripTimes().remove(tripTimesToRemove);
+                }
+            }
+        }
     }
     
     /**
@@ -223,13 +249,16 @@ public class TimetableSnapshot {
         if (tripIndex == -1) {
             // Trip not found, add it
             tt.addTripTimes(updatedTripTimes);
+        } else {
+            // Set updated trip times of trip
+            tt.setTripTimes(tripIndex, updatedTripTimes);
+        }
+
+        if (pattern.isCreatedByRealtimeUpdater()) {
             // Remember this pattern for the added trip id and service date
             FeedScopedId tripId = updatedTripTimes.getTrip().getId();
             TripIdAndServiceDate tripIdAndServiceDate = new TripIdAndServiceDate(tripId, serviceDate);
             lastAddedTripPattern.put(tripIdAndServiceDate, pattern);
-        } else {
-            // Set updated trip times of trip
-            tt.setTripTimes(tripIndex, updatedTripTimes);
         }
 
         // To make these trip patterns visible for departureRow searches.
@@ -325,6 +354,15 @@ public class TimetableSnapshot {
     }
 
     /**
+     * Removes the latest added trip pattern from the cache. This should be done when removing the
+     * trip times from the timetable the trip has been added to.
+     */
+    public void removeLastAddedTripPattern(FeedScopedId feedScopedTripId, ServiceDate serviceDate) {
+        lastAddedTripPattern.remove(new TripIdAndServiceDate(feedScopedTripId, serviceDate));
+    }
+
+
+    /**
      * Removes all Timetables which are valid for a ServiceDate on-or-before the one supplied.
      */
     public boolean purgeExpiredData(ServiceDate serviceDate) {
@@ -377,30 +415,21 @@ public class TimetableSnapshot {
     }
 
     /**
-     * @return all TripPatterns for which we have any updated timetables created by realtime messages, including both
-     *         patterns that were in the scheduled (static) transit data and those that were added to this snapshot by
-     *         rerouted or added trips.
-     */
-    public Collection<TripPattern> getAllRealtimeTripPatterns () {
-        return timetables.keySet();
-    }
-
-    /**
      * Add the patterns to the stop index, only if they come from a modified pattern
      */
     private void addPatternToIndex(TripPattern tripPattern) {
         if (tripPattern.isCreatedByRealtimeUpdater()) {
-            for (Stop stop: tripPattern.getStops()) {
+            for (var stop: tripPattern.getStops()) {
                 patternsForStop.put(stop, tripPattern);
             }
         }
     }
 
-    public Collection<TripPattern> getPatternsForStop(Stop stop) {
+    public Collection<TripPattern> getPatternsForStop(StopLocation stop) {
         return patternsForStop.get(stop);
     }
 
-    public void setPatternsForStop(SetMultimap<Stop, TripPattern> patternsForStop) {
+    public void setPatternsForStop(SetMultimap<StopLocation, TripPattern> patternsForStop) {
         this.patternsForStop = patternsForStop;
     }
 }

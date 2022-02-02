@@ -4,13 +4,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumMap;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,12 +27,15 @@ import org.opentripplanner.api.common.LocationStringParser;
 import org.opentripplanner.api.common.Message;
 import org.opentripplanner.api.common.ParameterException;
 import org.opentripplanner.common.geometry.SphericalDistanceLibrary;
+import org.opentripplanner.ext.dataoverlay.api.DataOverlayParameters;
 import org.opentripplanner.model.FeedScopedId;
 import org.opentripplanner.model.GenericLocation;
 import org.opentripplanner.model.Route;
-import org.opentripplanner.model.TransitMode;
 import org.opentripplanner.routing.algorithm.filterchain.ItineraryListFilter;
+import org.opentripplanner.model.TransitMode;
 import org.opentripplanner.routing.algorithm.transferoptimization.api.TransferOptimizationParameters;
+import org.opentripplanner.model.modes.AllowedTransitMode;
+import org.opentripplanner.model.plan.PageCursor;
 import org.opentripplanner.routing.core.BicycleOptimizeType;
 import org.opentripplanner.routing.core.RouteMatcher;
 import org.opentripplanner.routing.core.RoutingContext;
@@ -52,6 +55,7 @@ import org.opentripplanner.routing.spt.ShortestPathTree;
 import org.opentripplanner.routing.vehicle_rental.RentalVehicleType.FormFactor;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalStation;
 import org.opentripplanner.util.time.DateUtils;
+import org.opentripplanner.util.time.DurationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,6 +82,8 @@ public class RoutingRequest implements AutoCloseable, Cloneable, Serializable {
     private static final long serialVersionUID = 1L;
 
     private static final Logger LOG = LoggerFactory.getLogger(RoutingRequest.class);
+
+    private static final long NOW_THRESHOLD_SEC = DurationUtils.duration("15h");
 
     /* FIELDS UNIQUELY IDENTIFYING AN SPT REQUEST */
 
@@ -145,7 +151,7 @@ public class RoutingRequest implements AutoCloseable, Cloneable, Serializable {
         StreetMode.WALK,
         StreetMode.WALK,
         StreetMode.WALK,
-        EnumSet.allOf(TransitMode.class)
+        AllowedTransitMode.getAllTransitModes()
     );
 
     /**
@@ -159,8 +165,11 @@ public class RoutingRequest implements AutoCloseable, Cloneable, Serializable {
      */
     public BicycleOptimizeType bicycleOptimizeType = BicycleOptimizeType.SAFE;
 
-    /** The epoch date/time that the trip should depart (or arrive, for requests where arriveBy is true) */
-    public long dateTime = new Date().getTime() / 1000;
+    /**
+     * The epoch date/time in seconds that the trip should depart (or arrive, for requests where
+     * arriveBy is true)
+     */
+    private long dateTime = new Date().getTime() / 1000;
 
     /**
      * This is the time/duration in seconds from the earliest-departure-time(EDT) to
@@ -173,13 +182,27 @@ public class RoutingRequest implements AutoCloseable, Cloneable, Serializable {
      * Transit search as well; Hence this is named search-window and not raptor-search-window. Do
      * not confuse this with the travel-window, which is the time between EDT to LAT.
      * <p>
-     * Use {@code null} to unset, and {@link Duration#ZERO} to do one Raptor iteration. The value is
-     * dynamically  assigned a suitable value, if not set. In a small to medium size operation
+     * Use {@code null} to unset, and {@link Duration#ZERO} to do one Raptor iteration. The value
+     * is dynamically  assigned a suitable value, if not set. In a small to medium size operation
      * you may use a fixed value, like 60 minutes. If you have a mixture of high frequency cities
      * routes and infrequent long distant journeys, the best option is normally to use the dynamic
      * auto assignment.
+     * <p>
+     * There is no need to set this when going to the next/previous page any more.
      */
     public Duration searchWindow;
+
+    /**
+     * Use the cursor to go to the next or previous "page" of trips.
+     * You should pass in the original request as is.
+     * <p>
+     * The next page of itineraries will depart after the current results
+     * and the previous page of itineraries will depart before the current results.
+     * <p>
+     * The paging does not support timeTableView=false and arriveBy=true, this will result in
+     * none pareto-optimal results.
+     */
+    public PageCursor pageCursor;
 
     /**
      * Search for the best trip options within a time window. If {@code true} two itineraries are
@@ -748,6 +771,13 @@ public class RoutingRequest implements AutoCloseable, Cloneable, Serializable {
      */
     public int additionalDaysAfterSearchTime = 1;
 
+
+    /**
+     * The filled request parameters for penalties and thresholds values
+     */
+    public DataOverlayParameters dataOverlay = null;
+
+
     /* CONSTRUCTORS */
 
     /** Constructor for options; modes defaults to walk and transit */
@@ -968,17 +998,41 @@ public class RoutingRequest implements AutoCloseable, Cloneable, Serializable {
         streetSubRequestModes.setMode(mode, true);
     }
 
-    public Date getDateTime() {
-        return new Date(dateTime * 1000);
+    /**
+     * When a client perform the first search it supply a search time - its is that
+     * time. The client may go to the next page, but the original datetime stay unchanged.
+     */
+    public Instant getDateTimeOriginalSearch() {
+        return Instant.ofEpochSecond(dateTime);
     }
 
-    public void setDateTime(Date dateTime) {
-        this.dateTime = dateTime.getTime() / 1000;
+    /**
+     * The search time for the current page. If the client have moved to the next page
+     * then this is the adjusted search time. The search time is adjusted with according to
+     * the time-window used.
+     */
+    public Instant getDateTimeCurrentPage() {
+        return pageCursor == null ? Instant.ofEpochSecond(dateTime) : (
+                arriveBy
+                        ? pageCursor.latestArrivalTime
+                        : pageCursor.earliestDepartureTime
+        );
+    }
+
+    public void setDateTime(Instant dateTime) {
+        this.dateTime = dateTime.getEpochSecond();
     }
 
     public void setDateTime(String date, String time, TimeZone tz) {
         Date dateObject = DateUtils.toDate(date, time, tz);
-        setDateTime(dateObject);
+        setDateTime(dateObject == null ? Instant.now() : dateObject.toInstant());
+    }
+
+    /**
+     * Is the trip originally planned withing the previous/next 15h?
+     */
+    public boolean isTripPlannedForNow() {
+        return Math.abs(Instant.now().getEpochSecond() - dateTime) < NOW_THRESHOLD_SEC;
     }
 
     /**
@@ -986,6 +1040,10 @@ public class RoutingRequest implements AutoCloseable, Cloneable, Serializable {
      */
     public int getNumItineraries() {
         return 1;
+    }
+
+    public void setPageCursor(String pageCursor) {
+        this.pageCursor = PageCursor.decode(pageCursor);
     }
 
     public void setNumItineraries(int numItineraries) {
@@ -997,7 +1055,7 @@ public class RoutingRequest implements AutoCloseable, Cloneable, Serializable {
     }
 
     public String toString(String sep) {
-        return from + sep + to + sep + getDateTime() + sep
+        return from + sep + to + sep + getDateTimeOriginalSearch() + sep
                 + arriveBy + sep + bicycleOptimizeType + sep + streetSubRequestModes.getAsStr() + sep
                 + getNumItineraries();
     }
@@ -1208,11 +1266,13 @@ public class RoutingRequest implements AutoCloseable, Cloneable, Serializable {
 
     /** Tear down any routing context (remove temporary edges from edge lists) */
     public void cleanup() {
-        if (this.rctx == null)
-            LOG.warn("routing context was not set, cannot destroy it.");
-        else {
-            rctx.destroy();
-            LOG.debug("routing context destroyed");
+        if (this.rctx != null) {
+            try {
+                rctx.destroy();
+            }
+            catch (Exception e) {
+                LOG.error("Could not destroy the routing context", e);
+            }
         }
     }
 
@@ -1311,6 +1371,12 @@ public class RoutingRequest implements AutoCloseable, Cloneable, Serializable {
     }
 
     public Set<FeedScopedId> getBannedRoutes(Collection<Route> routes) {
+        if (bannedRoutes.isEmpty() && bannedAgencies.isEmpty() &&
+            whiteListedRoutes.isEmpty() && whiteListedAgencies.isEmpty()
+        ) {
+            return Set.of();
+        }
+
         Set<FeedScopedId> bannedRoutes = new HashSet<>();
         for (Route route : routes) {
             if (routeIsBanned(route)) {
@@ -1335,14 +1401,14 @@ public class RoutingRequest implements AutoCloseable, Cloneable, Serializable {
      */
     private boolean routeIsBanned(Route route) {
         /* check if agency is banned for this plan */
-        if (bannedAgencies != null) {
+        if (!bannedAgencies.isEmpty()) {
             if (bannedAgencies.contains(route.getAgency().getId())) {
                 return true;
             }
         }
 
         /* check if route banned for this plan */
-        if (bannedRoutes != null) {
+        if (!bannedRoutes.isEmpty()) {
             if (bannedRoutes.matches(route)) {
                 return true;
             }
@@ -1352,7 +1418,7 @@ public class RoutingRequest implements AutoCloseable, Cloneable, Serializable {
         boolean whiteListInUse = false;
 
         /* check if agency is whitelisted for this plan */
-        if (whiteListedAgencies != null && whiteListedAgencies.size() > 0) {
+        if (!whiteListedAgencies.isEmpty()) {
             whiteListInUse = true;
             if (whiteListedAgencies.contains(route.getAgency().getId())) {
                 whiteListed = true;
@@ -1360,7 +1426,7 @@ public class RoutingRequest implements AutoCloseable, Cloneable, Serializable {
         }
 
         /* check if route is whitelisted for this plan */
-        if (whiteListedRoutes != null && !whiteListedRoutes.isEmpty()) {
+        if (!whiteListedRoutes.isEmpty()) {
             whiteListInUse = true;
             if (whiteListedRoutes.matches(route)) {
                 whiteListed = true;

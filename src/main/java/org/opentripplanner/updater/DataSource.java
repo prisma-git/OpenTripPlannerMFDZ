@@ -3,8 +3,8 @@ package org.opentripplanner.updater;
 import java.util.List;
 
 /**
- * TODO clarify thread safety.
- * It appears that update() and getStations() are never called simultaneously by different threads, but is not stated.
+ * DataSource interface that can be used for different types of realtime updaters. It is assumed
+ * that these methods are never called in parallel (i.e. updater doesn't run on multiple threads).
  */
 public interface DataSource<T> {
 
@@ -18,4 +18,9 @@ public interface DataSource<T> {
    * @return a List of all currently known objects. The updater will use this to update the Graph.
    */
   List<T> getUpdates();
+
+  /**
+   * @see org.opentripplanner.updater.GraphUpdater#setup
+   */
+  default void setup() {}
 }

@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import org.opentripplanner.model.Stop;
+import org.opentripplanner.model.StopLocation;
 import org.opentripplanner.model.transfer.TransferService;
 import org.opentripplanner.routing.algorithm.raptor.transit.request.RaptorRequestTransferCache;
 import org.opentripplanner.routing.api.request.RoutingRequest;
@@ -75,12 +76,12 @@ public class TransitLayer {
   }
 
   public int getIndexByStop(Stop stop) {
-    return stopIndex.indexByStop.get(stop);
+    return stopIndex.indexOf(stop);
   }
 
   @Nullable
-  public Stop getStopByIndex(int stop) {
-    return stop != -1 ? this.stopIndex.stopsByIndex.get(stop) : null;
+  public StopLocation getStopByIndex(int stop) {
+    return stop == -1 ? null : this.stopIndex.stopByIndex(stop);
   }
 
   public StopIndexForRaptor getStopIndex() {
@@ -103,7 +104,7 @@ public class TransitLayer {
   }
 
   public int getStopCount() {
-    return stopIndex.stopsByIndex.size();
+    return stopIndex.size();
   }
 
   @Nullable

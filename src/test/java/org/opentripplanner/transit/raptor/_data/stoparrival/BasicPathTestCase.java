@@ -1,6 +1,7 @@
 package org.opentripplanner.transit.raptor._data.stoparrival;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.opentripplanner.model.transfer.TransferConstraint.REGULAR_TRANSFER;
 import static org.opentripplanner.routing.algorithm.raptor.transit.cost.RaptorCostConverter.toRaptorCost;
 import static org.opentripplanner.transit.raptor._data.transit.TestTransfer.walk;
 import static org.opentripplanner.transit.raptor._data.transit.TestTripPattern.pattern;
@@ -10,12 +11,6 @@ import static org.opentripplanner.util.time.TimeUtils.time;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.opentripplanner.ext.flex.FlexAccessEgress;
-import org.opentripplanner.model.Stop;
-import org.opentripplanner.routing.algorithm.GraphRoutingTest;
-import org.opentripplanner.routing.algorithm.raptor.transit.FlexAccessEgressAdapter;
-import org.opentripplanner.routing.algorithm.raptor.transit.StopIndexForRaptor;
-import org.opentripplanner.routing.algorithm.raptor.transit.TransitTuningParameters;
 import org.opentripplanner.routing.algorithm.raptor.transit.cost.DefaultCostCalculator;
 import org.opentripplanner.transit.raptor._data.RaptorTestConstants;
 import org.opentripplanner.transit.raptor._data.transit.TestTransfer;
@@ -335,7 +330,7 @@ public class BasicPathTestCase implements RaptorTestConstants {
     ) {
         boolean firstTransit = TRIP_1 == trip;
         int boardCost = COST_CALCULATOR.boardingCost(
-                firstTransit, prevArrivalTime, boardStop, boardTime, trip, null
+                firstTransit, prevArrivalTime, boardStop, boardTime, trip, REGULAR_TRANSFER
         );
 
         return COST_CALCULATOR.transitArrivalCost(

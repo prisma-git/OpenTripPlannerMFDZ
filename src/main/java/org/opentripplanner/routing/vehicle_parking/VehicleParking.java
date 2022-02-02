@@ -12,6 +12,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.opentripplanner.model.FeedScopedId;
+import org.opentripplanner.routing.core.TraverseMode;
 import org.opentripplanner.routing.core.TimeRestriction;
 import org.opentripplanner.routing.core.TraverseMode;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingEntrance.VehicleParkingEntranceBuilder;
@@ -81,33 +82,6 @@ public class VehicleParking implements Serializable {
     return String.format(Locale.US, "VehicleParking(%s at %.6f, %.6f)", name, y, x);
   }
 
-  public boolean hasSpacesAvailable(TraverseMode traverseMode, boolean wheelchairAccessible, boolean useAvailability) {
-    switch (traverseMode) {
-      case BICYCLE:
-        if (useAvailability && hasRealTimeDataForMode(TraverseMode.BICYCLE, false)) {
-          return availability.getBicycleSpaces() > 0;
-        } else {
-          return bicyclePlaces;
-        }
-      case CAR:
-        if (wheelchairAccessible) {
-          if (useAvailability && hasRealTimeDataForMode(TraverseMode.CAR, true)) {
-              return availability.getWheelchairAccessibleCarSpaces() > 0;
-          } else {
-            return wheelchairAccessibleCarPlaces;
-          }
-        } else {
-          if (useAvailability && hasRealTimeDataForMode(TraverseMode.CAR, false)) {
-              return availability.getCarSpaces() > 0;
-          } else {
-            return carPlaces;
-          }
-        }
-      default:
-        return false;
-    }
-  }
-
   public boolean hasBicyclePlaces() {
     return bicyclePlaces;
   }
@@ -128,6 +102,33 @@ public class VehicleParking implements Serializable {
     return availability != null;
   }
 
+  public boolean hasSpacesAvailable(TraverseMode traverseMode, boolean wheelchairAccessible, boolean useAvailability) {
+    switch (traverseMode) {
+      case BICYCLE:
+        if (useAvailability && hasRealTimeDataForMode(TraverseMode.BICYCLE, false)) {
+          return availability.getBicycleSpaces() > 0;
+        } else {
+          return bicyclePlaces;
+        }
+      case CAR:
+        if (wheelchairAccessible) {
+          if (useAvailability && hasRealTimeDataForMode(TraverseMode.CAR, true)) {
+            return availability.getWheelchairAccessibleCarSpaces() > 0;
+          } else {
+            return wheelchairAccessibleCarPlaces;
+          }
+        } else {
+          if (useAvailability && hasRealTimeDataForMode(TraverseMode.CAR, false)) {
+            return availability.getCarSpaces() > 0;
+          } else {
+            return carPlaces;
+          }
+        }
+      default:
+        return false;
+    }
+  }
+
   public boolean hasRealTimeDataForMode(TraverseMode traverseMode, boolean wheelchairAccessibleCarPlaces) {
     if (availability == null) {
       return false;
@@ -137,16 +138,17 @@ public class VehicleParking implements Serializable {
       case BICYCLE:
         return availability.getBicycleSpaces() != null;
       case CAR:
-        var places = wheelchairAccessibleCarPlaces ?
-            availability.getWheelchairAccessibleCarSpaces() : availability.getCarSpaces();
+        var places = wheelchairAccessibleCarPlaces
+                ? availability.getWheelchairAccessibleCarSpaces()
+                : availability.getCarSpaces();
         return places != null;
       default:
         return false;
     }
   }
 
-  public void updateAvailability(VehicleParkingSpaces availability) {
-    this.availability = availability;
+  public void updateAvailability(VehicleParkingSpaces vehicleParkingSpaces) {
+    this.availability = vehicleParkingSpaces;
   }
 
   private void addEntrance(VehicleParkingEntranceCreator creator) {

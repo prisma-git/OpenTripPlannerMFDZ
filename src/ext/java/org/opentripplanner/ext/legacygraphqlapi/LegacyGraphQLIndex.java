@@ -98,6 +98,7 @@ class LegacyGraphQLIndex {
       RuntimeWiring runtimeWiring = RuntimeWiring
           .newRuntimeWiring()
           .scalar(LegacyGraphQLScalars.polylineScalar)
+          .scalar(LegacyGraphQLScalars.geoJsonScalar)
           .scalar(LegacyGraphQLScalars.graphQLIDScalar)
           .scalar(ExtendedScalars.GraphQLLong)
           .type("Node", type -> type.typeResolver(new LegacyGraphQLNodeTypeResolver()))
@@ -143,6 +144,9 @@ class LegacyGraphQLIndex {
           .type("AlertEntity", type -> type.typeResolver(new LegacyGraphQLAlertEntityTypeResolver()))
           .type(IntrospectionTypeWiring.build(LegacyGraphQLStopOnRouteImpl.class))
           .type(IntrospectionTypeWiring.build(LegacyGraphQLStopOnTripImpl.class))
+          .type(IntrospectionTypeWiring.build(LegacyGraphQLUnknownImpl.class))
+          .type(IntrospectionTypeWiring.build(LegacyGraphQLRouteTypeImpl.class))
+          .type(IntrospectionTypeWiring.build(LegacyGraphQLStopGeometriesImpl.class))
           .build();
       SchemaGenerator schemaGenerator = new SchemaGenerator();
       return schemaGenerator.makeExecutableSchema(typeRegistry, runtimeWiring);

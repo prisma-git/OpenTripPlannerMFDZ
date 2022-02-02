@@ -144,17 +144,6 @@ public class VehicleParkingEdge extends Edge implements TimeRestrictedEdge {
         return s0e.makeState();
     }
 
-    private boolean isSpacesAvailable(TraverseMode traverseMode, boolean wheelchairAccessible) {
-        switch (traverseMode) {
-            case BICYCLE:
-                return vehicleParking.hasBicyclePlaces();
-            case CAR:
-                return wheelchairAccessible ? vehicleParking.hasWheelchairAccessibleCarPlaces() : vehicleParking.hasCarPlaces();
-            default:
-                return false;
-        }
-    }
-
     @Override
     public double getDistanceMeters() {
         return 0;
