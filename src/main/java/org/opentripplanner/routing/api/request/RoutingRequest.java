@@ -356,12 +356,6 @@ public class RoutingRequest implements AutoCloseable, Cloneable, Serializable {
     /** The vehicle rental networks which may not be used. If empty, no networks are banned. */
     public Set<String> bannedVehicleRentalNetworks = Set.of();
 
-    /** The bike rental networks which may be used. If empty all networks may be used. */
-    public Set<String> allowedBikeRentalNetworks = Set.of();
-
-    /** The bike rental networks which may not be used. If empty, no networks are banned. */
-    public Set<String> bannedBikeRentalNetworks = Set.of();
-
     /** Time to park a bike */
     public int bikeParkTime = 60;
 

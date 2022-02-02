@@ -872,11 +872,11 @@ public class LegacyGraphQLTypes {
         private Integer _alightSlack;
         private Boolean _allowBikeRental;
         private Boolean _allowKeepingRentedBicycleAtDestination;
-        private Iterable<String> _allowedBikeRentalNetworks;
+        private Iterable<String> _allowedVehicleRentalNetworks;
         private Iterable<String> _allowedTicketTypes;
         private Boolean _arriveBy;
         private LegacyGraphQLInputBannedInput _banned;
-        private Iterable<String> _bannedBikeRentalNetworks;
+        private Iterable<String> _bannedVehicleRentalNetworks;
         private Iterable<String> _bannedVehicleParkingTags;
         private Boolean _batch;
         private Integer _bikeBoardCost;
@@ -941,14 +941,14 @@ public class LegacyGraphQLTypes {
                 this._allowBikeRental = (Boolean) args.get("allowBikeRental");
                 this._allowKeepingRentedBicycleAtDestination =
                         (Boolean) args.get("allowKeepingRentedBicycleAtDestination");
-                this._allowedBikeRentalNetworks =
-                        (Iterable<String>) args.get("allowedBikeRentalNetworks");
+                this._allowedVehicleRentalNetworks =
+                        (Iterable<String>) args.get("allowedVehicleRentalNetworks");
                 this._allowedTicketTypes = (Iterable<String>) args.get("allowedTicketTypes");
                 this._arriveBy = (Boolean) args.get("arriveBy");
                 this._banned =
                         new LegacyGraphQLInputBannedInput((Map<String, Object>) args.get("banned"));
-                this._bannedBikeRentalNetworks =
-                        (Iterable<String>) args.get("bannedBikeRentalNetworks");
+                this._bannedVehicleRentalNetworks =
+                        (Iterable<String>) args.get("bannedVehicleRentalNetworks");
                 this._bannedVehicleParkingTags =
                         (Iterable<String>) args.get("bannedVehicleParkingTags");
                 this._batch = (Boolean) args.get("batch");
@@ -1047,7 +1047,7 @@ public class LegacyGraphQLTypes {
 
         public Boolean getLegacyGraphQLAllowKeepingRentedBicycleAtDestination() {return this._allowKeepingRentedBicycleAtDestination;}
 
-        public Iterable<String> getLegacyGraphQLAllowedBikeRentalNetworks() {return this._allowedBikeRentalNetworks;}
+        public Iterable<String> getLegacyGraphQLAllowedVehicleRentalNetworks() {return this._allowedVehicleRentalNetworks;}
 
         public Iterable<String> getLegacyGraphQLAllowedTicketTypes() {return this._allowedTicketTypes;}
 
@@ -1055,7 +1055,7 @@ public class LegacyGraphQLTypes {
 
         public LegacyGraphQLInputBannedInput getLegacyGraphQLBanned() {return this._banned;}
 
-        public Iterable<String> getLegacyGraphQLBannedBikeRentalNetworks() {return this._bannedBikeRentalNetworks;}
+        public Iterable<String> getLegacyGraphQLBannedVehicleRentalNetworks() {return this._bannedVehicleRentalNetworks;}
 
         public Iterable<String> getLegacyGraphQLBannedVehicleParkingTags() {return this._bannedVehicleParkingTags;}
 

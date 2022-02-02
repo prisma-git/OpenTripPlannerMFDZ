@@ -2333,9 +2333,9 @@ type QueryType {
         compactLegsByReversedSearch: Boolean
 
         """
-        Which bike rental networks can be used. By default, all networks are allowed.
+        Which vehicle rental networks can be used. By default, all networks are allowed.
         """
-        allowedBikeRentalNetworks: [String]
+        allowedVehicleRentalNetworks: [String]
 
         """
         If the visiting time for a VehicleParking is inside this interval,
@@ -2344,9 +2344,9 @@ type QueryType {
         vehicleParkingClosesSoonSeconds: Int
 
         """
-        Which bike rental networks may not be used. By default, all networks are allowed.
+        Which vehicle rental networks may not be used. By default, all networks are allowed.
         """
-        bannedBikeRentalNetworks: [String]
+        bannedVehicleRentalNetworks: [String]
 
         """
         When doing bike-and-ride or park-and-ride search what tags can not have a vehicle parking?

@@ -889,8 +889,8 @@ public class LegacyGraphQLQueryTypeImpl
       callWith.argument("bikeSwitchCost", (Integer v) -> request.bikeSwitchCost = v);
       callWith.argument("allowKeepingRentedBicycleAtDestination", (Boolean v) -> request.allowKeepingRentedVehicleAtDestination = v);
       callWith.argument("keepingRentedBicycleAtDestinationCost", (Integer v) -> request.keepingRentedVehicleAtDestinationCost = v);
-      callWith.argument("allowedBikeRentalNetworks", (Collection<String> v) -> request.allowedBikeRentalNetworks = new HashSet<>(v));
-      callWith.argument("bannedBikeRentalNetworks", (Collection<String> v) -> request.bannedBikeRentalNetworks = new HashSet<>(v));
+      callWith.argument("allowedVehicleRentalNetworks", (Collection<String> v) -> request.allowedVehicleRentalNetworks = new HashSet<>(v));
+      callWith.argument("bannedVehicleRentalNetworks", (Collection<String> v) -> request.bannedVehicleRentalNetworks = new HashSet<>(v));
       callWith.argument("requiredVehicleParkingTags", (Collection<String> v) -> request.requiredVehicleParkingTags = new HashSet<>(v));
       callWith.argument("bannedVehicleParkingTags", (Collection<String> v) -> request.bannedVehicleParkingTags = new HashSet<>(v));
       callWith.argument("preferredVehicleParkingTags", (Collection<String> v) -> request.preferredVehicleParkingTags = new HashSet<>(v));
