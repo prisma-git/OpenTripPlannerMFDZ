@@ -83,7 +83,7 @@ public class RentalVehicleType implements Serializable, Comparable<RentalVehicle
                 case BICYCLE: return BICYCLE;
                 case CAR: return CAR;
                 case MOPED: return MOPED;
-                case SCOOTER: return SCOOTER;
+                case SCOOTER: return BICYCLE; // this is a hotfix for the mfdz fork
                 case OTHER: return OTHER;
             }
             throw new IllegalArgumentException();
