@@ -61,6 +61,6 @@
   <logger name="com.ning.http.client.providers.netty.NettyAsyncHttpProvider" level="error" />
   <logger name="com.sun.jersey" level="warn" />
   <!-- Suppress an inconsequential IOException that is logged at debug level. -->
-  <logger name="org.glassfish.grizzly" level="info" />
+  <logger name="org.glassfish.grizzly" level="debug" />
 
 </configuration>
