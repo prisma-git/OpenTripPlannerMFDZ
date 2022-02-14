@@ -1,7 +1,7 @@
 FROM docker.io/openjdk:11-slim
 
 RUN apt-get update \
-    && apt-get install -y curl bash fonts-dejavu \
+    && apt-get install -y curl bash fonts-dejavu fontconfig \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

@@ -17,6 +17,6 @@ if [[ ! -z "${GRAPH_ZIP_URL}" ]]; then
 else
   echo "Environment variable GRAPH_ZIP_URL not set. Starting in manual mode."
   set -x
-  java $JAVA_OPTS -Djava.awt.headless=true -jar otp-shaded.jar $@
+  java $JAVA_OPTS -Djava.awt.headless=true -server --add-exports java.desktop/sun.font=ALL-UNNAMED -jar otp-shaded.jar $@
 fi
 
