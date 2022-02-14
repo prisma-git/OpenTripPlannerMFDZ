@@ -1,7 +1,10 @@
-FROM adoptopenjdk/openjdk11:alpine-slim
+FROM docker.io/openjdk:11-slim
 
-RUN apk add --update curl bash ttf-dejavu && \
-    rm -rf /var/cache/apk/*
+RUN apt-get update \
+    && apt-get install -y curl bash fonts-dejavu \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 VOLUME /opt/opentripplanner/graph
 
 ENV OTP_ROOT="/opt/opentripplanner"
