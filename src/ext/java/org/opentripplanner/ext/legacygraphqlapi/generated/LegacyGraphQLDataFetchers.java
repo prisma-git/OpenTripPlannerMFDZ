@@ -17,7 +17,7 @@ import org.opentripplanner.routing.graphfinder.PatternAtStop;
 import org.opentripplanner.common.model.P2;
 import java.util.Map;
 import org.opentripplanner.routing.core.FareComponent;
-import org.opentripplanner.util.model.EncodedPolylineBean;
+import org.locationtech.jts.geom.Geometry;
 import org.opentripplanner.model.plan.Itinerary;
 import org.opentripplanner.model.plan.Leg;
 import org.opentripplanner.model.TripPattern;
@@ -25,7 +25,6 @@ import org.opentripplanner.model.plan.StopArrival;
 import org.opentripplanner.routing.graphfinder.PlaceAtDistance;
 import graphql.relay.Connection;
 import graphql.relay.Edge;
-import org.opentripplanner.routing.api.response.RoutingResponse;
 import org.opentripplanner.model.Route;
 import org.opentripplanner.model.plan.WalkStep;
 import org.opentripplanner.routing.graphfinder.NearbyStop;
@@ -398,7 +397,7 @@ public class LegacyGraphQLDataFetchers {
 
         public DataFetcher<Iterable<Object>> intermediateStops();
 
-        public DataFetcher<EncodedPolylineBean> legGeometry();
+        public DataFetcher<Geometry> legGeometry();
 
         public DataFetcher<String> mode();
 
@@ -491,7 +490,7 @@ public class LegacyGraphQLDataFetchers {
 
         public DataFetcher<String> name();
 
-        public DataFetcher<EncodedPolylineBean> patternGeometry();
+        public DataFetcher<Geometry> patternGeometry();
 
         public DataFetcher<Route> route();
 
@@ -612,7 +611,7 @@ public class LegacyGraphQLDataFetchers {
 
         public DataFetcher<Iterable<TripPattern>> patterns();
 
-        public DataFetcher<RoutingResponse> plan();
+        public DataFetcher<graphql.execution.DataFetcherResult<org.opentripplanner.routing.api.response.RoutingResponse>> plan();
 
         public DataFetcher<VehicleRentalVehicle> rentalVehicle();
 
@@ -798,7 +797,7 @@ public class LegacyGraphQLDataFetchers {
 
         public DataFetcher<org.locationtech.jts.geom.Geometry> geoJson();
 
-        public DataFetcher<Iterable<EncodedPolylineBean>> googleEncoded();
+        public DataFetcher<Iterable<Geometry>> googleEncoded();
     }
 
     /**
@@ -952,7 +951,7 @@ public class LegacyGraphQLDataFetchers {
 
         public DataFetcher<Iterable<TripTimeOnDate>> stoptimesForDate();
 
-        public DataFetcher<EncodedPolylineBean> tripGeometry();
+        public DataFetcher<Geometry> tripGeometry();
 
         public DataFetcher<String> tripHeadsign();
 

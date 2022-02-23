@@ -14,7 +14,8 @@ import org.opentripplanner.ConstantsForTests;
 import org.opentripplanner.model.FeedScopedId;
 import org.opentripplanner.model.GenericLocation;
 import org.opentripplanner.model.plan.Itinerary;
-import org.opentripplanner.routing.algorithm.raptor.router.TransitRouter;
+import org.opentripplanner.routing.algorithm.raptoradapter.router.AdditionalSearchDays;
+import org.opentripplanner.routing.algorithm.raptoradapter.router.TransitRouter;
 import org.opentripplanner.routing.api.request.RoutingRequest;
 import org.opentripplanner.routing.core.Fare;
 import org.opentripplanner.routing.core.Fare.FareType;
@@ -75,7 +76,7 @@ public class FaresTest {
 
         // long trip
 
-        startTime = TestUtils.dateInstant("America/Los_Angeles", 2009, 11, 1, 14, 0, 0);
+        startTime = TestUtils.dateInstant("America/Los_Angeles", 2009, 11, 2, 14, 0, 0);
 
         from = GenericLocation.fromStopId("Origin", portlandId, "8389");
         to = GenericLocation.fromStopId("Destination", portlandId, "1252");
@@ -261,10 +262,14 @@ public class FaresTest {
         request.from = from;
         request.to = to;
 
+        var zonedDateTime = time.atZone(ZoneId.of("America/Los_Angeles"));
+        var additionalSearchDays = AdditionalSearchDays.defaults(zonedDateTime);
+
         var result = TransitRouter.route(
                 request,
                 router,
-                time.atZone(ZoneId.of("America/Los_Angeles")),
+                zonedDateTime,
+                additionalSearchDays,
                 new DebugTimingAggregator()
         );
         return result.getItineraries();
