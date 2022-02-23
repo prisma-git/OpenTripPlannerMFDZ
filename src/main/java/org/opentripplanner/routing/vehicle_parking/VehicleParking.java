@@ -7,16 +7,12 @@ import java.util.List;
 import java.util.Locale;
 import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
 import org.opentripplanner.model.FeedScopedId;
-import org.opentripplanner.routing.core.TraverseMode;
 import org.opentripplanner.routing.core.TimeRestriction;
 import org.opentripplanner.routing.core.TraverseMode;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingEntrance.VehicleParkingEntranceBuilder;
-import org.opentripplanner.routing.vertextype.StreetVertex;
 import org.opentripplanner.util.I18NString;
 
 /**

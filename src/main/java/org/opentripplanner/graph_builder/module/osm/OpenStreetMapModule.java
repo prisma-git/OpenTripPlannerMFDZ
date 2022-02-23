@@ -706,45 +706,6 @@ public class OpenStreetMapModule implements GraphBuilderModule {
             return entrances;
         }
 
-        private void buildWalkableAreas(boolean skipVisibility, boolean platformEntriesLinking) {
-            if (skipVisibility) {
-                LOG.info("Skipping visibility graph construction for walkable areas and using just area rings for edges.");
-            } else {
-                LOG.info("Building visibility graphs for walkable areas.");
-            }
-            List<AreaGroup> areaGroups = groupAreas(osmdb.getWalkableAreas());
-            WalkableAreaBuilder walkableAreaBuilder = new WalkableAreaBuilder(graph, osmdb,
-                    wayPropertySet, edgeFactory, this, issueStore, maxAreaNodes,
-                    platformEntriesLinking
-            );
-            if (skipVisibility) {
-                for (AreaGroup group : areaGroups) {
-                    walkableAreaBuilder.buildWithoutVisibility(group);
-                }
-            } else {
-                ProgressTracker progress = ProgressTracker.track(
-                    "Build visibility graph for areas",
-                    50,
-                    areaGroups.size()
-                );
-                for (AreaGroup group : areaGroups) {
-                    walkableAreaBuilder.buildWithVisibility(group);
-                    //Keep lambda! A method-ref would causes incorrect class and line number to be logged
-                    progress.step(m -> LOG.info(m));
-                }
-                LOG.info(progress.completeMessage());
-            }
-
-            // running a request caches the timezone; we need to clear it now so that when agencies are loaded
-            // the graph time zone is set to the agency time zone.
-            graph.clearTimeZone();
-            if (skipVisibility) {
-                LOG.info("Done building rings for walkable areas.");
-            } else {
-                LOG.info("Done building visibility graphs for walkable areas.");
-            }
-        }
-
         private List<AreaGroup> groupAreas(Collection<Area> areas) {
             Map<Area, OSMLevel> areasLevels = new HashMap<>(areas.size());
             for (Area area : areas) {
