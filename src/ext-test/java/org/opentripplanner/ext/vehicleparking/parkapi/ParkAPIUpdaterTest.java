@@ -42,7 +42,7 @@ public class ParkAPIUpdaterTest {
     }
 
     @Test
-    void parseLudwigsburg() throws OpeningHoursParseException {
+    void parseLudwigsburg() {
         var url = "file:src/ext-test/resources/vehicleparking/parkapi/ludwigsburg.json";
 
         var parameters =
@@ -63,5 +63,29 @@ public class ParkAPIUpdaterTest {
 
         assertTrue(first.hasAnyCarPlaces());
         assertEquals(158, first.getCapacity().getCarSpaces());
+    }
+
+    @Test
+    void acrossMidnight() {
+        var url = "file:src/ext-test/resources/vehicleparking/parkapi/ludwigsburg-across-midnight.json";
+
+        var parameters =
+                new ParkAPIUpdaterParameters("", url, "park-api", 30, null, List.of(), null);
+        var updater = new CarParkAPIUpdater(parameters);
+
+        assertTrue(updater.update());
+        var parkingLots = updater.getUpdates();
+
+        assertEquals(1, parkingLots.size());
+
+        var first = parkingLots.get(0);
+        assertEquals("Lotter", first.getName().toString());
+        assertEquals(
+                "Su 06:00-02:00, Mo 06:00-02:00, Tu 06:00-02:00, We 06:00-02:00, Th 06:00-02:00, Fr 06:00-02:00, Sa 06:00-02:00",
+                first.getOpeningHours().toString()
+        );
+
+        assertTrue(first.hasAnyCarPlaces());
+        assertEquals(82, first.getCapacity().getCarSpaces());
     }
 }
