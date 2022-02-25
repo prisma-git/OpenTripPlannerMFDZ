@@ -50,7 +50,7 @@ public class PlaceMapper {
 
         ApiPlace api = new ApiPlace();
 
-        api.name = domain.name;
+        api.name = domain.name.toString(locale);
 
         if (domain.stop != null) {
             api.stopId = FeedScopedIdMapper.mapToApi(domain.stop.getId());
@@ -69,7 +69,6 @@ public class PlaceMapper {
 
         api.arrival = arrival;
         api.departure = departure;
-        api.orig = domain.orig;
         api.stopIndex = stopIndex;
         api.stopSequence = gtfsStopSequence;
         api.vertexType = VertexTypeMapper.mapVertexType(domain.vertexType);

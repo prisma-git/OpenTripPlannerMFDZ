@@ -12,6 +12,7 @@ import org.opentripplanner.routing.core.TraverseMode;
 import org.opentripplanner.routing.graph.Edge;
 import org.opentripplanner.routing.vehicle_parking.VehicleParking;
 import org.opentripplanner.routing.vertextype.VehicleParkingEntranceVertex;
+import org.opentripplanner.util.I18NString;
 
 /**
  * Parking a vehicle edge.
@@ -155,13 +156,8 @@ public class VehicleParkingEdge extends Edge implements TimeRestrictedEdge {
     }
 
     @Override
-    public String getName() {
+    public I18NString getName() {
         return getToVertex().getName();
-    }
-
-    @Override
-    public String getName(Locale locale) {
-        return getToVertex().getName(locale);
     }
 
     @Override

@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import javax.annotation.Nullable;
 import org.junit.jupiter.api.Test;
-import org.opentripplanner.routing.algorithm.raptor.transit.cost.DefaultCostCalculator;
+import org.opentripplanner.routing.algorithm.raptoradapter.transit.cost.DefaultCostCalculator;
 import org.opentripplanner.routing.algorithm.transferoptimization.model.TransferWaitTimeCostCalculator;
 import org.opentripplanner.transit.raptor._data.RaptorTestConstants;
 import org.opentripplanner.transit.raptor._data.api.PathUtils;
@@ -124,7 +124,7 @@ public class OptimizePathDomainServiceTest implements RaptorTestConstants {
 
         // Insert wait-time cost summary info
         var expected = original.toStringDetailed(this::stopIndexToName)
-                .replace("$3250]", "$3250 $33pri $333.81wtc]");
+                .replace("$3250]", "$3250 $33pri $3583.81wtc]");
 
         assertEquals(
                 expected,
@@ -201,7 +201,7 @@ public class OptimizePathDomainServiceTest implements RaptorTestConstants {
 
         assertEquals(
                 "A ~ BUS T1 10:02 10:10 ~ B ~ Walk 30s ~ C ~ BUS T2 10:15 10:35 ~ F "
-                        + "~ BUS T3 10:37 10:49 ~ G [10:00:20 10:49:20 49m $3040 $66pri $314.05wtc]",
+                        + "~ BUS T3 10:37 10:49 ~ G [10:00:20 10:49:20 49m $3040 $66pri $3354.05wtc]",
                 PathUtils.pathsToString(result)
         );
     }

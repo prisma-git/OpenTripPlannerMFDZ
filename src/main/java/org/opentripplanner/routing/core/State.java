@@ -64,7 +64,7 @@ public class State implements Cloneable {
                     new State(
                     vertex,
                     request.rctx.originBackEdge,
-                    request.getSecondsSinceEpoch(),
+                    request.getDateTime().getEpochSecond(),
                     request,
                     true,
                     false,
@@ -79,7 +79,7 @@ public class State implements Cloneable {
                     new State(
                         vertex,
                         request.rctx.originBackEdge,
-                        request.getSecondsSinceEpoch(),
+                        request.getDateTime().getEpochSecond(),
                         request,
                         false,
                         true,
@@ -91,7 +91,7 @@ public class State implements Cloneable {
                             new State(
                                     vertex,
                                     request.rctx.originBackEdge,
-                                    request.getSecondsSinceEpoch(),
+                                    request.getDateTime().getEpochSecond(),
                                     request,
                                     false,
                                     true,
@@ -103,7 +103,7 @@ public class State implements Cloneable {
             states.add(new State(
                 vertex,
                 request.rctx.originBackEdge,
-                request.getSecondsSinceEpoch(),
+                request.getDateTime().getEpochSecond(),
                 request
             ));
         }
@@ -114,7 +114,7 @@ public class State implements Cloneable {
         this(
                 opt.rctx.fromVertices == null ? null : opt.rctx.fromVertices.iterator().next(),
                 opt.rctx.originBackEdge,
-                opt.getSecondsSinceEpoch(),
+                opt.getDateTime().getEpochSecond(),
                 opt
         );
     }
@@ -125,7 +125,7 @@ public class State implements Cloneable {
      */
     public State(Vertex vertex, RoutingRequest opt) {
         // Since you explicitly specify, the vertex, we don't set the backEdge.
-        this(vertex, opt.getSecondsSinceEpoch(), opt);
+        this(vertex, opt.getDateTime().getEpochSecond(), opt);
     }
 
     /**

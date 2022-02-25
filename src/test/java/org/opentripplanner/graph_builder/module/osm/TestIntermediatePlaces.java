@@ -142,7 +142,7 @@ public class TestIntermediatePlaces {
         assertNotNull(paths);
         assertFalse(paths.isEmpty());
 
-        List<Itinerary> itineraries = GraphPathToItineraryMapper.mapItineraries(paths, request);
+        List<Itinerary> itineraries = GraphPathToItineraryMapper.mapItineraries(paths);
         TripPlan plan = TripPlanMapper.mapTripPlan(request, itineraries);
         assertLocationIsVeryCloseToPlace(from, plan.from);
         assertLocationIsVeryCloseToPlace(to, plan.to);
@@ -190,9 +190,9 @@ public class TestIntermediatePlaces {
         Calendar arriveTime = Calendar.getInstance(timeZone);
         if (request.arriveBy) {
             departTime = itinerary.legs.get(0).getStartTime();
-            arriveTime.setTimeInMillis(request.getDateTimeOriginalSearch().toEpochMilli());
+            arriveTime.setTimeInMillis(request.getDateTime().toEpochMilli());
         } else {
-            departTime.setTimeInMillis(request.getDateTimeCurrentPage().toEpochMilli());
+            departTime.setTimeInMillis(request.getDateTime().toEpochMilli());
             arriveTime = itinerary.legs.get(itinerary.legs.size() - 1).getEndTime();
         }
         long sumOfDuration = 0;
