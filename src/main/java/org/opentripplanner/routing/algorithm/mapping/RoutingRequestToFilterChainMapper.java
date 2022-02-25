@@ -12,6 +12,7 @@ import org.opentripplanner.routing.api.request.ItineraryFilterParameters;
 
 import java.time.Instant;
 import java.util.function.Consumer;
+import org.opentripplanner.routing.api.request.RequestModes;
 import org.opentripplanner.routing.api.request.StreetMode;
 
 public class RoutingRequestToFilterChainMapper {
@@ -28,6 +29,7 @@ public class RoutingRequestToFilterChainMapper {
       Instant filterOnLatestDepartureTime,
       boolean removeWalkAllTheWayResults,
       boolean maxNumberOfItinerariesCropHead,
+      RequestModes modes,
       Consumer<Itinerary> maxLimitReachedSubscriber
   ) {
     var builder = new ItineraryListFilterChainBuilder(sortOrder);
@@ -54,16 +56,16 @@ public class RoutingRequestToFilterChainMapper {
       builder.withMaxNumberOfItinerariesCrop(ListSection.HEAD);
     }
 
-    if (request.modes.contains(StreetMode.BIKE_TO_PARK)) {
-      builder.withMinBikeParkingDistance(p.minBikeParkingDistance);
+    if (modes.contains(StreetMode.BIKE_TO_PARK)) {
+      builder.withMinBikeParkingDistance(params.minBikeParkingDistance);
     }
 
-    if (request.modes.contains(StreetMode.CAR_TO_PARK) && request.modes.directMode == StreetMode.BIKE) {
+    if (modes.contains(StreetMode.CAR_TO_PARK) && modes.directMode == StreetMode.BIKE) {
       builder.withRemoveBikeOnlyParkAndRideItineraries(true);
     }
 
-    var flexWasRequested = request.modes.egressMode == StreetMode.FLEXIBLE ||
-            request.modes.directMode == StreetMode.FLEXIBLE;
+    var flexWasRequested = modes.egressMode == StreetMode.FLEXIBLE ||
+            modes.directMode == StreetMode.FLEXIBLE;
     builder
         .withMaxNumberOfItineraries(Math.min(maxNumOfItineraries, MAX_NUMBER_OF_ITINERARIES))
         .withTransitGeneralizedCostLimit(params.transitGeneralizedCostLimit)
@@ -74,9 +76,8 @@ public class RoutingRequestToFilterChainMapper {
         .withLatestDepartureTimeLimit(filterOnLatestDepartureTime)
         .withMaxLimitReachedSubscriber(maxLimitReachedSubscriber)
         .withRemoveWalkAllTheWayResults(removeWalkAllTheWayResults)
-        .withReverseFilteringDirection(reverseFilteringDirection)
-        .withFlexOnlyToDestination(flexWasRequested && p.flexOnlyToDestination)
-        .withDebugEnabled(p.debug);
+        .withFlexOnlyToDestination(flexWasRequested && params.flexOnlyToDestination)
+        .withDebugEnabled(params.debug);
 
     return builder.build();
   }

@@ -165,6 +165,6 @@ public class RaptorRoutingRequestTransitData implements RaptorTransitDataProvide
   }
 
   public ZonedDateTime getStartOfTime() {
-    return startOfTime;
+    return transitSearchTimeZero;
   }
 }

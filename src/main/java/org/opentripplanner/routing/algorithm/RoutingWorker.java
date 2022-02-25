@@ -118,6 +118,7 @@ public class RoutingWorker {
             filterOnLatestDepartureTime(),
             emptyDirectModeHandler.removeWalkAllTheWayResults(),
             request.maxNumberOfItinerariesCropHead(),
+            request.modes,
             it -> firstRemovedItinerary = it
         );
 

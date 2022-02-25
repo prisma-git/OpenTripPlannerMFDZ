@@ -20,6 +20,7 @@ import org.opentripplanner.model.WgsCoordinate;
 import org.opentripplanner.model.WheelChairBoarding;
 import org.opentripplanner.routing.algorithm.astar.AStar;
 import org.opentripplanner.routing.api.request.RoutingRequest;
+import org.opentripplanner.routing.core.TimeRestriction;
 import org.opentripplanner.routing.core.TraverseModeSet;
 import org.opentripplanner.routing.edgetype.ElevatorAlightEdge;
 import org.opentripplanner.routing.edgetype.ElevatorBoardEdge;
@@ -326,10 +327,20 @@ public abstract class GraphRoutingTest {
         }
 
         public VehicleParking vehicleParking(String id, double x, double y, boolean bicyclePlaces, boolean carPlaces, List<VehicleParkingEntranceCreator> entrances, String ... tags) {
-            return vehicleParking(id, x, y, bicyclePlaces, carPlaces, false, entrances, tags);
+            return vehicleParking(id, x, y, bicyclePlaces, carPlaces, false, null, entrances, tags);
         }
 
-        public VehicleParking vehicleParking(String id, double x, double y, boolean bicyclePlaces, boolean carPlaces, boolean wheelchairAccessibleCarPlaces, List<VehicleParkingEntranceCreator> entrances, String ... tags) {
+        public VehicleParking vehicleParking(
+                String id,
+                double x,
+                double y,
+                boolean bicyclePlaces,
+                boolean carPlaces,
+                boolean wheelchairAccessibleCarPlaces,
+                TimeRestriction openingHours,
+                List<VehicleParkingEntranceCreator> entrances,
+                String... tags
+        ) {
             var vehicleParking = VehicleParking.builder()
                 .id(new FeedScopedId(TEST_FEED_ID, id))
                 .x(x)
@@ -337,6 +348,7 @@ public abstract class GraphRoutingTest {
                 .bicyclePlaces(bicyclePlaces)
                 .carPlaces(carPlaces)
                 .entrances(entrances)
+                .openingHours(openingHours)
                 .wheelchairAccessibleCarPlaces(wheelchairAccessibleCarPlaces)
                 .tags(List.of(tags))
                 .build();

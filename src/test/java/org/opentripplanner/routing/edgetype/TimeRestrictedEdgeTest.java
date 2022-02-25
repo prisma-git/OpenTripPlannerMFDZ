@@ -10,10 +10,10 @@ import java.time.ZonedDateTime;
 import org.junit.jupiter.api.Test;
 import org.opentripplanner.routing.algorithm.GraphRoutingTest;
 import org.opentripplanner.routing.algorithm.astar.AStar;
-import org.opentripplanner.routing.algorithm.raptor.router.street.AccessEgressRouter;
-import org.opentripplanner.routing.algorithm.raptor.transit.TransitTuningParameters;
-import org.opentripplanner.routing.algorithm.raptor.transit.mappers.AccessEgressMapper;
-import org.opentripplanner.routing.algorithm.raptor.transit.mappers.TransitLayerMapper;
+import org.opentripplanner.routing.algorithm.raptoradapter.router.street.AccessEgressRouter;
+import org.opentripplanner.routing.algorithm.raptoradapter.transit.TransitTuningParameters;
+import org.opentripplanner.routing.algorithm.raptoradapter.transit.mappers.AccessEgressMapper;
+import org.opentripplanner.routing.algorithm.raptoradapter.transit.mappers.TransitLayerMapper;
 import org.opentripplanner.routing.api.request.RoutingRequest;
 import org.opentripplanner.routing.api.request.StreetMode;
 import org.opentripplanner.routing.core.OsmOpeningHours;
@@ -61,6 +61,7 @@ public class TimeRestrictedEdgeTest extends GraphRoutingTest {
             }
         });
 
+        graph.index();
         graph.setTransitLayer(TransitLayerMapper.map(TransitTuningParameters.FOR_TEST, graph));
     }
 

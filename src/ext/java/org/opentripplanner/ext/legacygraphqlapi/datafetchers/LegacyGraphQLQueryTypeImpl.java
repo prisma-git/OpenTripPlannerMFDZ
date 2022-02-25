@@ -860,7 +860,7 @@ public class LegacyGraphQLQueryTypeImpl
     return f;
   }
 
-  public DataFetcher<RoutingResponse> planFetcher() {
+  public DataFetcher<DataFetcherResult<RoutingResponse>> planFetcher() {
     return environment -> {
       LegacyGraphQLRequestContext context = environment.<LegacyGraphQLRequestContext>getContext();
       RoutingRequest request = context.getRouter().defaultRoutingRequest.clone();
@@ -1003,7 +1003,6 @@ public class LegacyGraphQLQueryTypeImpl
       callWith.argument("useVehicleParkingAvailabilityInformation", (Boolean v) -> request.useVehicleParkingAvailabilityInformation = v);
       RoutingResponse res = context.getRoutingService().route(request, context.getRouter());
       return DataFetcherResult.<RoutingResponse>newResult().data(res).localContext(Map.of("locale", request.locale)).build();
-      return context.getRoutingService().route(request, context.getRouter());
     };
   }
 
