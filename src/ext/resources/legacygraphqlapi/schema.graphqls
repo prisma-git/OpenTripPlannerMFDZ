@@ -3295,6 +3295,9 @@ enum VertexType {
 
     """PARKANDRIDE"""
     PARKANDRIDE
+
+    """BIKEPARK"""
+    BIKEPARK
 }
 
 enum WheelchairBoarding {

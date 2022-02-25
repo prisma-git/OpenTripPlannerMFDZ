@@ -2355,7 +2355,8 @@ public class LegacyGraphQLTypes {
         BIKESHARE,
         NORMAL,
         PARKANDRIDE,
-        TRANSIT
+        TRANSIT,
+        VEHICLEPARKING
 
     }
 
