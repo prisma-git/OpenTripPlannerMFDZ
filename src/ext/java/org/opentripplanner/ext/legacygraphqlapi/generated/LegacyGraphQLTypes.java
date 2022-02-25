@@ -507,6 +507,7 @@ public class LegacyGraphQLTypes {
         BUS,
         CABLE_CAR,
         CAR,
+        CARPOOL,
         COACH,
         FERRY,
         FLEX,
@@ -1053,10 +1054,12 @@ public class LegacyGraphQLTypes {
         private Integer alightSlack;
         private Boolean allowBikeRental;
         private Boolean allowKeepingRentedBicycleAtDestination;
-        private Iterable<String> allowedBikeRentalNetworks;
         private Iterable<String> allowedTicketTypes;
+        private Iterable<String> allowedVehicleRentalNetworks;
         private Boolean arriveBy;
         private LegacyGraphQLInputBannedInput banned;
+        private Iterable<String> bannedVehicleParkingTags;
+        private Iterable<String> bannedVehicleRentalNetworks;
         private Boolean batch;
         private Integer bikeBoardCost;
         private Double bikeReluctance;
@@ -1091,6 +1094,8 @@ public class LegacyGraphQLTypes {
         private LegacyGraphQLOptimizeType optimize;
         private String pageCursor;
         private LegacyGraphQLInputPreferredInput preferred;
+        private Iterable<String> preferredVehicleParkingTags;
+        private Iterable<String> requiredVehicleParkingTags;
         private Boolean reverseOptimizeOnTheFly;
         private Long searchWindow;
         private String startTransitStopId;
@@ -1102,6 +1107,9 @@ public class LegacyGraphQLTypes {
         private Iterable<LegacyGraphQLTransportModeInput> transportModes;
         private LegacyGraphQLInputTriangleInput triangle;
         private LegacyGraphQLInputUnpreferredInput unpreferred;
+        private Double unpreferredVehicleParkingTagPenalty;
+        private Boolean useVehicleParkingAvailabilityInformation;
+        private Integer vehicleParkingClosesSoonSeconds;
         private Double waitAtBeginningFactor;
         private Double waitReluctance;
         private Integer walkBoardCost;
@@ -1116,12 +1124,16 @@ public class LegacyGraphQLTypes {
                 this.allowBikeRental = (Boolean) args.get("allowBikeRental");
                 this.allowKeepingRentedBicycleAtDestination =
                         (Boolean) args.get("allowKeepingRentedBicycleAtDestination");
-                this.allowedBikeRentalNetworks =
-                        (Iterable<String>) args.get("allowedBikeRentalNetworks");
                 this.allowedTicketTypes = (Iterable<String>) args.get("allowedTicketTypes");
+                this.allowedVehicleRentalNetworks =
+                        (Iterable<String>) args.get("allowedVehicleRentalNetworks");
                 this.arriveBy = (Boolean) args.get("arriveBy");
                 this.banned =
                         new LegacyGraphQLInputBannedInput((Map<String, Object>) args.get("banned"));
+                this.bannedVehicleParkingTags =
+                        (Iterable<String>) args.get("bannedVehicleParkingTags");
+                this.bannedVehicleRentalNetworks =
+                        (Iterable<String>) args.get("bannedVehicleRentalNetworks");
                 this.batch = (Boolean) args.get("batch");
                 this.bikeBoardCost = (Integer) args.get("bikeBoardCost");
                 this.bikeReluctance = (Double) args.get("bikeReluctance");
@@ -1173,6 +1185,10 @@ public class LegacyGraphQLTypes {
                 this.pageCursor = (String) args.get("pageCursor");
                 this.preferred = new LegacyGraphQLInputPreferredInput(
                         (Map<String, Object>) args.get("preferred"));
+                this.preferredVehicleParkingTags =
+                        (Iterable<String>) args.get("preferredVehicleParkingTags");
+                this.requiredVehicleParkingTags =
+                        (Iterable<String>) args.get("requiredVehicleParkingTags");
                 this.reverseOptimizeOnTheFly = (Boolean) args.get("reverseOptimizeOnTheFly");
                 this.searchWindow = (Long) args.get("searchWindow");
                 this.startTransitStopId = (String) args.get("startTransitStopId");
@@ -1190,6 +1206,12 @@ public class LegacyGraphQLTypes {
                         (Map<String, Object>) args.get("triangle"));
                 this.unpreferred = new LegacyGraphQLInputUnpreferredInput(
                         (Map<String, Object>) args.get("unpreferred"));
+                this.unpreferredVehicleParkingTagPenalty =
+                        (Double) args.get("unpreferredVehicleParkingTagPenalty");
+                this.useVehicleParkingAvailabilityInformation =
+                        (Boolean) args.get("useVehicleParkingAvailabilityInformation");
+                this.vehicleParkingClosesSoonSeconds =
+                        (Integer) args.get("vehicleParkingClosesSoonSeconds");
                 this.waitAtBeginningFactor = (Double) args.get("waitAtBeginningFactor");
                 this.waitReluctance = (Double) args.get("waitReluctance");
                 this.walkBoardCost = (Integer) args.get("walkBoardCost");
@@ -1206,13 +1228,17 @@ public class LegacyGraphQLTypes {
 
         public Boolean getLegacyGraphQLAllowKeepingRentedBicycleAtDestination() {return this.allowKeepingRentedBicycleAtDestination;}
 
-        public Iterable<String> getLegacyGraphQLAllowedBikeRentalNetworks() {return this.allowedBikeRentalNetworks;}
-
         public Iterable<String> getLegacyGraphQLAllowedTicketTypes() {return this.allowedTicketTypes;}
+
+        public Iterable<String> getLegacyGraphQLAllowedVehicleRentalNetworks() {return this.allowedVehicleRentalNetworks;}
 
         public Boolean getLegacyGraphQLArriveBy() {return this.arriveBy;}
 
         public LegacyGraphQLInputBannedInput getLegacyGraphQLBanned() {return this.banned;}
+
+        public Iterable<String> getLegacyGraphQLBannedVehicleParkingTags() {return this.bannedVehicleParkingTags;}
+
+        public Iterable<String> getLegacyGraphQLBannedVehicleRentalNetworks() {return this.bannedVehicleRentalNetworks;}
 
         public Boolean getLegacyGraphQLBatch() {return this.batch;}
 
@@ -1282,6 +1308,10 @@ public class LegacyGraphQLTypes {
 
         public LegacyGraphQLInputPreferredInput getLegacyGraphQLPreferred() {return this.preferred;}
 
+        public Iterable<String> getLegacyGraphQLPreferredVehicleParkingTags() {return this.preferredVehicleParkingTags;}
+
+        public Iterable<String> getLegacyGraphQLRequiredVehicleParkingTags() {return this.requiredVehicleParkingTags;}
+
         public Boolean getLegacyGraphQLReverseOptimizeOnTheFly() {return this.reverseOptimizeOnTheFly;}
 
         public Long getLegacyGraphQLSearchWindow() {return this.searchWindow;}
@@ -1303,6 +1333,12 @@ public class LegacyGraphQLTypes {
         public LegacyGraphQLInputTriangleInput getLegacyGraphQLTriangle() {return this.triangle;}
 
         public LegacyGraphQLInputUnpreferredInput getLegacyGraphQLUnpreferred() {return this.unpreferred;}
+
+        public Double getLegacyGraphQLUnpreferredVehicleParkingTagPenalty() {return this.unpreferredVehicleParkingTagPenalty;}
+
+        public Boolean getLegacyGraphQLUseVehicleParkingAvailabilityInformation() {return this.useVehicleParkingAvailabilityInformation;}
+
+        public Integer getLegacyGraphQLVehicleParkingClosesSoonSeconds() {return this.vehicleParkingClosesSoonSeconds;}
 
         public Double getLegacyGraphQLWaitAtBeginningFactor() {return this.waitAtBeginningFactor;}
 
@@ -1330,18 +1366,26 @@ public class LegacyGraphQLTypes {
             this.allowKeepingRentedBicycleAtDestination = allowKeepingRentedBicycleAtDestination;
         }
 
-        public void setLegacyGraphQLAllowedBikeRentalNetworks(Iterable<String> allowedBikeRentalNetworks) {
-            this.allowedBikeRentalNetworks = allowedBikeRentalNetworks;
-        }
-
         public void setLegacyGraphQLAllowedTicketTypes(Iterable<String> allowedTicketTypes) {
             this.allowedTicketTypes = allowedTicketTypes;
+        }
+
+        public void setLegacyGraphQLAllowedVehicleRentalNetworks(Iterable<String> allowedVehicleRentalNetworks) {
+            this.allowedVehicleRentalNetworks = allowedVehicleRentalNetworks;
         }
 
         public void setLegacyGraphQLArriveBy(Boolean arriveBy) {this.arriveBy = arriveBy;}
 
         public void setLegacyGraphQLBanned(LegacyGraphQLInputBannedInput banned) {
             this.banned = banned;
+        }
+
+        public void setLegacyGraphQLBannedVehicleParkingTags(Iterable<String> bannedVehicleParkingTags) {
+            this.bannedVehicleParkingTags = bannedVehicleParkingTags;
+        }
+
+        public void setLegacyGraphQLBannedVehicleRentalNetworks(Iterable<String> bannedVehicleRentalNetworks) {
+            this.bannedVehicleRentalNetworks = bannedVehicleRentalNetworks;
         }
 
         public void setLegacyGraphQLBatch(Boolean batch) {this.batch = batch;}
@@ -1466,6 +1510,14 @@ public class LegacyGraphQLTypes {
             this.preferred = preferred;
         }
 
+        public void setLegacyGraphQLPreferredVehicleParkingTags(Iterable<String> preferredVehicleParkingTags) {
+            this.preferredVehicleParkingTags = preferredVehicleParkingTags;
+        }
+
+        public void setLegacyGraphQLRequiredVehicleParkingTags(Iterable<String> requiredVehicleParkingTags) {
+            this.requiredVehicleParkingTags = requiredVehicleParkingTags;
+        }
+
         public void setLegacyGraphQLReverseOptimizeOnTheFly(Boolean reverseOptimizeOnTheFly) {
             this.reverseOptimizeOnTheFly = reverseOptimizeOnTheFly;
         }
@@ -1502,6 +1554,19 @@ public class LegacyGraphQLTypes {
 
         public void setLegacyGraphQLUnpreferred(LegacyGraphQLInputUnpreferredInput unpreferred) {
             this.unpreferred = unpreferred;
+        }
+
+        public void setLegacyGraphQLUnpreferredVehicleParkingTagPenalty(Double unpreferredVehicleParkingTagPenalty) {
+            this.unpreferredVehicleParkingTagPenalty = unpreferredVehicleParkingTagPenalty;
+        }
+
+        public void setLegacyGraphQLUseVehicleParkingAvailabilityInformation(Boolean useVehicleParkingAvailabilityInformation) {
+            this.useVehicleParkingAvailabilityInformation =
+                    useVehicleParkingAvailabilityInformation;
+        }
+
+        public void setLegacyGraphQLVehicleParkingClosesSoonSeconds(Integer vehicleParkingClosesSoonSeconds) {
+            this.vehicleParkingClosesSoonSeconds = vehicleParkingClosesSoonSeconds;
         }
 
         public void setLegacyGraphQLWaitAtBeginningFactor(Double waitAtBeginningFactor) {
