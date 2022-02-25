@@ -7,7 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import lombok.SneakyThrows;
 import org.opentripplanner.model.FeedScopedId;
+import org.opentripplanner.routing.core.OsmOpeningHours;
+import org.opentripplanner.routing.core.TimeRestriction;
 import org.opentripplanner.routing.vehicle_parking.VehicleParking;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingSpaces;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingState;
@@ -80,9 +83,8 @@ abstract class ParkAPIUpdater extends GenericJsonDataSource<VehicleParking> {
                 .state(state)
                 .x(x)
                 .y(y)
-                // TODO
-                // .openingHours(parseOpeningHours(jsonNode.path("opening_hours")))
-                // .feeHours(parseOpeningHours(jsonNode.path("fee_hours")))
+                .openingHours(parseOpeningHours(jsonNode.path("opening_hours")))
+                .feeHours(parseOpeningHours(jsonNode.path("fee_hours")))
                 .detailsUrl(jsonNode.has("url") ? jsonNode.get("url").asText() : null)
                 .imageUrl(jsonNode.has("image_url") ? jsonNode.get("image_url").asText() : null)
                 .note(note)
@@ -94,6 +96,15 @@ abstract class ParkAPIUpdater extends GenericJsonDataSource<VehicleParking> {
                 .entrance(entrance)
                 .tags(tags)
                 .build();
+    }
+
+    @SneakyThrows
+    private TimeRestriction parseOpeningHours(JsonNode jsonNode) {
+        if (jsonNode == null || jsonNode.asText().isBlank()) {
+            return null;
+        }
+
+        return OsmOpeningHours.parseFromOsm(jsonNode.asText());
     }
 
     abstract VehicleParkingSpaces parseCapacity(JsonNode jsonNode);

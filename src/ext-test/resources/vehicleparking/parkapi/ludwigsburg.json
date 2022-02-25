@@ -1,0 +1,329 @@
+{
+  "data_source": "https://www.swlb.de/parken-ludwigsburg",
+  "lots": [
+    {
+      "lot_type": "Parkhaus",
+      "address": "Ludwigsburg",
+      "name": "Forum/Blühendes Barock Ost",
+      "forecast": "false",
+      "state": "unknown",
+      "coords": {
+        "lat": 48.893726,
+        "lng": 9.197112
+      },
+      "total": 158,
+      "url": "https://www.swlb.de/parken-ludwigsburg",
+      "opening_hours": " Su 00:00-23:59; Mo 00:00-23:59; Tu 00:00-23:59; We 00:00-23:59; Th 00:00-23:59; Fr 00:00-23:59; Sa 00:00-23:59;",
+      "notes": {
+        "de": ""
+      },
+      "free": 0
+    },
+    {
+      "lot_type": "Parkhaus",
+      "address": "Ludwigsburg",
+      "name": "Asperger Straße",
+      "forecast": "false",
+      "state": "unknown",
+      "coords": {
+        "lat": 48.897525,
+        "lng": 9.186669
+      },
+      "total": 308,
+      "url": "https://www.swlb.de/parken-ludwigsburg",
+      "opening_hours": " Mo 07:00-20:30; Tu 07:00-20:30; We 07:00-20:30; Th 07:00-20:30; Fr 07:00-20:30; Sa 07:00-18:30;",
+      "notes": {
+        "de": ""
+      },
+      "free": 93
+    },
+    {
+      "lot_type": "Parkhaus",
+      "address": "Ludwigsburg",
+      "name": "Marstall PH A",
+      "forecast": "false",
+      "state": "unknown",
+      "coords": {
+        "lat": 48.899807,
+        "lng": 9.190283
+      },
+      "total": 257,
+      "url": "https://www.swlb.de/parken-ludwigsburg",
+      "opening_hours": " Su 00:00-23:59; Mo 00:00-23:59; Tu 00:00-23:59; We 00:00-23:59; Th 00:00-23:59; Fr 00:00-23:59; Sa 00:00-23:59;",
+      "notes": {
+        "de": ""
+      },
+      "free": 91
+    },
+    {
+      "lot_type": "Parkhaus",
+      "address": "Ludwigsburg",
+      "name": "Marstall PH B",
+      "forecast": "false",
+      "state": "unknown",
+      "coords": {
+        "lat": 48.900153,
+        "lng": 9.191225
+      },
+      "total": 215,
+      "url": "https://www.swlb.de/parken-ludwigsburg",
+      "opening_hours": " Su 00:00-23:59; Mo 00:00-23:59; Tu 00:00-23:59; We 00:00-23:59; Th 00:00-23:59; Fr 00:00-23:59; Sa 00:00-23:59;",
+      "notes": {
+        "de": ""
+      },
+      "free": 128
+    },
+    {
+      "lot_type": "Parkhaus",
+      "address": "Ludwigsburg",
+      "name": "Solitude",
+      "forecast": "false",
+      "state": "unknown",
+      "coords": {
+        "lat": 48.892334,
+        "lng": 9.188409
+      },
+      "total": 358,
+      "url": "https://www.swlb.de/parken-ludwigsburg",
+      "opening_hours": " Su 10:00-20:00; Mo 06:30-22:30; Tu 06:30-22:30; We 06:30-22:30; Th 06:30-22:30; Fr 06:30-22:30; Sa 06:30-22:30;",
+      "notes": {
+        "de": ""
+      },
+      "free": 98
+    },
+    {
+      "lot_type": "Parkhaus",
+      "address": "Ludwigsburg",
+      "name": "Bahnhof",
+      "forecast": "false",
+      "state": "unknown",
+      "coords": {
+        "lat": 48.892557,
+        "lng": 9.184062
+      },
+      "total": 425,
+      "url": "https://www.swlb.de/parken-ludwigsburg",
+      "opening_hours": " Su 00:00-23:59; Mo 07:00-22:30; Tu 07:00-22:30; We 07:00-22:30; Th 07:00-22:30; Fr 07:00-22:30; Sa 07:00-22:30;",
+      "notes": {
+        "de": ""
+      },
+      "free": 250
+    },
+    {
+      "lot_type": "Parkhaus",
+      "address": "Ludwigsburg",
+      "name": "Lotter",
+      "forecast": "false",
+      "state": "unknown",
+      "coords": {
+        "lat": 48.896753,
+        "lng": 9.192791
+      },
+      "total": 82,
+      "url": "https://www.swlb.de/parken-ludwigsburg",
+      "opening_hours": " Su 06:00-02:00, Mo 06:00-02:00, Tu 06:00-02:00, We 06:00-02:00, Th 06:00-02:00, Fr 06:00-02:00, Sa 06:00-02:00,",
+      "notes": {
+        "de": ""
+      },
+      "free": 39
+    },
+    {
+      "lot_type": "Parkhaus",
+      "address": "Ludwigsburg",
+      "name": "Rathaus",
+      "forecast": "false",
+      "state": "unknown",
+      "coords": {
+        "lat": 48.894513,
+        "lng": 9.19226
+      },
+      "total": 459,
+      "url": "https://www.swlb.de/parken-ludwigsburg",
+      "opening_hours": " Su 10:00-20:00; Mo 06:30-22:30; Tu 06:30-22:30; We 06:30-22:30; Th 06:30-22:30; Fr 06:30-22:30; Sa 06:30-22:30;",
+      "notes": {
+        "de": ""
+      },
+      "free": 124
+    },
+    {
+      "lot_type": "Parkhaus",
+      "address": "Ludwigsburg",
+      "name": "Oberpaur",
+      "forecast": "false",
+      "state": "unknown",
+      "coords": {
+        "lat": 48.897828,
+        "lng": 9.188844
+      },
+      "total": 152,
+      "url": "https://www.swlb.de/parken-ludwigsburg",
+      "opening_hours": " Mo 08:00-19:30; Tu 08:00-19:30; We 08:00-19:30; Th 08:00-20:30; Fr 08:00-20:30; Sa 08:00-18:30;",
+      "notes": {
+        "de": ""
+      },
+      "free": 78
+    },
+    {
+      "lot_type": "Parkhaus",
+      "address": "Ludwigsburg",
+      "name": "Schillerviertel",
+      "forecast": "false",
+      "state": "unknown",
+      "coords": {
+        "lat": 48.89356,
+        "lng": 9.18555
+      },
+      "total": 122,
+      "url": "https://www.swlb.de/parken-ludwigsburg",
+      "opening_hours": " Mo 07:00-20:30; Tu 07:00-20:30; We 07:00-20:30; Th 07:00-20:30; Fr 07:00-20:30; Sa 07:00-20:30;",
+      "notes": {
+        "de": ""
+      },
+      "free": 62
+    },
+    {
+      "lot_type": "Parkhaus",
+      "address": "Ludwigsburg",
+      "name": "Bahnpassage 1",
+      "forecast": "false",
+      "state": "unknown",
+      "coords": {
+        "lat": 48.892946,
+        "lng": 9.18538
+      },
+      "total": 38,
+      "url": "https://www.swlb.de/parken-ludwigsburg",
+      "opening_hours": " Su 00:00-23:59; Mo 00:00-23:59; Tu 00:00-23:59; We 00:00-23:59; Th 00:00-23:59; Fr 00:00-23:59; Sa 00:00-23:59;",
+      "notes": {
+        "de": ""
+      },
+      "free": 3
+    },
+    {
+      "lot_type": "Parkhaus",
+      "address": "Ludwigsburg",
+      "name": "Walckerpark",
+      "forecast": "false",
+      "state": "unknown",
+      "coords": {
+        "lat": 48.9017,
+        "lng": 9.190868
+      },
+      "total": 112,
+      "url": "https://www.swlb.de/parken-ludwigsburg",
+      "opening_hours": " Su 10:00-20:00; Mo 07:00-22:30; Tu 07:00-22:30; We 07:00-22:30; Th 07:00-22:30; Fr 07:00-22:30; Sa 07:00-22:30;",
+      "notes": {
+        "de": ""
+      },
+      "free": 112
+    },
+    {
+      "lot_type": "Parkhaus",
+      "address": "Ludwigsburg",
+      "name": "Arena",
+      "forecast": "false",
+      "state": "unknown",
+      "coords": {
+        "lat": 48.89121,
+        "lng": 9.182467
+      },
+      "total": 299,
+      "url": "https://www.swlb.de/parken-ludwigsburg",
+      "opening_hours": " Mo 07:00-22:30; Tu 07:00-22:30; We 07:00-22:30; Th 07:00-22:30; Fr 07:00-22:30; Sa 07:00-22:30;",
+      "notes": {
+        "de": ""
+      },
+      "free": 229
+    },
+    {
+      "lot_type": "Parkhaus",
+      "address": "Ludwigsburg",
+      "name": "Akademiehof",
+      "forecast": "false",
+      "state": "unknown",
+      "coords": {
+        "lat": 48.893848,
+        "lng": 9.192945
+      },
+      "total": 239,
+      "url": "https://www.swlb.de/parken-ludwigsburg",
+      "opening_hours": " Su 10:00-20:00; Mo 07:00-22:30; Tu 07:00-22:30; We 07:00-22:30; Th 07:00-22:30; Fr 07:00-22:30; Sa 07:00-22:30;",
+      "notes": {
+        "de": ""
+      },
+      "free": 124
+    },
+    {
+      "lot_type": "Parkhaus",
+      "address": "Ludwigsburg",
+      "name": "Wilhelm Galerie",
+      "forecast": "false",
+      "state": "unknown",
+      "coords": {
+        "lat": 48.897208,
+        "lng": 9.187836
+      },
+      "total": 300,
+      "url": "https://www.swlb.de/parken-ludwigsburg",
+      "opening_hours": " Mo 07:30-22:30; Tu 07:30-22:30; We 07:30-22:30; Th 07:30-22:30; Fr 07:30-22:30; Sa 07:30-22:30;",
+      "notes": {
+        "de": ""
+      },
+      "free": 86
+    },
+    {
+      "lot_type": "Parkhaus",
+      "address": "Ludwigsburg",
+      "name": "Bahnpassage 2",
+      "forecast": "false",
+      "state": "unknown",
+      "coords": {
+        "lat": 48.893359,
+        "lng": 9.184682
+      },
+      "total": 40,
+      "url": "https://www.swlb.de/parken-ludwigsburg",
+      "opening_hours": " Su 00:00-23:59; Mo 00:00-23:59; Tu 00:00-23:59; We 00:00-23:59; Th 00:00-23:59; Fr 00:00-23:59; Sa 00:00-23:59;",
+      "notes": {
+        "de": ""
+      },
+      "free": 10
+    },
+    {
+      "lot_type": "Parkhaus",
+      "address": "Ludwigsburg",
+      "name": "BLEYLE",
+      "forecast": "false",
+      "state": "unknown",
+      "coords": {
+        "lat": 48.893219,
+        "lng": 9.183093
+      },
+      "total": 168,
+      "url": "https://www.swlb.de/parken-ludwigsburg",
+      "opening_hours": " Su 00:00-23:59; Mo 00:00-23:59; Tu 00:00-23:59; We 00:00-23:59; Th 00:00-23:59; Fr 00:00-23:59; Sa 00:00-23:59;",
+      "notes": {
+        "de": ""
+      },
+      "free": 92
+    },
+    {
+      "lot_type": "Parkhaus",
+      "address": "Ludwigsburg",
+      "name": "Kallenberg",
+      "forecast": "false",
+      "state": "unknown",
+      "coords": {
+        "lat": 48.890392,
+        "lng": 9.188282
+      },
+      "total": 100,
+      "url": "https://www.swlb.de/parken-ludwigsburg",
+      "opening_hours": " Su 00:00-23:59; Mo 00:00-23:59; Tu 00:00-23:59; We 00:00-23:59; Th 00:00-23:59; Fr 00:00-23:59; Sa 00:00-23:59;",
+      "notes": {
+        "de": ""
+      },
+      "free": 52
+    }
+  ]
+}
