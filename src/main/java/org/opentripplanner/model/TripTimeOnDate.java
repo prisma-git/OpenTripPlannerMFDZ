@@ -20,7 +20,7 @@ public class TripTimeOnDate {
     private final int stopIndex;
     // This is only needed because TripTimes has no reference to TripPattern
     private final TripPattern tripPattern;
-    private final Long midnight;
+    private final long midnight;
 
     public TripTimeOnDate(TripTimes tripTimes, int stopIndex, TripPattern tripPattern, ServiceDay serviceDay) {
         this.tripTimes = tripTimes;
@@ -157,7 +157,7 @@ public class TripTimeOnDate {
     }
 
     public List<String> getHeadsignVias() {
-        return tripTimes.getVia(stopIndex);
+        return tripTimes.getHeadsignVias(stopIndex);
     }
 
     public PickDrop getPickupType() {
