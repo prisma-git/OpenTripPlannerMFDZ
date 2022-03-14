@@ -41,6 +41,7 @@ public class VehicleRentalLayerBuilder extends LayerBuilder<VehicleRentalPlace> 
     if (service == null) {return List.of();}
     return service.getVehicleRentalPlaces()
         .stream()
+        .filter(vehicleRentalPlace -> !vehicleRentalPlace.isFloatingVehicle() || vehicleRentalPlace.isAllowPickup())
         .map(vehicleRentalStation -> {
           Coordinate coordinate = new Coordinate(vehicleRentalStation.getLongitude(), vehicleRentalStation.getLatitude());
           Point point = GeometryUtils.getGeometryFactory().createPoint(coordinate);
