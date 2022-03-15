@@ -43,6 +43,12 @@ jobs:
         with:
           files: target/site/jacoco/jacoco.xml
 
+      - name: Sets env vars for release
+        if: ${{ github.repository_owner == 'mfdz' && github.ref == 'refs/heads/dev-2.x' }}
+        run: echo "DOCKER_DATE_TAG=`date +%Y-%m-%d-%H_%M`" >> $GITHUB_ENV
+        env:
+          TZ: Europe/Berlin
+
       - name: Publish to Dockerhub
         if: ${{ github.repository_owner == 'mfdz' && github.ref == 'refs/heads/dev-2.x' }}
         uses: elgohr/Publish-Docker-Github-Action@master
@@ -50,4 +56,4 @@ jobs:
           name: mfdz/opentripplanner
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_AUTH}}
-          tags: "latest,${{ github.sha }}"
+          tags: "latest,${{ github.sha }},${{ env.DOCKER_DATE_TAG }}"
