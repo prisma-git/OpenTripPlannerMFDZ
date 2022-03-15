@@ -1394,9 +1394,6 @@ public class OpenStreetMapModule implements GraphBuilderModule {
                 customNamer.nameWithEdge(way, street);
             }
 
-            // save the way ID so we can match with OpenTraffic
-            street.wayId = way.getId();
-
             return street;
         }
 
