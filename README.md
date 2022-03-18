@@ -16,10 +16,10 @@ If you do not want to test or explore this version, please switch to the final 1
 
 The main Java server code is in `src/main/`. OTP also includes a Javascript client based on the Leaflet mapping library in `src/client/`. This client is now primarily used for testing, with most major deployments building custom clients from reusable components. The Maven build produces a unified ("shaded") JAR file at `target/otp-VERSION.jar` containing all necessary code and dependencies to run OpenTripPlanner.
 
-Additional information and instructions are available in the [main documentation](http://docs.opentripplanner.org/en/dev-2.x/), including a
+Additional information and instructions are available in the [main documentation](http://docs.opentripplanner.org/en/dev-2.x/), including a 
 [quick introduction](http://docs.opentripplanner.org/en/dev-2.x/Basic-Tutorial/).
 
-## Development
+## Development 
 
 [![codecov](https://codecov.io/gh/opentripplanner/OpenTripPlanner/branch/dev-2.x/graph/badge.svg?token=ak4PbIKgZ1)](https://codecov.io/gh/opentripplanner/OpenTripPlanner)
 
@@ -33,6 +33,11 @@ The OpenTripPlanner project was launched by Portland, Oregon's transport agency 
 ## Mailing Lists
 
 The main forums through which the OpenTripPlanner community organizes development and provides mutual assistance are our two Google discussion groups. Changes and extensions to OTP are debated on the [opentripplanner-dev](https://groups.google.com/forum/#!forum/opentripplanner-dev) developers' list. More general questions and announcements of interest to non-developer OTP users should be directed to the [opentripplanner-users](https://groups.google.com/forum/#!forum/opentripplanner-users) list. Other details of [project governance](http://docs.opentripplanner.org/en/dev-2.x/Governance/) can be found in the main documentation.
+
+
+## OTP Ecosystem
+
+ - [awesome-transit](https://github.com/CUTR-at-USF/awesome-transit) Community list of transit APIs, apps, datasets, research, and software.
 
 ## MFDZ's OpenTripPlanner fork
 
