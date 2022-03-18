@@ -30,7 +30,7 @@ public enum ApiRequestMode {
     TROLLEYBUS(fromMainModeEnum(TransitMode.TROLLEYBUS)),
     MONORAIL(fromMainModeEnum(TransitMode.MONORAIL)),
     FLEX(),
-    CARPOOL();
+    CARPOOL(fromMainModeEnum(TransitMode.CARPOOL));
 
     private final Set<AllowedTransitMode> transitModes;
 
