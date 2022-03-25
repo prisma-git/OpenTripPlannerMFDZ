@@ -110,8 +110,7 @@ public class ParkAndRideOpeningHoursTest extends GraphRoutingTest {
 
         var tree = new AStar().getShortestPathTree(options);
         var path = tree.getPath(
-                arriveBy ? A : S,
-                false
+                arriveBy ? A : S
         );
 
         if (path == null) {

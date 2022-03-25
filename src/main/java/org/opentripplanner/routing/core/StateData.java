@@ -2,6 +2,8 @@ package org.opentripplanner.routing.core;
 
 import java.util.List;
 import java.util.Set;
+import org.opentripplanner.routing.api.request.RoutingRequest;
+
 import org.opentripplanner.routing.vehicle_rental.RentalVehicleType.FormFactor;
 import org.opentripplanner.routing.api.request.RoutingRequest;
 

@@ -1,11 +1,6 @@
 package org.opentripplanner.ext.flex.template;
 
-import java.time.ZonedDateTime;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
+import org.opentripplanner.ext.flex.FlexParameters;
 import org.opentripplanner.ext.flex.FlexServiceDate;
 import org.opentripplanner.ext.flex.edgetype.FlexTripEdge;
 import org.opentripplanner.ext.flex.flexpathcalculator.FlexPathCalculator;
@@ -13,15 +8,17 @@ import org.opentripplanner.ext.flex.trip.FlexTrip;
 import org.opentripplanner.model.PathTransfer;
 import org.opentripplanner.model.Stop;
 import org.opentripplanner.model.StopLocation;
-import org.opentripplanner.model.plan.Itinerary;
-import org.opentripplanner.routing.algorithm.mapping.GraphPathToItineraryMapper;
 import org.opentripplanner.routing.core.State;
 import org.opentripplanner.routing.graph.Edge;
 import org.opentripplanner.routing.graph.Graph;
 import org.opentripplanner.routing.graph.Vertex;
 import org.opentripplanner.routing.graphfinder.NearbyStop;
 import org.opentripplanner.routing.spt.GraphPath;
-import org.opentripplanner.ext.flex.FlexParameters;
+
+import java.time.ZonedDateTime;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
 
 public class FlexAccessTemplate extends FlexAccessEgressTemplate {
   public FlexAccessTemplate(
@@ -32,8 +29,8 @@ public class FlexAccessTemplate extends FlexAccessEgressTemplate {
     super(accessEgress, trip, fromStopTime, toStopTime, transferStop, date, calculator, flexParams);
   }
 
-  public Itinerary createDirectItinerary(
-          NearbyStop egress, boolean arriveBy, int departureTime, ZonedDateTime startOfTime,
+  public GraphPath createDirectGraphPath(
+      NearbyStop egress, boolean arriveBy, int departureTime, ZonedDateTime startOfTime,
           Locale locale
   ) {
     List<Edge> egressEdges = egress.edges;
@@ -58,7 +55,7 @@ public class FlexAccessTemplate extends FlexAccessEgressTemplate {
     int flexTime = flexTimes[1];
     int postFlexTime = flexTimes[2];
 
-    Integer timeShift = null;
+    int timeShift;
 
     if (arriveBy) {
       int lastStopArrivalTime = departureTime - postFlexTime - secondsFromStartOfTime;
@@ -89,13 +86,13 @@ public class FlexAccessTemplate extends FlexAccessEgressTemplate {
       timeShift = secondsFromStartOfTime + earliestDepartureTime - preFlexTime;
     }
 
-    Itinerary itinerary = GraphPathToItineraryMapper.generateItinerary(new GraphPath(state));
+    State s = state;
+    while (s != null) {
+      s.timeshiftBySeconds(timeShift);
+      s = s.getBackState();
+    }
 
-    ZonedDateTime zdt = startOfTime.plusSeconds(timeShift);
-    Calendar c = Calendar.getInstance(TimeZone.getTimeZone(zdt.getZone()));
-    c.setTimeInMillis(zdt.toInstant().toEpochMilli());
-    itinerary.timeShiftToStartAt(c);
-    return itinerary;
+    return new GraphPath(state);
   }
 
   protected List<Edge> getTransferEdges(PathTransfer transfer) {
@@ -123,7 +120,7 @@ public class FlexAccessTemplate extends FlexAccessEgressTemplate {
           fromStopIndex,
           toStopIndex
       ) != null;
-  };
+  }
 
   protected int[] getFlexTimes(FlexTripEdge flexEdge, State state) {
     int preFlexTime = (int) accessEgress.state.getElapsedTimeSeconds();

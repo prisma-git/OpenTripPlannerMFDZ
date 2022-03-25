@@ -9,12 +9,10 @@ import org.opentripplanner.routing.graph.Edge;
 import org.opentripplanner.routing.graph.Graph;
 import org.opentripplanner.routing.graph.Vertex;
 import org.opentripplanner.model.TransitMode;
-import org.opentripplanner.util.NonLocalizedString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 
 
@@ -28,7 +26,7 @@ public class TransitStopVertex extends Vertex {
 
     private static final long serialVersionUID = 1L;
 
-    private final boolean wheelchairEntrance;
+    private final WheelChairBoarding wheelchairBoarding;
 
     private final Stop stop;
 
@@ -54,13 +52,13 @@ public class TransitStopVertex extends Vertex {
         );
         this.stop = stop;
         this.modes = modes != null ? modes : new HashSet<>();
-        this.wheelchairEntrance = stop.getWheelchairBoarding() != WheelChairBoarding.NOT_POSSIBLE;
+        this.wheelchairBoarding = stop.getWheelchairBoarding();
         //Adds this vertex into graph envelope so that we don't need to loop over all vertices
         graph.expandToInclude(stop.getLon(), stop.getLat());
     }
 
-    public boolean hasWheelchairEntrance() {
-        return wheelchairEntrance;
+    public WheelChairBoarding getWheelchairBoarding() {
+        return wheelchairBoarding;
     }
 
     public boolean hasPathways() {

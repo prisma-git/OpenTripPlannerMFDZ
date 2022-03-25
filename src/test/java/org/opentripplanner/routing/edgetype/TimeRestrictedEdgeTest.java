@@ -175,8 +175,7 @@ public class TimeRestrictedEdgeTest extends GraphRoutingTest {
 
         var tree = new AStar().getShortestPathTree(options);
         var path = tree.getPath(
-                arriveBy ? A : C,
-                false
+                arriveBy ? A : C
         );
 
         if (path == null) {

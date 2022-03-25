@@ -6,7 +6,6 @@ import org.opentripplanner.api.model.ApiTripShort;
 import org.opentripplanner.model.FeedScopedId;
 import org.opentripplanner.model.Trip;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +23,7 @@ public class TripMapper {
         api.directionId = obj.getGtfsDirectionIdAsString(null);
         api.blockId = obj.getBlockId();
         api.shapeId = FeedScopedIdMapper.mapToApi(obj.getShapeId());
-        api.wheelchairAccessible = obj.getWheelchairAccessible();
+        api.wheelchairAccessible = obj.getWheelchairBoarding().gtfsCode;
         api.bikesAllowed = BikeAccessMapper.mapToApi(obj.getBikesAllowed());
         api.fareId = obj.getFareId();
 

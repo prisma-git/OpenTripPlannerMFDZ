@@ -84,3 +84,6 @@ config:
     VertexType: String
     SystemNotice: org.opentripplanner.model.SystemNotice#SystemNotice
     VehicleParkingWithEntrance: org.opentripplanner.model.plan.VehicleParkingWithEntrance
+    VehiclePosition: org.opentripplanner.model.vehicle_position.RealtimeVehiclePosition#RealtimeVehiclePosition
+    StopRelationship: org.opentripplanner.model.vehicle_position.RealtimeVehiclePosition.StopRelationship#StopRelationship
+    WheelchairBoarding: org.opentripplanner.ext.legacygraphqlapi.generated.LegacyGraphQLTypes.LegacyGraphQLWheelchairBoarding
