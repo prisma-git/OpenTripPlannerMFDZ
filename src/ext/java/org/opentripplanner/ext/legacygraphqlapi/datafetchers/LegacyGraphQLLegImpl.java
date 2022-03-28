@@ -19,7 +19,6 @@ import org.opentripplanner.model.plan.StopArrival;
 import org.opentripplanner.model.plan.WalkStep;
 import org.opentripplanner.routing.RoutingService;
 import org.opentripplanner.routing.alertpatch.TransitAlert;
-import org.opentripplanner.util.model.EncodedPolylineBean;
 
 public class LegacyGraphQLLegImpl implements LegacyGraphQLDataFetchers.LegacyGraphQLLeg {
 

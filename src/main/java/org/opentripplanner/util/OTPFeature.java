@@ -2,7 +2,6 @@ package org.opentripplanner.util;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -23,12 +22,12 @@ public enum OTPFeature {
     OptimizeTransfers(true),
     ParallelRouting(false),
     TransferConstraints(true),
+    FloatingBike(true),
 
     // Sandbox extension features - Must be turned OFF by default
     ActuatorAPI(false),
     DataOverlay(false),
     FlexRouting(false),
-    FloatingBike(false),
     GoogleCloudStorage(false),
     ReportApi(false),
     SandboxAPILegacyGraphQLApi(false),

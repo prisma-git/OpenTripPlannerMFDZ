@@ -494,6 +494,10 @@ public class State implements Cloneable {
                 .toLocalDateTime();
     }
 
+    public void timeshiftBySeconds(int timeShift) {
+        time += (timeShift * 1000L);
+    }
+
     public boolean multipleOptionsBefore() {
         boolean foundAlternatePaths = false;
         TraverseMode requestedMode = getNonTransitMode();

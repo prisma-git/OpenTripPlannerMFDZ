@@ -11,15 +11,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.DoubleFunction;
 import java.util.stream.Collectors;
-import org.opentripplanner.api.common.ParameterException;
 import org.opentripplanner.ext.transmodelapi.mapping.TransitIdMapper;
 import org.opentripplanner.ext.transmodelapi.model.PlanResponse;
 import org.opentripplanner.ext.transmodelapi.model.TransmodelTransportSubmode;
@@ -64,10 +61,6 @@ public class TransmodelGraphQLPlanner {
             response.previousPageCursor = res.getPreviousPageCursor();
             response.nextPageCursor = res.getNextPageCursor();
         }
-        catch (ParameterException e) {
-            var msg = e.message.get();
-            throw new GraphQLException(msg, e);
-        }
         catch (Exception e) {
             LOG.error("System error: " + e.getMessage(), e);
             response.plan = TripPlanMapper.mapTripPlan(request, List.of());
@@ -97,9 +90,7 @@ public class TransmodelGraphQLPlanner {
         return new GenericLocation(name, stopId, lat, lon);
     }
 
-    private RoutingRequest createRequest(DataFetchingEnvironment environment)
-            throws ParameterException
-    {
+    private RoutingRequest createRequest(DataFetchingEnvironment environment) {
         TransmodelRequestContext context = environment.getContext();
         Router router = context.getRouter();
         RoutingRequest request = router.copyDefaultRoutingRequest();
@@ -146,11 +137,6 @@ public class TransmodelGraphQLPlanner {
             callWith.argument("triangleFactors.time", (Double v) -> args[2] = v);
 
             request.setTriangleNormalized(args[0], args[1], args[2]);
-        }
-
-        if (bicycleOptimizeType == BicycleOptimizeType.TRANSFERS) {
-            bicycleOptimizeType = BicycleOptimizeType.QUICK;
-            request.transferCost += 1800;
         }
 
         if (bicycleOptimizeType != null) {
