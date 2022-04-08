@@ -91,4 +91,17 @@ public class TraverseModeSetTest {
     assertTrue(modeSet.getGondola());
     assertTrue(modeSet.getTrolleyBus());
   }
+
+  @Test
+  public void testCarpool() {
+    TraverseModeSet modeSet = new TraverseModeSet(TraverseMode.CARPOOL);
+
+    assertTrue(modeSet.getCarpool());
+
+    assertFalse(modeSet.getBicycle());
+    assertFalse(modeSet.getWalk());
+    assertFalse(modeSet.getCar());
+    assertFalse(modeSet.getFunicular());
+    assertFalse(modeSet.getGondola());
+  }
 }
