@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor(staticName = "of")
 public class TimeRestrictionWithOffset {
-    private final TimeRestriction timeRestriction;
-    private final long offsetInSecondsFromStartOfSearch;
+
+  private final TimeRestriction timeRestriction;
+  private final long offsetInSecondsFromStartOfSearch;
 }

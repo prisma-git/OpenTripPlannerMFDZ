@@ -9,114 +9,117 @@ import org.opentripplanner.routing.vehicle_parking.VehicleParkingSpaces;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingState;
 import org.opentripplanner.util.I18NString;
 
-public class LegacyGraphQLVehicleParkingImpl implements LegacyGraphQLDataFetchers.LegacyGraphQLVehicleParking {
-    @Override
-    public DataFetcher<Relay.ResolvedGlobalId> id() {
-        return environment -> new Relay.ResolvedGlobalId(
-                "VehicleParking",
-                getSource(environment).getId().toString()
-        );
-    }
+public class LegacyGraphQLVehicleParkingImpl
+  implements LegacyGraphQLDataFetchers.LegacyGraphQLVehicleParking {
 
-    @Override
-    public DataFetcher<String> vehicleParkingId() {
-        return environment -> getSource(environment).getId().toString();
-    }
+  @Override
+  public DataFetcher<Boolean> anyCarPlaces() {
+    return environment -> getSource(environment).hasAnyCarPlaces();
+  }
 
-    @Override
-    public DataFetcher<String> name() {
-        return environment -> getSource(environment).getName().toString(environment.getLocale());
-    }
+  @Override
+  public DataFetcher<VehicleParkingSpaces> availability() {
+    return environment -> getSource(environment).getAvailability();
+  }
 
-    @Override
-    public DataFetcher<Boolean> realtime() {
-        return environment -> getSource(environment).hasRealTimeData();
-    }
+  @Override
+  public DataFetcher<Boolean> bicyclePlaces() {
+    return environment -> getSource(environment).hasBicyclePlaces();
+  }
 
-    @Override
-    public DataFetcher<Double> lon() {
-        return environment -> getSource(environment).getX();
-    }
+  @Override
+  public DataFetcher<VehicleParkingSpaces> capacity() {
+    return environment -> getSource(environment).getCapacity();
+  }
 
-    @Override
-    public DataFetcher<Double> lat() {
-        return environment -> getSource(environment).getY();
-    }
+  @Override
+  public DataFetcher<Boolean> carPlaces() {
+    return environment -> getSource(environment).hasCarPlaces();
+  }
 
-    @Override
-    public DataFetcher<String> detailsUrl() {
-        return environment -> getSource(environment).getDetailsUrl();
-    }
+  @Override
+  public DataFetcher<String> detailsUrl() {
+    return environment -> getSource(environment).getDetailsUrl();
+  }
 
-    @Override
-    public DataFetcher<String> imageUrl() {
-        return environment -> getSource(environment).getImageUrl();
-    }
+  @Override
+  public DataFetcher<Relay.ResolvedGlobalId> id() {
+    return environment ->
+      new Relay.ResolvedGlobalId("VehicleParking", getSource(environment).getId().toString());
+  }
 
-    @Override
-    public DataFetcher<Iterable<String>> tags() {
-        return environment -> getSource(environment).getTags();
-    }
+  @Override
+  public DataFetcher<String> imageUrl() {
+    return environment -> getSource(environment).getImageUrl();
+  }
 
-    @Override
-    public DataFetcher<String> note() {
-        return environment -> {
-            var note = getSource(environment).getNote();
-            return note != null ? note.toString(environment.getLocale()) : null;
-        };
-    }
+  @Override
+  public DataFetcher<Double> lat() {
+    return environment -> getSource(environment).getY();
+  }
 
-    public DataFetcher<String> feeHours() {
-        return environment -> {
-            var feeHours = getSource(environment).getFeeHours();
-            return feeHours instanceof I18NString
-                    ? ((I18NString) feeHours).toString(environment.getLocale()) : null;
-        };
-    }
+  @Override
+  public DataFetcher<Double> lon() {
+    return environment -> getSource(environment).getX();
+  }
 
-    public DataFetcher<String> openingHours() {
-        return environment -> {
-            var openingHours = getSource(environment).getOpeningHours();
-            return openingHours instanceof I18NString
-                    ? ((I18NString) openingHours).toString(environment.getLocale()) : null;
-        };
-    }
+  @Override
+  public DataFetcher<String> name() {
+    return environment -> getSource(environment).getName().toString();
+  }
 
-    public DataFetcher<VehicleParkingState> state() {
-        return environment -> getSource(environment).getState();
-    }
+  @Override
+  public DataFetcher<String> note() {
+    return environment -> {
+      var note = getSource(environment).getNote();
+      return note != null ? note.toString(environment.getLocale()) : null;
+    };
+  }
 
-    @Override
-    public DataFetcher<Boolean> bicyclePlaces() {
-        return environment -> getSource(environment).hasBicyclePlaces();
-    }
+  public DataFetcher<String> feeHours() {
+    return environment -> {
+      var feeHours = getSource(environment).getFeeHours();
+      return feeHours instanceof I18NString
+        ? ((I18NString) feeHours).toString(environment.getLocale())
+        : null;
+    };
+  }
 
-    @Override
-    public DataFetcher<Boolean> anyCarPlaces() {
-        return environment -> getSource(environment).hasAnyCarPlaces();
-    }
+  @Override
+  public DataFetcher<Boolean> realtime() {
+    return environment -> getSource(environment).hasRealTimeData();
+  }
 
-    @Override
-    public DataFetcher<Boolean> carPlaces() {
-        return environment -> getSource(environment).hasCarPlaces();
-    }
+  @Override
+  public DataFetcher<String> openingHours() {
+    return environment -> {
+      var openingHours = getSource(environment).getOpeningHours();
+      return openingHours instanceof I18NString
+        ? ((I18NString) openingHours).toString(environment.getLocale())
+        : null;
+    };
+  }
 
-    @Override
-    public DataFetcher<Boolean> wheelchairAccessibleCarPlaces() {
-        return environment -> getSource(environment).hasWheelchairAccessibleCarPlaces();
-    }
+  public DataFetcher<VehicleParkingState> state() {
+    return environment -> getSource(environment).getState();
+  }
 
-    @Override
-    public DataFetcher<VehicleParkingSpaces> capacity() {
-        return environment -> getSource(environment).getCapacity();
-    }
+  @Override
+  public DataFetcher<Iterable<String>> tags() {
+    return environment -> getSource(environment).getTags();
+  }
 
-    @Override
-    public DataFetcher<VehicleParkingSpaces> availability() {
-        return environment -> getSource(environment).getAvailability();
-    }
+  @Override
+  public DataFetcher<String> vehicleParkingId() {
+    return environment -> getSource(environment).getId().toString();
+  }
 
-    private VehicleParking getSource(DataFetchingEnvironment environment) {
-        return environment.getSource();
-    }
+  @Override
+  public DataFetcher<Boolean> wheelchairAccessibleCarPlaces() {
+    return environment -> getSource(environment).hasWheelchairAccessibleCarPlaces();
+  }
+
+  private VehicleParking getSource(DataFetchingEnvironment environment) {
+    return environment.getSource();
+  }
 }

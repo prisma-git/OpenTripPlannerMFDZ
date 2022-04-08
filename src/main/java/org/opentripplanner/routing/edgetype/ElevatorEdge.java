@@ -7,15 +7,14 @@ import org.opentripplanner.routing.graph.Edge;
 
 /**
  * Marker interface indicating that an edge is part of an elevator.
- * 
+ *
  * @author mattwigway
  */
 public interface ElevatorEdge extends BikeWalkableEdge {
-
-    default StateEditor createElevatorStateEditor(State s0, Edge edge) {
-        if (s0.getNonTransitMode() == TraverseMode.CAR) {
-            return s0.edit(edge);
-        }
-        return createEditorForWalking(s0, edge);
+  default StateEditor createElevatorStateEditor(State s0, Edge edge) {
+    if (s0.getNonTransitMode() == TraverseMode.CAR) {
+      return s0.edit(edge);
     }
+    return createEditorForWalking(s0, edge);
+  }
 }

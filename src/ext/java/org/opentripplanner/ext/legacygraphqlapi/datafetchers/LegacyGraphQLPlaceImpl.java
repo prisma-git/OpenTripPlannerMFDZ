@@ -21,10 +21,90 @@ import org.opentripplanner.routing.vehicle_rental.VehicleRentalVehicle;
 public class LegacyGraphQLPlaceImpl implements LegacyGraphQLDataFetchers.LegacyGraphQLPlace {
 
   @Override
+  public DataFetcher<Long> arrivalTime() {
+    return environment -> getSource(environment).arrival.getTime().getTime();
+  }
+
+  @Override
+  public DataFetcher<VehicleParking> bikePark() {
+    return this::getVehicleParking;
+  }
+
+  @Override
+  public DataFetcher<VehicleRentalPlace> bikeRentalStation() {
+    return environment -> {
+      Place place = getSource(environment).place;
+
+      if (!place.vertexType.equals(VertexType.VEHICLERENTAL)) {
+        return null;
+      }
+
+      return place.vehicleRentalPlace;
+    };
+  }
+
+  @Override
+  public DataFetcher<VehicleParking> carPark() {
+    return this::getVehicleParking;
+  }
+
+  @Override
+  public DataFetcher<Long> departureTime() {
+    return environment -> getSource(environment).departure.getTime().getTime();
+  }
+
+  @Override
+  public DataFetcher<Double> lat() {
+    return environment -> getSource(environment).place.getCoordinate().latitude();
+  }
+
+  @Override
+  public DataFetcher<Double> lon() {
+    return environment -> getSource(environment).place.getCoordinate().longitude();
+  }
+
+  @Override
   public DataFetcher<String> name() {
     return environment -> {
       Locale locale = LegacyGraphQLUtils.getLocale(environment);
       return getSource(environment).place.name.toString(locale);
+    };
+  }
+
+  @Override
+  public DataFetcher<VehicleRentalVehicle> rentalVehicle() {
+    return environment -> {
+      Place place = getSource(environment).place;
+
+      if (
+        !place.vertexType.equals(VertexType.VEHICLERENTAL) ||
+        !(place.vehicleRentalPlace instanceof VehicleRentalVehicle)
+      ) {
+        return null;
+      }
+
+      return (VehicleRentalVehicle) place.vehicleRentalPlace;
+    };
+  }
+
+  @Override
+  public DataFetcher<Object> stop() {
+    return environment -> getSource(environment).place.stop;
+  }
+
+  @Override
+  public DataFetcher<VehicleRentalStation> vehicleRentalStation() {
+    return environment -> {
+      Place place = getSource(environment).place;
+
+      if (
+        !place.vertexType.equals(VertexType.VEHICLERENTAL) ||
+        !(place.vehicleRentalPlace instanceof VehicleRentalStation)
+      ) {
+        return null;
+      }
+
+      return (VehicleRentalStation) place.vehicleRentalPlace;
     };
   }
 
@@ -47,82 +127,8 @@ public class LegacyGraphQLPlaceImpl implements LegacyGraphQLDataFetchers.LegacyG
     };
   }
 
-  @Override
-  public DataFetcher<Double> lat() {
-    return environment -> getSource(environment).place.getCoordinate().latitude();
-  }
-
-  @Override
-  public DataFetcher<Double> lon() {
-    return environment -> getSource(environment).place.getCoordinate().longitude();
-  }
-
-  @Override
-  public DataFetcher<Long> arrivalTime() {
-    return environment -> getSource(environment).arrival.getTime().getTime();
-  }
-
-  @Override
-  public DataFetcher<Long> departureTime() {
-    return environment -> getSource(environment).departure.getTime().getTime();
-  }
-
-  @Override
-  public DataFetcher<Object> stop() {
-    return environment -> getSource(environment).place.stop;
-  }
-
-  @Override
-  public DataFetcher<VehicleRentalPlace> bikeRentalStation() {
-    return environment -> {
-      Place place = getSource(environment).place;
-
-      if (!place.getVertexType().equals(VertexType.VEHICLERENTAL)) { return null; }
-
-      return place.vehicleRentalPlace;
-    };
-  }
-
-  @Override
-  public DataFetcher<VehicleRentalStation> vehicleRentalStation() {
-    return environment -> {
-      Place place = getSource(environment).place;
-
-      if (!place.vertexType.equals(VertexType.VEHICLERENTAL)
-              || !(place.vehicleRentalPlace instanceof VehicleRentalStation)) {
-        return null;
-      }
-
-      return (VehicleRentalStation) place.vehicleRentalPlace;
-    };
-  }
-
-  @Override
-  public DataFetcher<VehicleRentalVehicle> rentalVehicle() {
-    return environment -> {
-      Place place = getSource(environment).place;
-
-      if (!place.vertexType.equals(VertexType.VEHICLERENTAL)
-              || !(place.vehicleRentalPlace instanceof VehicleRentalVehicle)) {
-        return null;
-      }
-
-      return (VehicleRentalVehicle) place.vehicleRentalPlace;
-    };
-  }
-
-  @Override
-  public DataFetcher<VehicleParking> bikePark() {
-    return this::getVehicleParking;
-  }
-
-  @Override
-  public DataFetcher<VehicleParking> carPark() {
-    return this::getVehicleParking;
-  }
-
   public DataFetcher<VehicleParkingWithEntrance> vehicleParkingWithEntrance() {
-    return (environment) -> getSource(environment).place.getVehicleParkingWithEntrance();
+    return environment -> getSource(environment).place.getVehicleParkingWithEntrance();
   }
 
   private VehicleParking getVehicleParking(DataFetchingEnvironment environment) {

@@ -20,32 +20,44 @@ public class AccessEgressMapper {
     this.stopIndex = stopIndex;
   }
 
-  public AccessEgress mapNearbyStop(NearbyStop nearbyStop, ZonedDateTime startOfTime, boolean isEgress) {
-    if (!(nearbyStop.stop instanceof Stop)) { return null; }
+  public AccessEgress mapNearbyStop(
+    NearbyStop nearbyStop,
+    ZonedDateTime startOfTime,
+    boolean isEgress
+  ) {
+    if (!(nearbyStop.stop instanceof Stop)) {
+      return null;
+    }
 
     return new AccessEgress(
-        stopIndex.indexOf(nearbyStop.stop),
-        isEgress ? nearbyStop.state.reverse() : nearbyStop.state,
-        startOfTime
+      stopIndex.indexOf(nearbyStop.stop),
+      isEgress ? nearbyStop.state.reverse() : nearbyStop.state,
+      startOfTime
     );
   }
 
-  public List<AccessEgress> mapNearbyStops(Collection<NearbyStop> accessStops, ZonedDateTime startOfTime, boolean isEgress) {
+  public List<AccessEgress> mapNearbyStops(
+    Collection<NearbyStop> accessStops,
+    ZonedDateTime startOfTime,
+    boolean isEgress
+  ) {
     return accessStops
-        .stream()
-        .map(stopAtDistance -> mapNearbyStop(stopAtDistance, startOfTime, isEgress))
-        .filter(Objects::nonNull)
-        .collect(Collectors.toList());
+      .stream()
+      .map(stopAtDistance -> mapNearbyStop(stopAtDistance, startOfTime, isEgress))
+      .filter(Objects::nonNull)
+      .collect(Collectors.toList());
   }
 
   public Collection<AccessEgress> mapFlexAccessEgresses(
-          Collection<FlexAccessEgress> flexAccessEgresses,
-          ZonedDateTime startOfTime,
-          boolean isEgress
+    Collection<FlexAccessEgress> flexAccessEgresses,
+    ZonedDateTime startOfTime,
+    boolean isEgress
   ) {
-    return flexAccessEgresses.stream()
-        .map(flexAccessEgress -> new FlexAccessEgressAdapter(flexAccessEgress, stopIndex, startOfTime, isEgress))
-        .collect(Collectors.toList());
+    return flexAccessEgresses
+      .stream()
+      .map(flexAccessEgress ->
+        new FlexAccessEgressAdapter(flexAccessEgress, stopIndex, startOfTime, isEgress)
+      )
+      .collect(Collectors.toList());
   }
-
 }

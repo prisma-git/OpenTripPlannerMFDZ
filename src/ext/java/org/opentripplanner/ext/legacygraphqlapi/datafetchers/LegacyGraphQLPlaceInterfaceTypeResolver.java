@@ -38,9 +38,15 @@ public class LegacyGraphQLPlaceInterfaceTypeResolver implements TypeResolver {
     if (o instanceof VehicleRentalVehicle) {
       return schema.getObjectType("RentalVehicle");
     }
-    if (o instanceof PatternAtStop) { return schema.getObjectType("DepartureRow"); }
-    if (o instanceof Stop) { return schema.getObjectType("Stop"); }
-    if (o instanceof VehicleParking) { return schema.getObjectType("VehicleParking"); }
+    if (o instanceof PatternAtStop) {
+      return schema.getObjectType("DepartureRow");
+    }
+    if (o instanceof Stop) {
+      return schema.getObjectType("Stop");
+    }
+    if (o instanceof VehicleParking) {
+      return schema.getObjectType("VehicleParking");
+    }
 
     return null;
   }

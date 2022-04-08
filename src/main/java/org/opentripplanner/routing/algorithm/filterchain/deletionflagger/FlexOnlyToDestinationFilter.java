@@ -13,26 +13,27 @@ import org.opentripplanner.routing.core.TraverseMode;
  */
 public class FlexOnlyToDestinationFilter implements ItineraryListFilter {
 
-    private final long maxWalkDuration = Duration.ofMinutes(2).toSeconds();
+  private final long maxWalkDuration = Duration.ofMinutes(2).toSeconds();
 
-    @Override
-    public List<Itinerary> filter(List<Itinerary> itineraries) {
-        return itineraries
-                .stream().filter(it -> {
-                    var lastLeg = it.lastLeg();
-                    boolean lastLegIsLongWalk = lastLeg.getMode() == TraverseMode.WALK
-                            && lastLeg.getDuration() > maxWalkDuration;
+  @Override
+  public List<Itinerary> filter(List<Itinerary> itineraries) {
+    return itineraries
+      .stream()
+      .filter(it -> {
+        var lastLeg = it.lastLeg();
+        boolean lastLegIsLongWalk =
+          lastLeg.getMode() == TraverseMode.WALK && lastLeg.getDuration() > maxWalkDuration;
 
-                    var lastLegIsFlex = it.legs.stream()
-                            .filter(l -> l.isTransitLeg() || l.isFlexibleTrip())
-                            // get last element of stream
-                            .reduce((first, second) -> second)
-                            .map(Leg::isFlexibleTrip)
-                            .orElse(false);
+        var lastLegIsFlex = it.legs
+          .stream()
+          .filter(l -> l.isTransitLeg() || l.isFlexibleTrip())
+          // get last element of stream
+          .reduce((first, second) -> second)
+          .map(Leg::isFlexibleTrip)
+          .orElse(false);
 
-                    return !lastLegIsLongWalk && lastLegIsFlex;
-                })
-                .collect(Collectors.toList());
-    }
-
+        return !lastLegIsLongWalk && lastLegIsFlex;
+      })
+      .collect(Collectors.toList());
+  }
 }

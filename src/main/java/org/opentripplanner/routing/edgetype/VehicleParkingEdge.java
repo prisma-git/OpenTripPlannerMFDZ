@@ -19,162 +19,173 @@ import org.opentripplanner.util.I18NString;
  */
 public class VehicleParkingEdge extends Edge implements TimeRestrictedEdge {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    @Getter
-    private final VehicleParking vehicleParking;
+  @Getter
+  private final VehicleParking vehicleParking;
 
-    public VehicleParkingEdge(VehicleParkingEntranceVertex vehicleParkingEntranceVertex) {
-        this(vehicleParkingEntranceVertex, vehicleParkingEntranceVertex);
+  public VehicleParkingEdge(VehicleParkingEntranceVertex vehicleParkingEntranceVertex) {
+    this(vehicleParkingEntranceVertex, vehicleParkingEntranceVertex);
+  }
+
+  public VehicleParkingEdge(
+    VehicleParkingEntranceVertex fromVehicleParkingEntranceVertex,
+    VehicleParkingEntranceVertex toVehicleParkingEntranceVertex
+  ) {
+    super(fromVehicleParkingEntranceVertex, toVehicleParkingEntranceVertex);
+    this.vehicleParking = fromVehicleParkingEntranceVertex.getVehicleParking();
+  }
+
+  private TimeRestriction getTimeRestriction(int parkingTime) {
+    var openingHours = vehicleParking.getOpeningHours();
+    if (openingHours == null) {
+      return null;
     }
 
-    public VehicleParkingEdge(VehicleParkingEntranceVertex fromVehicleParkingEntranceVertex, VehicleParkingEntranceVertex toVehicleParkingEntranceVertex) {
-        super(fromVehicleParkingEntranceVertex, toVehicleParkingEntranceVertex);
-        this.vehicleParking = fromVehicleParkingEntranceVertex.getVehicleParking();
+    return TimeRestrictionWithTimeSpan.of(vehicleParking.getOpeningHours(), parkingTime);
+  }
+
+  public VehicleParking getVehicleParking() {
+    return vehicleParking;
+  }
+
+  public boolean equals(Object o) {
+    if (o instanceof VehicleParkingEdge) {
+      VehicleParkingEdge other = (VehicleParkingEdge) o;
+      return other.getFromVertex().equals(fromv) && other.getToVertex().equals(tov);
+    }
+    return false;
+  }
+
+  public String toString() {
+    return "VehicleParkingEdge(" + fromv + " -> " + tov + ")";
+  }
+
+  @Override
+  public State traverse(State s0) {
+    RoutingRequest options = s0.getOptions();
+
+    if (!options.parkAndRide) {
+      return null;
     }
 
-    private TimeRestriction getTimeRestriction(int parkingTime) {
-        var openingHours = vehicleParking.getOpeningHours();
-        if (openingHours == null) {
-            return null;
-        }
+    if (options.arriveBy) {
+      return traverseUnPark(s0);
+    } else {
+      return traversePark(s0);
+    }
+  }
 
-        return TimeRestrictionWithTimeSpan.of(
-                vehicleParking.getOpeningHours(),
-                parkingTime
-        );
+  @Override
+  public I18NString getName() {
+    return getToVertex().getName();
+  }
+
+  @Override
+  public boolean hasBogusName() {
+    return false;
+  }
+
+  @Override
+  public LineString getGeometry() {
+    return null;
+  }
+
+  @Override
+  public double getDistanceMeters() {
+    return 0;
+  }
+
+  protected State traverseUnPark(State s0) {
+    RoutingRequest options = s0.getOptions();
+
+    if (s0.getNonTransitMode() != TraverseMode.WALK || !s0.isVehicleParked()) {
+      return null;
     }
 
-    public VehicleParking getVehicleParking() {
-        return vehicleParking;
+    if (options.streetSubRequestModes.getBicycle()) {
+      return traverseUnPark(s0, options.bikeParkCost, options.bikeParkTime, TraverseMode.BICYCLE);
+    } else if (options.streetSubRequestModes.getCar()) {
+      return traverseUnPark(s0, options.carParkCost, options.carParkTime, TraverseMode.CAR);
+    } else {
+      return null;
+    }
+  }
+
+  private State traverseUnPark(State s0, int parkingCost, int parkingTime, TraverseMode mode) {
+    RoutingRequest options = s0.getOptions();
+    if (
+      !vehicleParking.hasSpacesAvailable(
+        mode,
+        options.wheelchairAccessible,
+        options.useVehicleParkingAvailabilityInformation
+      )
+    ) {
+      return null;
     }
 
-    @Override
-    public State traverse(State s0) {
-        RoutingRequest options = s0.getOptions();
-
-        if (!options.parkAndRide) {
-            return null;
-        }
-
-        if (options.arriveBy) {
-            return traverseUnPark(s0);
-        } else {
-            return traversePark(s0);
-        }
+    var timeRestriction = getTimeRestriction(parkingTime);
+    if (isTraversalBlockedByTimeRestriction(s0, true, timeRestriction)) {
+      return null;
     }
 
-    protected State traverseUnPark(State s0) {
-        RoutingRequest options = s0.getOptions();
+    StateEditor s0e = s0.edit(this);
 
-        if (s0.getNonTransitMode() != TraverseMode.WALK || !s0.isVehicleParked()) {
-            return null;
-        }
+    s0e.incrementWeight(parkingCost);
+    s0e.incrementTimeInSeconds(parkingTime);
+    s0e.setVehicleParked(false, mode);
 
-        if (options.streetSubRequestModes.getBicycle()) {
-            return traverseUnPark(s0, options.bikeParkCost, options.bikeParkTime, TraverseMode.BICYCLE);
-        } else if (options.streetSubRequestModes.getCar()) {
-            return traverseUnPark(s0, options.carParkCost, options.carParkTime, TraverseMode.CAR);
-        } else {
-            return null;
-        }
+    updateEditorWithTimeRestriction(s0, s0e, timeRestriction, getVehicleParking());
+
+    return s0e.makeState();
+  }
+
+  private State traversePark(State s0) {
+    RoutingRequest options = s0.getOptions();
+
+    if (!options.streetSubRequestModes.getWalk() || s0.isVehicleParked()) {
+      return null;
     }
 
-    private State traverseUnPark(State s0, int parkingCost, int parkingTime, TraverseMode mode) {
-        RoutingRequest options = s0.getOptions();
-        if (!vehicleParking.hasSpacesAvailable(mode, options.wheelchairAccessible, options.useVehicleParkingAvailabilityInformation)) {
-            return null;
-        }
-
-        var timeRestriction = getTimeRestriction(parkingTime);
-        if (isTraversalBlockedByTimeRestriction(s0, true, timeRestriction)) {
-            return null;
-        }
-
-        StateEditor s0e = s0.edit(this);
-
-        s0e.incrementWeight(parkingCost);
-        s0e.incrementTimeInSeconds(parkingTime);
-        s0e.setVehicleParked(false, mode);
-
-        updateEditorWithTimeRestriction(s0, s0e, timeRestriction, getVehicleParking());
-
-        return s0e.makeState();
-    }
-
-    private State traversePark(State s0) {
-        RoutingRequest options = s0.getOptions();
-
-        if (!options.streetSubRequestModes.getWalk() || s0.isVehicleParked()) {
-            return null;
-        }
-
-        if (options.streetSubRequestModes.getBicycle()) {
-            // Parking a rented bike is not allowed
-            if (s0.isRentingVehicle()) {
-                return null;
-            }
-
-            return traversePark(s0, options.bikeParkCost, options.bikeParkTime);
-        } else if (options.streetSubRequestModes.getCar()) {
-            return traversePark(s0, options.carParkCost, options.carParkTime);
-        } else {
-            return null;
-        }
-    }
-
-    private State traversePark(State s0, int parkingCost, int parkingTime) {
-        RoutingRequest options = s0.getOptions();
-
-        if (!vehicleParking.hasSpacesAvailable(s0.getNonTransitMode(), options.wheelchairAccessible, options.useVehicleParkingAvailabilityInformation)) {
-            return null;
-        }
-
-        var timeRestriction = getTimeRestriction(parkingTime);
-        if (isTraversalBlockedByTimeRestriction(s0, false, timeRestriction)) {
-            return null;
-        }
-
-        StateEditor s0e = s0.edit(this);
-
-        updateEditorWithTimeRestriction(s0, s0e, timeRestriction, getVehicleParking());
-
-        s0e.incrementWeight(parkingCost);
-        s0e.incrementTimeInSeconds(parkingTime);
-        s0e.setVehicleParked(true, TraverseMode.WALK);
-        return s0e.makeState();
-    }
-
-    @Override
-    public double getDistanceMeters() {
-        return 0;
-    }
-
-    @Override
-    public LineString getGeometry() {
+    if (options.streetSubRequestModes.getBicycle()) {
+      // Parking a rented bike is not allowed
+      if (s0.isRentingVehicle()) {
         return null;
+      }
+
+      return traversePark(s0, options.bikeParkCost, options.bikeParkTime);
+    } else if (options.streetSubRequestModes.getCar()) {
+      return traversePark(s0, options.carParkCost, options.carParkTime);
+    } else {
+      return null;
+    }
+  }
+
+  private State traversePark(State s0, int parkingCost, int parkingTime) {
+    RoutingRequest options = s0.getOptions();
+
+    if (
+      !vehicleParking.hasSpacesAvailable(
+        s0.getNonTransitMode(),
+        options.wheelchairAccessible,
+        options.useVehicleParkingAvailabilityInformation
+      )
+    ) {
+      return null;
     }
 
-    @Override
-    public I18NString getName() {
-        return getToVertex().getName();
+    var timeRestriction = getTimeRestriction(parkingTime);
+    if (isTraversalBlockedByTimeRestriction(s0, false, timeRestriction)) {
+      return null;
     }
 
-    @Override
-    public boolean hasBogusName() {
-        return false;
-    }
+    StateEditor s0e = s0.edit(this);
 
-    public boolean equals(Object o) {
-        if (o instanceof VehicleParkingEdge) {
-            VehicleParkingEdge other = (VehicleParkingEdge) o;
-            return other.getFromVertex().equals(fromv) && other.getToVertex().equals(tov);
-        }
-        return false;
-    }
+    updateEditorWithTimeRestriction(s0, s0e, timeRestriction, getVehicleParking());
 
-    @Override
-    public String toString() {
-        return "VehicleParkingEdge(" + fromv + " -> " + tov + ")";
-    }
+    s0e.incrementWeight(parkingCost);
+    s0e.incrementTimeInSeconds(parkingTime);
+    s0e.setVehicleParked(true, TraverseMode.WALK);
+    return s0e.makeState();
+  }
 }
