@@ -21,10 +21,12 @@ public class AccessEgressMapper {
   }
 
   public AccessEgress mapNearbyStop(NearbyStop nearbyStop, ZonedDateTime startOfTime, boolean isEgress) {
-    if (!(nearbyStop.stop instanceof Stop)) { return null; }
+    if (!(nearbyStop.stop instanceof Stop)) {
+      return null;
+    }
 
     return new AccessEgress(
-        stopIndex.indexOf(nearbyStop.stop),
+      stopIndex.indexOf(nearbyStop.stop),
         isEgress ? nearbyStop.state.reverse() : nearbyStop.state,
         startOfTime
     );
@@ -32,20 +34,20 @@ public class AccessEgressMapper {
 
   public List<AccessEgress> mapNearbyStops(Collection<NearbyStop> accessStops, ZonedDateTime startOfTime, boolean isEgress) {
     return accessStops
-        .stream()
+      .stream()
         .map(stopAtDistance -> mapNearbyStop(stopAtDistance, startOfTime, isEgress))
-        .filter(Objects::nonNull)
-        .collect(Collectors.toList());
+      .filter(Objects::nonNull)
+      .collect(Collectors.toList());
   }
 
   public Collection<AccessEgress> mapFlexAccessEgresses(
-          Collection<FlexAccessEgress> flexAccessEgresses,
+    Collection<FlexAccessEgress> flexAccessEgresses,
           ZonedDateTime startOfTime,
-          boolean isEgress
+    boolean isEgress
   ) {
-    return flexAccessEgresses.stream()
-        .map(flexAccessEgress -> new FlexAccessEgressAdapter(flexAccessEgress, stopIndex, startOfTime, isEgress))
-        .collect(Collectors.toList());
+    return flexAccessEgresses
+      .stream()
+      .map(flexAccessEgress -> new FlexAccessEgressAdapter(flexAccessEgress, stopIndex, startOfTime, isEgress))
+      .collect(Collectors.toList());
   }
-
 }

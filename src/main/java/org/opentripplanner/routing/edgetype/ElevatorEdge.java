@@ -7,7 +7,7 @@ import org.opentripplanner.routing.graph.Edge;
 
 /**
  * Marker interface indicating that an edge is part of an elevator.
- * 
+ *
  * @author mattwigway
  */
 public interface ElevatorEdge extends BikeWalkableEdge {

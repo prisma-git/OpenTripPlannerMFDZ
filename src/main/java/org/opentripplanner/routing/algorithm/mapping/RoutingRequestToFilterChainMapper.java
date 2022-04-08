@@ -16,6 +16,7 @@ import org.opentripplanner.routing.api.request.RequestModes;
 import org.opentripplanner.routing.api.request.StreetMode;
 
 public class RoutingRequestToFilterChainMapper {
+
   /** Filter itineraries down to this limit, but not below. */
   private static final int KEEP_THREE = 3;
 
@@ -23,36 +24,36 @@ public class RoutingRequestToFilterChainMapper {
   private static final int MAX_NUMBER_OF_ITINERARIES = 200;
 
   public static ItineraryListFilterChain createFilterChain(
-      SortOrder sortOrder,
-      ItineraryFilterParameters params,
-      int maxNumOfItineraries,
-      Instant filterOnLatestDepartureTime,
-      boolean removeWalkAllTheWayResults,
-      boolean maxNumberOfItinerariesCropHead,
+    SortOrder sortOrder,
+    ItineraryFilterParameters params,
+    int maxNumOfItineraries,
+    Instant filterOnLatestDepartureTime,
+    boolean removeWalkAllTheWayResults,
+    boolean maxNumberOfItinerariesCropHead,
       RequestModes modes,
-      Consumer<Itinerary> maxLimitReachedSubscriber
+    Consumer<Itinerary> maxLimitReachedSubscriber
   ) {
     var builder = new ItineraryListFilterChainBuilder(sortOrder);
 
     // Group by similar legs filter
     if (params.groupSimilarityKeepOne >= 0.5) {
       builder.addGroupBySimilarity(
-          GroupBySimilarity.createWithOneItineraryPerGroup(params.groupSimilarityKeepOne)
+        GroupBySimilarity.createWithOneItineraryPerGroup(params.groupSimilarityKeepOne)
       );
     }
 
     if (params.groupSimilarityKeepThree >= 0.5) {
       builder.addGroupBySimilarity(
         GroupBySimilarity.createWithMoreThanOneItineraryPerGroup(
-            params.groupSimilarityKeepThree,
-            KEEP_THREE,
-            true,
-            params.groupedOtherThanSameLegsMaxCostMultiplier
+          params.groupSimilarityKeepThree,
+          KEEP_THREE,
+          true,
+          params.groupedOtherThanSameLegsMaxCostMultiplier
         )
       );
     }
 
-    if(maxNumberOfItinerariesCropHead) {
+    if (maxNumberOfItinerariesCropHead) {
       builder.withMaxNumberOfItinerariesCrop(ListSection.HEAD);
     }
 
@@ -67,17 +68,17 @@ public class RoutingRequestToFilterChainMapper {
     var flexWasRequested = modes.egressMode == StreetMode.FLEXIBLE ||
             modes.directMode == StreetMode.FLEXIBLE;
     builder
-        .withMaxNumberOfItineraries(Math.min(maxNumOfItineraries, MAX_NUMBER_OF_ITINERARIES))
-        .withTransitGeneralizedCostLimit(params.transitGeneralizedCostLimit)
-        .withBikeRentalDistanceRatio(params.bikeRentalDistanceRatio)
-        .withParkAndRideDurationRatio(params.parkAndRideDurationRatio)
-        .withNonTransitGeneralizedCostLimit(params.nonTransitGeneralizedCostLimit)
-        .withRemoveTransitWithHigherCostThanBestOnStreetOnly(true)
-        .withLatestDepartureTimeLimit(filterOnLatestDepartureTime)
-        .withMaxLimitReachedSubscriber(maxLimitReachedSubscriber)
-        .withRemoveWalkAllTheWayResults(removeWalkAllTheWayResults)
+      .withMaxNumberOfItineraries(Math.min(maxNumOfItineraries, MAX_NUMBER_OF_ITINERARIES))
+      .withTransitGeneralizedCostLimit(params.transitGeneralizedCostLimit)
+      .withBikeRentalDistanceRatio(params.bikeRentalDistanceRatio)
+      .withParkAndRideDurationRatio(params.parkAndRideDurationRatio)
+      .withNonTransitGeneralizedCostLimit(params.nonTransitGeneralizedCostLimit)
+      .withRemoveTransitWithHigherCostThanBestOnStreetOnly(true)
+      .withLatestDepartureTimeLimit(filterOnLatestDepartureTime)
+      .withMaxLimitReachedSubscriber(maxLimitReachedSubscriber)
+      .withRemoveWalkAllTheWayResults(removeWalkAllTheWayResults)
         .withFlexOnlyToDestination(flexWasRequested && params.flexOnlyToDestination)
-        .withDebugEnabled(params.debug);
+      .withDebugEnabled(params.debug);
 
     return builder.build();
   }

@@ -3,7 +3,6 @@ package org.opentripplanner.routing.core;
 import java.util.List;
 import java.util.Set;
 import org.opentripplanner.routing.api.request.RoutingRequest;
-
 import org.opentripplanner.routing.vehicle_rental.RentalVehicleType.FormFactor;
 import org.opentripplanner.routing.api.request.RoutingRequest;
 
@@ -14,18 +13,18 @@ import org.opentripplanner.routing.api.request.RoutingRequest;
  */
 public class StateData implements Cloneable {
 
-    // the time at which the search started
-    protected long startTime;
+  // the time at which the search started
+  protected long startTime;
 
-    // TODO OTP2 Many of these could be replaced by a more generic state machine implementation
+  // TODO OTP2 Many of these could be replaced by a more generic state machine implementation
 
-    protected boolean vehicleParked;
+  protected boolean vehicleParked;
 
-    protected VehicleRentalState vehicleRentalState;
+  protected VehicleRentalState vehicleRentalState;
 
-    protected boolean mayKeepRentedVehicleAtDestination;
+  protected boolean mayKeepRentedVehicleAtDestination;
 
-    protected CarPickupState carPickupState;
+  protected CarPickupState carPickupState;
 
     /**
      * Time restrictions encountered while traversing edges.
@@ -43,45 +42,44 @@ public class StateData implements Cloneable {
      */
     protected Set<Object> timeRestrictionSources;
 
-    protected RoutingRequest opt;
+  protected RoutingRequest opt;
 
-    /**
-     * The preferred mode, which may differ from backMode when for example walking with a bike.
-     * It may also change during traversal when switching between modes as in the case of Park & Ride or Kiss & Ride.
-     */
-    protected TraverseMode currentMode;
+  protected RoutingContext rctx;
 
-    /**
-     * The mode that was used to traverse the backEdge
-     */
-    protected TraverseMode backMode;
+  /**
+   * The preferred mode, which may differ from backMode when for example walking with a bike. It may
+   * also change during traversal when switching between modes as in the case of Park & Ride or Kiss
+   * & Ride.
+   */
+  protected TraverseMode currentMode;
 
-    protected boolean backWalkingBike;
+  /**
+   * The mode that was used to traverse the backEdge
+   */
+  protected TraverseMode backMode;
 
-    public String vehicleRentalNetwork;
+  protected boolean backWalkingBike;
 
-    public FormFactor rentalVehicleFormFactor;
+  public String vehicleRentalNetwork;
 
-    /* This boolean is set to true upon transition from a normal street to a no-through-traffic street. */
-    protected boolean enteredNoThroughTrafficArea;
+  public FormFactor rentalVehicleFormFactor;
 
-    public StateData(RoutingRequest options) {
-        TraverseModeSet modes = options.streetSubRequestModes;
-        if (modes.getCar())
-            currentMode = TraverseMode.CAR;
-        else if (modes.getWalk())
-            currentMode = TraverseMode.WALK;
-        else if (modes.getBicycle())
-            currentMode = TraverseMode.BICYCLE;
-        else
-            currentMode = null;
+  /* This boolean is set to true upon transition from a normal street to a no-through-traffic street. */
+  protected boolean enteredNoThroughTrafficArea;
+
+  public StateData(RoutingRequest options) {
+    this.opt = options;
+    TraverseModeSet modes = options.streetSubRequestModes;
+    if (modes.getCar()) currentMode = TraverseMode.CAR; else if (modes.getWalk()) currentMode =
+      TraverseMode.WALK; else if (modes.getBicycle()) currentMode =
+      TraverseMode.BICYCLE; else currentMode = null;
+  }
+
+  protected StateData clone() {
+    try {
+      return (StateData) super.clone();
+    } catch (CloneNotSupportedException e1) {
+      throw new IllegalStateException("This is not happening");
     }
-
-    protected StateData clone() {
-        try {
-            return (StateData) super.clone();
-        } catch (CloneNotSupportedException e1) {
-            throw new IllegalStateException("This is not happening");
-        }
-    }
+  }
 }
