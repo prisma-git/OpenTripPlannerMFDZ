@@ -1,11 +1,10 @@
 package org.opentripplanner.routing.algorithm.filterchain.deletionflagger;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import org.opentripplanner.model.plan.Itinerary;
 import org.opentripplanner.routing.algorithm.filterchain.ItineraryListFilter;
 import org.opentripplanner.routing.core.TraverseMode;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class RemoveBikeParkWithShortBikingFilter implements ItineraryListFilter {
 
@@ -17,9 +16,10 @@ public class RemoveBikeParkWithShortBikingFilter implements ItineraryListFilter 
 
   @Override
   public List<Itinerary> filter(List<Itinerary> itineraries) {
-    return itineraries.stream()
-        .filter(this::filterItinerariesWithShortBikeParkingLeg)
-        .collect(Collectors.toList());
+    return itineraries
+      .stream()
+      .filter(this::filterItinerariesWithShortBikeParkingLeg)
+      .collect(Collectors.toList());
   }
 
   private boolean filterItinerariesWithShortBikeParkingLeg(Itinerary itinerary) {
@@ -36,5 +36,4 @@ public class RemoveBikeParkWithShortBikingFilter implements ItineraryListFilter 
 
     return bikeParkingDistance > minBikeParkingDistance;
   }
-
 }

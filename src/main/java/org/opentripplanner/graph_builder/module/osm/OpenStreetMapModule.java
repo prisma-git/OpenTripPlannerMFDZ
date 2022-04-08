@@ -29,8 +29,8 @@ import org.opentripplanner.graph_builder.DataImportIssueStore;
 import org.opentripplanner.graph_builder.Issue;
 import org.opentripplanner.graph_builder.issues.Graphwide;
 import org.opentripplanner.graph_builder.issues.InvalidVehicleParkingCapacity;
-import org.opentripplanner.graph_builder.issues.ParkAndRideOpeningHoursUnparsed;
 import org.opentripplanner.graph_builder.issues.InvalidVehicleParkingCapacity;
+import org.opentripplanner.graph_builder.issues.ParkAndRideOpeningHoursUnparsed;
 import org.opentripplanner.graph_builder.issues.ParkAndRideUnlinked;
 import org.opentripplanner.graph_builder.issues.StreetCarSpeedZero;
 import org.opentripplanner.graph_builder.issues.TurnRestrictionBad;
@@ -147,8 +147,12 @@ public class OpenStreetMapModule implements GraphBuilderModule {
 
   public OpenStreetMapModule() {}
 
-    private final List<String>
-            OSM_VEHICLE_PARKING_EXTRA_TAGS = List.of("bicycle_parking", "operator", "fee", "source");
+  private final List<String> OSM_VEHICLE_PARKING_EXTRA_TAGS = List.of(
+    "bicycle_parking",
+    "operator",
+    "fee",
+    "source"
+  );
 
   public List<String> provides() {
     return Arrays.asList("streets", "turns");
@@ -649,9 +653,9 @@ public class OpenStreetMapModule implements GraphBuilderModule {
         creativeName,
         entity
       );
-            if(entrances.isEmpty()) {
-                entrances = createArtificialEntrances(group, creativeName, entity, isCarParkAndRide);
-            }
+      if (entrances.isEmpty()) {
+        entrances = createArtificialEntrances(group, creativeName, entity, isCarParkAndRide);
+      }
 
       var vehicleParking = createVehicleParkingObjectFromOsmEntity(
         isCarParkAndRide,
@@ -681,15 +685,15 @@ public class OpenStreetMapModule implements GraphBuilderModule {
       I18NString creativeName,
       List<VehicleParking.VehicleParkingEntranceCreator> entrances
     ) {
-            OptionalInt bicycleCapacity, carCapacity, wheelchairAccessibleCapacity;
+      OptionalInt bicycleCapacity, carCapacity, wheelchairAccessibleCapacity;
       if (isCarParkAndRide) {
         carCapacity = parseCapacity(entity);
         bicycleCapacity = parseCapacity(entity, "capacity:bike");
-                wheelchairAccessibleCapacity = parseCapacity(entity, "capacity:disabled");
+        wheelchairAccessibleCapacity = parseCapacity(entity, "capacity:disabled");
       } else {
         bicycleCapacity = parseCapacity(entity);
         carCapacity = OptionalInt.empty();
-                wheelchairAccessibleCapacity = OptionalInt.empty();
+        wheelchairAccessibleCapacity = OptionalInt.empty();
       }
 
       VehicleParkingSpaces vehiclePlaces = null;
@@ -717,7 +721,7 @@ public class OpenStreetMapModule implements GraphBuilderModule {
         carCapacity.orElse(0) > 0;
       var wheelchairAccessibleCarPlaces = wheelchairAccessibleCapacity.orElse(0) > 0;
 
-            var openingHours = parseVehicleParkingOpeningHours(entity, creativeName);
+      var openingHours = parseVehicleParkingOpeningHours(entity, creativeName);
 
       var id = new FeedScopedId(
         VEHICLE_PARKING_OSM_FEED_ID,
@@ -741,42 +745,46 @@ public class OpenStreetMapModule implements GraphBuilderModule {
         tags.add("osm:surveillance");
       }
 
-      OSM_VEHICLE_PARKING_EXTRA_TAGS.forEach(key ->{
-                if(entity.hasTag(key)){
-                    var value = entity.getTag(key);
-                    tags.add("osm:" + key + "=" + value);
-                }
-            });
+      OSM_VEHICLE_PARKING_EXTRA_TAGS.forEach(key -> {
+        if (entity.hasTag(key)) {
+          var value = entity.getTag(key);
+          tags.add("osm:" + key + "=" + value);
+        }
+      });
 
-            return VehicleParking.builder()
+      return VehicleParking
+        .builder()
         .id(id)
         .name(creativeName)
         .x(lon)
         .y(lat)
-                    .openingHours(openingHours)
+        .openingHours(openingHours)
         .tags(tags)
         .detailsUrl(entity.getTag("website"))
         .bicyclePlaces(bicyclePlaces)
         .carPlaces(carPlaces)
         .wheelchairAccessibleCarPlaces(wheelchairAccessibleCarPlaces)
-                    .capacity(vehiclePlaces)
+        .capacity(vehiclePlaces)
         .entrances(entrances)
         .build();
     }
 
-        private TimeRestriction parseVehicleParkingOpeningHours(OSMWithTags entity, I18NString creativeName) {
-            final var openingHoursTag = entity.getTag("opening_hours");
-            if (openingHoursTag != null) {
-                try {
-                    return OsmOpeningHours.parseFromOsm(openingHoursTag);
-                } catch (OpeningHoursParseException e) {
-                    issueStore.add(new ParkAndRideOpeningHoursUnparsed(
-                            creativeName.toString(), entity, openingHoursTag
-                    ));
-                }
-            }
-            return null;
+    private TimeRestriction parseVehicleParkingOpeningHours(
+      OSMWithTags entity,
+      I18NString creativeName
+    ) {
+      final var openingHoursTag = entity.getTag("opening_hours");
+      if (openingHoursTag != null) {
+        try {
+          return OsmOpeningHours.parseFromOsm(openingHoursTag);
+        } catch (OpeningHoursParseException e) {
+          issueStore.add(
+            new ParkAndRideOpeningHoursUnparsed(creativeName.toString(), entity, openingHoursTag)
+          );
         }
+      }
+      return null;
+    }
 
     private I18NString nameParkAndRideEntity(OSMWithTags osmWithTags) {
       // If there is an explicit name user that. The explicit name is used so that tag-based
@@ -796,8 +804,11 @@ public class OpenStreetMapModule implements GraphBuilderModule {
         .collect(Collectors.toList());
     }
 
-
-        private List<VertexAndName> processVehicleParkingArea(Ring ring, OSMWithTags entity, Envelope envelope) {
+    private List<VertexAndName> processVehicleParkingArea(
+      Ring ring,
+      OSMWithTags entity,
+      Envelope envelope
+    ) {
       List<VertexAndName> accessVertices = new ArrayList<>();
       for (OSMNode node : ring.nodes) {
         envelope.expandToInclude(new Coordinate(node.lon, node.lat));
@@ -817,27 +828,36 @@ public class OpenStreetMapModule implements GraphBuilderModule {
       return accessVertices;
     }
 
-        private List<VehicleParking.VehicleParkingEntranceCreator> createArtificialEntrances(
-                AreaGroup area,
-                I18NString vehicleParkingName,
-                OSMWithTags entity,
-                boolean isCarPark
-        ) {
-            LOG.warn("Adding artificial entrance to centroid of vehicle parking {}, because it is not connected to the street network.", entity.getOpenStreetMapLink());
+    private List<VehicleParking.VehicleParkingEntranceCreator> createArtificialEntrances(
+      AreaGroup area,
+      I18NString vehicleParkingName,
+      OSMWithTags entity,
+      boolean isCarPark
+    ) {
+      LOG.warn(
+        "Adding artificial entrance to centroid of vehicle parking {}, because it is not connected to the street network.",
+        entity.getOpenStreetMapLink()
+      );
 
-            var centroid = area.outermostRings.get(0).jtsPolygon.getCentroid();
+      var centroid = area.outermostRings.get(0).jtsPolygon.getCentroid();
 
-            return List.of((builder) -> builder
-                        .entranceId(new FeedScopedId(VEHICLE_PARKING_OSM_FEED_ID, String.format("%s/%d/centroid", entity.getClass().getSimpleName(), entity.getId())))
-                        .name(vehicleParkingName)
-                        .x(centroid.getX())
-                        .y(centroid.getY())
-                        // setting the vertex to null signals the rest of the build process that this needs to be linked to the street network
-                        .vertex(null)
-                        .walkAccessible(true)
-                        .carAccessible(isCarPark));
-
-        }
+      return List.of(builder ->
+        builder
+          .entranceId(
+            new FeedScopedId(
+              VEHICLE_PARKING_OSM_FEED_ID,
+              String.format("%s/%d/centroid", entity.getClass().getSimpleName(), entity.getId())
+            )
+          )
+          .name(vehicleParkingName)
+          .x(centroid.getX())
+          .y(centroid.getY())
+          // setting the vertex to null signals the rest of the build process that this needs to be linked to the street network
+          .vertex(null)
+          .walkAccessible(true)
+          .carAccessible(isCarPark)
+      );
+    }
 
     private List<VehicleParking.VehicleParkingEntranceCreator> createParkingEntrancesFromAccessVertices(
       Set<VertexAndName> accessVertices,

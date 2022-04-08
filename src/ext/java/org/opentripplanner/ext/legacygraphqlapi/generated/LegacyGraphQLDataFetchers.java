@@ -85,7 +85,7 @@ public class LegacyGraphQLDataFetchers {
 
     public DataFetcher<Iterable<Map.Entry<String, String>>> alertHeaderTextTranslations();
 
-        public DataFetcher<String> alertId();
+    public DataFetcher<String> alertId();
 
     public DataFetcher<String> alertSeverityLevel();
 
@@ -345,7 +345,7 @@ public class LegacyGraphQLDataFetchers {
   public interface LegacyGraphQLLeg {
     public DataFetcher<Agency> agency();
 
-        public DataFetcher<Iterable<TransitAlert>> alerts();
+    public DataFetcher<Iterable<TransitAlert>> alerts();
 
     public DataFetcher<Integer> arrivalDelay();
 
@@ -499,7 +499,7 @@ public class LegacyGraphQLDataFetchers {
 
     public DataFetcher<Object> stop();
 
-        public DataFetcher<org.opentripplanner.model.plan.VehicleParkingWithEntrance> vehicleParkingWithEntrance();
+    public DataFetcher<org.opentripplanner.model.plan.VehicleParkingWithEntrance> vehicleParkingWithEntrance();
 
     public DataFetcher<VehicleRentalStation> vehicleRentalStation();
 
@@ -960,7 +960,7 @@ public class LegacyGraphQLDataFetchers {
 
     public DataFetcher<String> detailsUrl();
 
-        public DataFetcher<String> feeHours();
+    public DataFetcher<String> feeHours();
 
     public DataFetcher<graphql.relay.Relay.ResolvedGlobalId> id();
 
@@ -974,7 +974,7 @@ public class LegacyGraphQLDataFetchers {
 
     public DataFetcher<String> note();
 
-        public DataFetcher<String> openingHours();
+    public DataFetcher<String> openingHours();
 
     public DataFetcher<Boolean> realtime();
 
@@ -998,14 +998,13 @@ public class LegacyGraphQLDataFetchers {
     public DataFetcher<Integer> wheelchairAccessibleCarSpaces();
   }
 
-    public interface LegacyGraphQLVehicleParkingWithEntrance {
+  public interface LegacyGraphQLVehicleParkingWithEntrance {
+    public DataFetcher<Boolean> closesSoon();
 
-        public DataFetcher<Boolean> closesSoon();
+    public DataFetcher<Boolean> realtime();
 
-        public DataFetcher<Boolean> realtime();
-
-        public DataFetcher<VehicleParking> vehicleParking();
-    }
+    public DataFetcher<VehicleParking> vehicleParking();
+  }
 
   public interface LegacyGraphQLVehiclePosition {
     public DataFetcher<Double> heading();

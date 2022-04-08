@@ -338,9 +338,9 @@ public class StateEditor {
     return child.getTimeSeconds();
   }
 
-    public ZonedDateTime getZonedDateTime() {
-        return child.getTimeAsZonedDateTime();
-    }
+  public ZonedDateTime getZonedDateTime() {
+    return child.getTimeAsZonedDateTime();
+  }
 
   public void setTimeSeconds(long seconds) {
     child.time = seconds * 1000;
@@ -371,18 +371,18 @@ public class StateEditor {
   /* PRIVATE METHODS */
 
   public void addTimeRestriction(TimeRestrictionWithOffset timeRestriction, Object source) {
-        if (child.getOptions().ignoreAndCollectTimeRestrictions) {
-            cloneStateDataAsNeeded();
-            child.stateData.timeRestrictions = new ArrayList<>();
-            child.stateData.timeRestrictions.addAll(child.backState.getTimeRestrictions());
-            child.stateData.timeRestrictions.add(timeRestriction);
+    if (child.getOptions().ignoreAndCollectTimeRestrictions) {
+      cloneStateDataAsNeeded();
+      child.stateData.timeRestrictions = new ArrayList<>();
+      child.stateData.timeRestrictions.addAll(child.backState.getTimeRestrictions());
+      child.stateData.timeRestrictions.add(timeRestriction);
 
-            child.stateData.timeRestrictionSources = new HashSet<>();
-            child.stateData.timeRestrictionSources.addAll(
-                    child.backState.getTimeRestrictionSources());
-            child.stateData.timeRestrictionSources.add(source);
-        }
+      child.stateData.timeRestrictionSources = new HashSet<>();
+      child.stateData.timeRestrictionSources.addAll(child.backState.getTimeRestrictionSources());
+      child.stateData.timeRestrictionSources.add(source);
     }
+  }
+
   public void setBikeRentalNetwork(String network) {
     cloneStateDataAsNeeded();
     child.stateData.vehicleRentalNetwork = network;

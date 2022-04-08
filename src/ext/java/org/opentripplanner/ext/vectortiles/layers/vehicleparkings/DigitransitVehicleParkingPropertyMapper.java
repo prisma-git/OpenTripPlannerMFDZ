@@ -40,8 +40,8 @@ public class DigitransitVehicleParkingPropertyMapper extends PropertyMapper<Vehi
     );
     items.addAll(mapI18NString("name", vehicleParking.getName()));
     items.addAll(mapI18NString("note", vehicleParking.getNote()));
-        items.addAll(mapI18NString("openingHours", vehicleParking.getOpeningHours()));
-        items.addAll(mapI18NString("feeHours", vehicleParking.getFeeHours()));
+    items.addAll(mapI18NString("openingHours", vehicleParking.getOpeningHours()));
+    items.addAll(mapI18NString("feeHours", vehicleParking.getFeeHours()));
     items.addAll(mapPlaces("capacity", vehicleParking.getCapacity()));
     items.addAll(mapPlaces("availability", vehicleParking.getAvailability()));
     items.addAll(mapPlaces("availability", vehicleParking.getAvailability()));

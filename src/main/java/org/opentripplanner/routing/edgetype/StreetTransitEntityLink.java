@@ -115,17 +115,17 @@ public abstract class StreetTransitEntityLink<T extends Vertex>
           if (canDropOffAfterDriving(s0) && isLeavingStreetNetwork(req)) {
             dropOffAfterDriving(s0, s1);
           } else {
-                        return null;
-                    }
-                }
-                // If Kiss & Ride (Taxi) mode is not enabled allow car traversal so that the Stop
-                // may be reached by car
-                break;
-            case WALK:
-                break;
-            default:
-                return null;
+            return null;
+          }
         }
+        // If Kiss & Ride (Taxi) mode is not enabled allow car traversal so that the Stop
+        // may be reached by car
+        break;
+      case WALK:
+        break;
+      default:
+        return null;
+    }
 
     if (
       s0.isRentingVehicleFromStation() &&

@@ -12,55 +12,57 @@ import lombok.Data;
 @Data(staticConstructor = "of")
 public class TimeRestrictionWithTimeSpan implements TimeRestriction {
 
-    private final TimeRestriction timeRestriction;
-    private final int spanInSeconds;
+  private final TimeRestriction timeRestriction;
+  private final int spanInSeconds;
 
-    @Override
-    public boolean isTraverseableAt(LocalDateTime now) {
-        return timeRestriction.isTraverseableAt(now)
-                && timeRestriction.isTraverseableAt(now.plusSeconds(spanInSeconds));
-    }
+  @Override
+  public boolean isTraverseableAt(LocalDateTime now) {
+    return (
+      timeRestriction.isTraverseableAt(now) &&
+      timeRestriction.isTraverseableAt(now.plusSeconds(spanInSeconds))
+    );
+  }
 
-    @Override
-    public Optional<LocalDateTime> earliestDepartureTime(LocalDateTime now) {
-        var time = now;
-        do {
-            var next = timeRestriction.earliestDepartureTime(time);
-            if (next.isEmpty()) {
-                return Optional.empty();
-            }
+  @Override
+  public Optional<LocalDateTime> earliestDepartureTime(LocalDateTime now) {
+    var time = now;
+    do {
+      var next = timeRestriction.earliestDepartureTime(time);
+      if (next.isEmpty()) {
+        return Optional.empty();
+      }
 
-            time = next.get();
-            var timeAtEnd = time.plusSeconds(spanInSeconds);
-            if (timeRestriction.isTraverseableAt(timeAtEnd)) {
-                return next;
-            } else {
-                time = timeAtEnd;
-            }
-        } while (true);
-    }
+      time = next.get();
+      var timeAtEnd = time.plusSeconds(spanInSeconds);
+      if (timeRestriction.isTraverseableAt(timeAtEnd)) {
+        return next;
+      } else {
+        time = timeAtEnd;
+      }
+    } while (true);
+  }
 
-    @Override
-    public Optional<LocalDateTime> latestArrivalTime(LocalDateTime now) {
-        var time = now;
-        do {
-            var previous = timeRestriction.latestArrivalTime(time);
-            if (previous.isEmpty()) {
-                return Optional.empty();
-            }
+  @Override
+  public Optional<LocalDateTime> latestArrivalTime(LocalDateTime now) {
+    var time = now;
+    do {
+      var previous = timeRestriction.latestArrivalTime(time);
+      if (previous.isEmpty()) {
+        return Optional.empty();
+      }
 
-            time = previous.get();
-            var timeAtEnd = time.plusSeconds(spanInSeconds);
-            if (timeRestriction.isTraverseableAt(timeAtEnd)) {
-                return previous;
-            } else {
-                time = time.minusSeconds(spanInSeconds);
-            }
-        } while (true);
-    }
+      time = previous.get();
+      var timeAtEnd = time.plusSeconds(spanInSeconds);
+      if (timeRestriction.isTraverseableAt(timeAtEnd)) {
+        return previous;
+      } else {
+        time = time.minusSeconds(spanInSeconds);
+      }
+    } while (true);
+  }
 
-    @Override
-    public boolean isAlwaysOpen() {
-        return timeRestriction.isAlwaysOpen();
-    }
+  @Override
+  public boolean isAlwaysOpen() {
+    return timeRestriction.isAlwaysOpen();
+  }
 }

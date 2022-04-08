@@ -1,7 +1,7 @@
 package org.opentripplanner.routing.edgetype;
 
-import java.util.Set;
 import java.util.Locale;
+import java.util.Set;
 import org.locationtech.jts.geom.LineString;
 import org.opentripplanner.routing.api.request.RoutingRequest;
 import org.opentripplanner.routing.core.State;
@@ -59,9 +59,11 @@ public class StreetVehicleRentalLink extends Edge {
       return null;
     }
 
-        if (networkIsNotAllowed(s0.getOptions(), vehicleRentalStationVertex.getStation().getNetwork())) {
-            return null;
-        }
+    if (
+      networkIsNotAllowed(s0.getOptions(), vehicleRentalStationVertex.getStation().getNetwork())
+    ) {
+      return null;
+    }
 
     StateEditor s1 = s0.edit(this);
     //assume bike rental stations are more-or-less on-street
@@ -70,32 +72,32 @@ public class StreetVehicleRentalLink extends Edge {
     return s1.makeState();
   }
 
-    private boolean networkIsNotAllowed(RoutingRequest options, String network) {
-        if (
-                !options.allowedVehicleRentalNetworks.isEmpty()
-                        && options.allowedVehicleRentalNetworks.stream().noneMatch(network::equals)
-        ) {
-            return false;
-        }
-
-        if (
-                !options.bannedVehicleRentalNetworks.isEmpty()
-                && options.bannedVehicleRentalNetworks.contains(network)
-        ) {
-            return true;
-        }
-
-        return false;
+  private boolean networkIsNotAllowed(RoutingRequest options, String network) {
+    if (
+      !options.allowedVehicleRentalNetworks.isEmpty() &&
+      options.allowedVehicleRentalNetworks.stream().noneMatch(network::equals)
+    ) {
+      return false;
     }
 
-    public Vertex getFromVertex() {
-        return fromv;
+    if (
+      !options.bannedVehicleRentalNetworks.isEmpty() &&
+      options.bannedVehicleRentalNetworks.contains(network)
+    ) {
+      return true;
+    }
+
+    return false;
   }
 
-    @Override
-    public I18NString getName() {
-        return vehicleRentalStationVertex.getName();
-    }
+  public Vertex getFromVertex() {
+    return fromv;
+  }
+
+  @Override
+  public I18NString getName() {
+    return vehicleRentalStationVertex.getName();
+  }
 
   public LineString getGeometry() {
     return null;

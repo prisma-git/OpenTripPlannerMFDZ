@@ -92,7 +92,6 @@ public class ItineraryFilterParameters {
    */
   public final double minBikeParkingDistance;
 
-
   private ItineraryFilterParameters() {
     this.debug = false;
     this.groupSimilarityKeepOne = 0.85;
@@ -114,9 +113,9 @@ public class ItineraryFilterParameters {
     DoubleFunction<Double> transitGeneralizedCostLimit,
     DoubleFunction<Double> nonTransitGeneralizedCostLimit,
     double bikeRentalDistanceRatio,
-      double parkAndRideDurationRatio,
-      boolean flexOnlyToDestination,
-      double minBikeParkingDistance
+    double parkAndRideDurationRatio,
+    boolean flexOnlyToDestination,
+    double minBikeParkingDistance
   ) {
     this.debug = debug;
     this.groupSimilarityKeepOne = groupSimilarityKeepOne;

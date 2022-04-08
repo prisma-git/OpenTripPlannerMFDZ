@@ -43,8 +43,9 @@ public class TraverseModeMapper {
         return "CAR";
       case CABLE_CAR:
         return "CABLE_CAR";
-      case CARPOOL: return "CARPOOL";
-            case FERRY:
+      case CARPOOL:
+        return "CARPOOL";
+      case FERRY:
         return "FERRY";
       case FUNICULAR:
         return "FUNICULAR";
@@ -106,7 +107,8 @@ public class TraverseModeMapper {
         return "TROLLEYBUS";
       case MONORAIL:
         return "MONORAIL";
-            case CARPOOL: return "CARPOOL";
+      case CARPOOL:
+        return "CARPOOL";
     }
     throw new IllegalArgumentException("Traverse mode not mapped: " + domain);
   }

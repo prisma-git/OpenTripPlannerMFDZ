@@ -46,16 +46,16 @@ public class ItineraryListFilterChainBuilder {
   private ListSection maxNumberOfItinerariesCrop = ListSection.TAIL;
   private boolean removeTransitWithHigherCostThanBestOnStreetOnly = true;
   private boolean removeWalkAllTheWayResults;
-    private boolean flexOnlyToDestination;
+  private boolean flexOnlyToDestination;
   private DoubleFunction<Double> transitGeneralizedCostLimit;
   private double bikeRentalDistanceRatio;
   private double parkAndRideDurationRatio;
   private DoubleFunction<Double> nonTransitGeneralizedCostLimit;
   private Instant latestDepartureTimeLimit = null;
   private Consumer<Itinerary> maxLimitReachedSubscriber;
-    private double minBikeParkingDistance = NOT_SET;
-    private boolean removeBikeOnlyParkAndRideItineraries;
-    private boolean reverseFilteringDirection;
+  private double minBikeParkingDistance = NOT_SET;
+  private boolean removeBikeOnlyParkAndRideItineraries;
+  private boolean reverseFilteringDirection;
 
   public ItineraryListFilterChainBuilder(SortOrder sortOrder) {
     this.sortOrder = sortOrder;
@@ -219,45 +219,45 @@ public class ItineraryListFilterChainBuilder {
   }
 
   @SuppressWarnings("CollectionAddAllCanBeReplacedWithConstructor")
-    /**
-     * Should the direction of the final filtering for max number of itineraries be swapped.
-     * This is used to be able to paginate to the opposite direction of the main search.
-     */
-    public ItineraryListFilterChainBuilder withReverseFilteringDirection(boolean enable) {
-        this.reverseFilteringDirection = enable;
-        return this;
-    }
+  /**
+   * Should the direction of the final filtering for max number of itineraries be swapped.
+   * This is used to be able to paginate to the opposite direction of the main search.
+   */
+  public ItineraryListFilterChainBuilder withReverseFilteringDirection(boolean enable) {
+    this.reverseFilteringDirection = enable;
+    return this;
+  }
 
-    /**
-     * If set, itineraries with a final "long" walk are removed.
-     *
-     * This is useful when to-door delivery is required in a flex trip.
-     *
-     * This happens AFTER e.g. the group-by
-     * and remove-transit-with-higher-cost-than-best-on-street-only filters. This make sure that
-     * poor transit itineraries are filtered away before the walk-all-the-way itinerary is removed.
-     */
-    public ItineraryListFilterChainBuilder withFlexOnlyToDestination(boolean enable) {
-        this.flexOnlyToDestination = enable;
-        return this;
-    }
+  /**
+   * If set, itineraries with a final "long" walk are removed.
+   *
+   * This is useful when to-door delivery is required in a flex trip.
+   *
+   * This happens AFTER e.g. the group-by
+   * and remove-transit-with-higher-cost-than-best-on-street-only filters. This make sure that
+   * poor transit itineraries are filtered away before the walk-all-the-way itinerary is removed.
+   */
+  public ItineraryListFilterChainBuilder withFlexOnlyToDestination(boolean enable) {
+    this.flexOnlyToDestination = enable;
+    return this;
+  }
 
-    public ItineraryListFilterChainBuilder withMinBikeParkingDistance(double minBikeParkingDistance) {
-        this.minBikeParkingDistance = minBikeParkingDistance;
-        return this;
-    }
+  public ItineraryListFilterChainBuilder withMinBikeParkingDistance(double minBikeParkingDistance) {
+    this.minBikeParkingDistance = minBikeParkingDistance;
+    return this;
+  }
 
-    public ItineraryListFilterChainBuilder withRemoveBikeOnlyParkAndRideItineraries(boolean enabled) {
-        this.removeBikeOnlyParkAndRideItineraries = enabled;
-        return this;
-    }
+  public ItineraryListFilterChainBuilder withRemoveBikeOnlyParkAndRideItineraries(boolean enabled) {
+    this.removeBikeOnlyParkAndRideItineraries = enabled;
+    return this;
+  }
 
   public ItineraryListFilterChain build() {
     List<ItineraryListFilter> filters = new ArrayList<>();
 
-        if(flexOnlyToDestination) {
-            filters.add(new FlexOnlyToDestinationFilter());
-        }
+    if (flexOnlyToDestination) {
+      filters.add(new FlexOnlyToDestinationFilter());
+    }
 
     filters.addAll(buildGroupByTripIdAndDistanceFilters());
 
@@ -295,8 +295,6 @@ public class ItineraryListFilterChainBuilder {
         filters.add(new DeletionFlaggingFilter(new RemoveWalkOnlyFilter()));
       }
 
-
-
       if (latestDepartureTimeLimit != null) {
         filters.add(
           new DeletionFlaggingFilter(new LatestDepartureTimeFilter(latestDepartureTimeLimit))
@@ -319,13 +317,13 @@ public class ItineraryListFilterChainBuilder {
         );
       }
 
-            if (minBikeParkingDistance != NOT_SET) {
-                filters.add(new RemoveBikeParkWithShortBikingFilter(minBikeParkingDistance));
-            }
+      if (minBikeParkingDistance != NOT_SET) {
+        filters.add(new RemoveBikeParkWithShortBikingFilter(minBikeParkingDistance));
+      }
 
-            if (removeBikeOnlyParkAndRideItineraries) {
-                filters.add(new ParkAndRideDirectBikeItineraryFilter());
-            }
+      if (removeBikeOnlyParkAndRideItineraries) {
+        filters.add(new ParkAndRideDirectBikeItineraryFilter());
+      }
     }
 
     // Remove itineraries if max limit is set

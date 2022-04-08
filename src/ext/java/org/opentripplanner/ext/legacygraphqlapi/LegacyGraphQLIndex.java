@@ -141,7 +141,7 @@ class LegacyGraphQLIndex {
         .type(IntrospectionTypeWiring.build(LegacyGraphQLTranslatedStringImpl.class))
         .type(IntrospectionTypeWiring.build(LegacyGraphQLTripImpl.class))
         .type(IntrospectionTypeWiring.build(LegacyGraphQLSystemNoticeImpl.class))
-          .type(IntrospectionTypeWiring.build(LegacyGraphQLVehicleParkingImpl.class))
+        .type(IntrospectionTypeWiring.build(LegacyGraphQLVehicleParkingImpl.class))
         .type(IntrospectionTypeWiring.build(LegacyGraphQLContactInfoImpl.class))
         .type(IntrospectionTypeWiring.build(LegacyGraphQLBookingTimeImpl.class))
         .type(IntrospectionTypeWiring.build(LegacyGraphQLBookingInfoImpl.class))

@@ -49,11 +49,11 @@ public class PathTransfer implements Serializable {
   }
 
   @Override
-    public int hashCode() {
-        return Objects.hash(from, to, distanceMeters, edges);
-    }
+  public int hashCode() {
+    return Objects.hash(from, to, distanceMeters, edges);
+  }
 
-    @Override
+  @Override
   public String toString() {
     return ToStringBuilder
       .of(getClass())

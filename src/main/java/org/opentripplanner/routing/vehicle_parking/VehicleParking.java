@@ -98,7 +98,11 @@ public class VehicleParking implements Serializable {
     return availability != null;
   }
 
-  public boolean hasSpacesAvailable(TraverseMode traverseMode, boolean wheelchairAccessible, boolean useAvailability) {
+  public boolean hasSpacesAvailable(
+    TraverseMode traverseMode,
+    boolean wheelchairAccessible,
+    boolean useAvailability
+  ) {
     switch (traverseMode) {
       case BICYCLE:
         if (useAvailability && hasRealTimeDataForMode(TraverseMode.BICYCLE, false)) {
@@ -125,7 +129,10 @@ public class VehicleParking implements Serializable {
     }
   }
 
-  public boolean hasRealTimeDataForMode(TraverseMode traverseMode, boolean wheelchairAccessibleCarPlaces) {
+  public boolean hasRealTimeDataForMode(
+    TraverseMode traverseMode,
+    boolean wheelchairAccessibleCarPlaces
+  ) {
     if (availability == null) {
       return false;
     }
@@ -135,8 +142,8 @@ public class VehicleParking implements Serializable {
         return availability.getBicycleSpaces() != null;
       case CAR:
         var places = wheelchairAccessibleCarPlaces
-                ? availability.getWheelchairAccessibleCarSpaces()
-                : availability.getCarSpaces();
+          ? availability.getWheelchairAccessibleCarSpaces()
+          : availability.getCarSpaces();
         return places != null;
       default:
         return false;
@@ -148,9 +155,9 @@ public class VehicleParking implements Serializable {
   }
 
   private void addEntrance(VehicleParkingEntranceCreator creator) {
-    var entrance = creator.updateValues(VehicleParkingEntrance.builder()
-            .vehicleParking(this))
-            .build();
+    var entrance = creator
+      .updateValues(VehicleParkingEntrance.builder().vehicleParking(this))
+      .build();
 
     entrances.add(entrance);
   }
@@ -165,6 +172,7 @@ public class VehicleParking implements Serializable {
    */
   @SuppressWarnings("unused")
   public static class VehicleParkingBuilder {
+
     private List<String> tags = new ArrayList<>();
     private final List<VehicleParkingEntranceCreator> entranceCreators = new ArrayList<>();
 
@@ -174,19 +182,19 @@ public class VehicleParking implements Serializable {
     }
 
     public VehicleParkingBuilder entrances(Collection<VehicleParkingEntranceCreator> creators) {
-        this.entranceCreators.addAll(creators);
-        return this;
+      this.entranceCreators.addAll(creators);
+      return this;
     }
 
     public VehicleParkingBuilder entrance(VehicleParkingEntranceCreator creator) {
-        this.entranceCreators.add(creator);
-        return this;
+      this.entranceCreators.add(creator);
+      return this;
     }
 
     public VehicleParking build() {
-        VehicleParking vehicleParking = this.buildInternal();
-        this.entranceCreators.forEach(vehicleParking::addEntrance);
-        return vehicleParking;
+      VehicleParking vehicleParking = this.buildInternal();
+      this.entranceCreators.forEach(vehicleParking::addEntrance);
+      return vehicleParking;
     }
   }
 }

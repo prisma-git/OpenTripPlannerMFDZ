@@ -1,6 +1,8 @@
 package org.opentripplanner.routing.algorithm.mapping;
 
 import java.time.Instant;
+import java.time.Instant;
+import java.util.function.Consumer;
 import java.util.function.Consumer;
 import org.opentripplanner.model.plan.Itinerary;
 import org.opentripplanner.model.plan.SortOrder;
@@ -9,9 +11,6 @@ import org.opentripplanner.routing.algorithm.filterchain.ItineraryListFilterChai
 import org.opentripplanner.routing.algorithm.filterchain.ItineraryListFilterChainBuilder;
 import org.opentripplanner.routing.algorithm.filterchain.ListSection;
 import org.opentripplanner.routing.api.request.ItineraryFilterParameters;
-
-import java.time.Instant;
-import java.util.function.Consumer;
 import org.opentripplanner.routing.api.request.RequestModes;
 import org.opentripplanner.routing.api.request.StreetMode;
 
@@ -30,7 +29,7 @@ public class RoutingRequestToFilterChainMapper {
     Instant filterOnLatestDepartureTime,
     boolean removeWalkAllTheWayResults,
     boolean maxNumberOfItinerariesCropHead,
-      RequestModes modes,
+    RequestModes modes,
     Consumer<Itinerary> maxLimitReachedSubscriber
   ) {
     var builder = new ItineraryListFilterChainBuilder(sortOrder);
@@ -65,8 +64,8 @@ public class RoutingRequestToFilterChainMapper {
       builder.withRemoveBikeOnlyParkAndRideItineraries(true);
     }
 
-    var flexWasRequested = modes.egressMode == StreetMode.FLEXIBLE ||
-            modes.directMode == StreetMode.FLEXIBLE;
+    var flexWasRequested =
+      modes.egressMode == StreetMode.FLEXIBLE || modes.directMode == StreetMode.FLEXIBLE;
     builder
       .withMaxNumberOfItineraries(Math.min(maxNumOfItineraries, MAX_NUMBER_OF_ITINERARIES))
       .withTransitGeneralizedCostLimit(params.transitGeneralizedCostLimit)
@@ -77,7 +76,7 @@ public class RoutingRequestToFilterChainMapper {
       .withLatestDepartureTimeLimit(filterOnLatestDepartureTime)
       .withMaxLimitReachedSubscriber(maxLimitReachedSubscriber)
       .withRemoveWalkAllTheWayResults(removeWalkAllTheWayResults)
-        .withFlexOnlyToDestination(flexWasRequested && params.flexOnlyToDestination)
+      .withFlexOnlyToDestination(flexWasRequested && params.flexOnlyToDestination)
       .withDebugEnabled(params.debug);
 
     return builder.build();

@@ -1,7 +1,10 @@
 package org.opentripplanner.ext.legacygraphqlapi.datafetchers;
 
 import static org.opentripplanner.ext.legacygraphqlapi.mapping.LegacyGraphQLCauseMapper.getLegacyGraphQLCause;
+import static org.opentripplanner.ext.legacygraphqlapi.mapping.LegacyGraphQLCauseMapper.getLegacyGraphQLCause;
 import static org.opentripplanner.ext.legacygraphqlapi.mapping.LegacyGraphQLEffectMapper.getLegacyGraphQLEffect;
+import static org.opentripplanner.ext.legacygraphqlapi.mapping.LegacyGraphQLEffectMapper.getLegacyGraphQLEffect;
+import static org.opentripplanner.ext.legacygraphqlapi.mapping.LegacyGraphQLSeverityMapper.getLegacyGraphQLSeverity;
 import static org.opentripplanner.ext.legacygraphqlapi.mapping.LegacyGraphQLSeverityMapper.getLegacyGraphQLSeverity;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -16,29 +19,29 @@ import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.DataFetchingEnvironmentImpl;
 import java.time.Duration;
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import java.util.stream.StreamSupport;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
@@ -64,27 +67,22 @@ import org.opentripplanner.routing.alertpatch.EntitySelector;
 import org.opentripplanner.routing.alertpatch.TransitAlert;
 import org.opentripplanner.routing.api.request.RoutingRequest;
 import org.opentripplanner.routing.api.response.RoutingResponse;
+import org.opentripplanner.routing.core.BicycleOptimizeType;
+import org.opentripplanner.routing.core.FareRuleSet;
+import org.opentripplanner.routing.error.RoutingValidationException;
 import org.opentripplanner.routing.graphfinder.NearbyStop;
 import org.opentripplanner.routing.graphfinder.PatternAtStop;
 import org.opentripplanner.routing.graphfinder.PlaceAtDistance;
 import org.opentripplanner.routing.graphfinder.PlaceType;
 import org.opentripplanner.routing.vehicle_parking.VehicleParking;
+import org.opentripplanner.routing.vehicle_parking.VehicleParkingService;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalPlace;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalStation;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalStationService;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalVehicle;
-import org.opentripplanner.routing.core.BicycleOptimizeType;
-import org.opentripplanner.routing.core.FareRuleSet;
-import org.opentripplanner.routing.error.RoutingValidationException;
-import org.opentripplanner.routing.vehicle_parking.VehicleParkingService;
-
 import org.opentripplanner.routing.vertextype.TransitStopVertex;
 import org.opentripplanner.updater.GtfsRealtimeFuzzyTripMatcher;
 import org.opentripplanner.util.ResourceBundleSingleton;
-
-import static org.opentripplanner.ext.legacygraphqlapi.mapping.LegacyGraphQLCauseMapper.getLegacyGraphQLCause;
-import static org.opentripplanner.ext.legacygraphqlapi.mapping.LegacyGraphQLEffectMapper.getLegacyGraphQLEffect;
-import static org.opentripplanner.ext.legacygraphqlapi.mapping.LegacyGraphQLSeverityMapper.getLegacyGraphQLSeverity;
 
 public class LegacyGraphQLQueryTypeImpl
   implements LegacyGraphQLDataFetchers.LegacyGraphQLQueryType {
@@ -385,19 +383,23 @@ public class LegacyGraphQLQueryTypeImpl
   @Override
   public DataFetcher<VehicleParking> vehicleParking() {
     return environment -> {
-      var args = new LegacyGraphQLTypes.LegacyGraphQLQueryTypeVehicleParkingArgs(environment.getArguments());
+      var args = new LegacyGraphQLTypes.LegacyGraphQLQueryTypeVehicleParkingArgs(
+        environment.getArguments()
+      );
 
       VehicleParkingService vehicleParkingService = getRoutingService(environment)
-              .getVehicleParkingService();
+        .getVehicleParkingService();
 
-      if (vehicleParkingService == null) { return null; }
+      if (vehicleParkingService == null) {
+        return null;
+      }
 
       var vehicleParkingId = FeedScopedId.parseId(args.getLegacyGraphQLId());
       return vehicleParkingService
-              .getVehicleParkings()
-              .filter(vehicleParking -> vehicleParking.getId().equals(vehicleParkingId))
-              .findAny()
-              .orElse(null);
+        .getVehicleParkings()
+        .filter(vehicleParking -> vehicleParking.getId().equals(vehicleParkingId))
+        .findAny()
+        .orElse(null);
     };
   }
 
@@ -661,14 +663,38 @@ public class LegacyGraphQLQueryTypeImpl
       callWith.argument("bikeSpeed", (Double v) -> request.bikeSpeed = v);
       callWith.argument("bikeSwitchTime", (Integer v) -> request.bikeSwitchTime = v);
       callWith.argument("bikeSwitchCost", (Integer v) -> request.bikeSwitchCost = v);
-      callWith.argument("allowKeepingRentedBicycleAtDestination", (Boolean v) -> request.allowKeepingRentedVehicleAtDestination = v);
-      callWith.argument("keepingRentedBicycleAtDestinationCost", (Integer v) -> request.keepingRentedVehicleAtDestinationCost = v);
-      callWith.argument("allowedVehicleRentalNetworks", (Collection<String> v) -> request.allowedVehicleRentalNetworks = new HashSet<>(v));
-      callWith.argument("bannedVehicleRentalNetworks", (Collection<String> v) -> request.bannedVehicleRentalNetworks = new HashSet<>(v));
-      callWith.argument("requiredVehicleParkingTags", (Collection<String> v) -> request.requiredVehicleParkingTags = new HashSet<>(v));
-      callWith.argument("bannedVehicleParkingTags", (Collection<String> v) -> request.bannedVehicleParkingTags = new HashSet<>(v));
-      callWith.argument("preferredVehicleParkingTags", (Collection<String> v) -> request.preferredVehicleParkingTags = new HashSet<>(v));
-      callWith.argument("unpreferredVehicleParkingTagPenalty", (Double v) -> request.unpreferredVehicleParkingTagPenalty = v);
+      callWith.argument(
+        "allowKeepingRentedBicycleAtDestination",
+        (Boolean v) -> request.allowKeepingRentedVehicleAtDestination = v
+      );
+      callWith.argument(
+        "keepingRentedBicycleAtDestinationCost",
+        (Integer v) -> request.keepingRentedVehicleAtDestinationCost = v
+      );
+      callWith.argument(
+        "allowedVehicleRentalNetworks",
+        (Collection<String> v) -> request.allowedVehicleRentalNetworks = new HashSet<>(v)
+      );
+      callWith.argument(
+        "bannedVehicleRentalNetworks",
+        (Collection<String> v) -> request.bannedVehicleRentalNetworks = new HashSet<>(v)
+      );
+      callWith.argument(
+        "requiredVehicleParkingTags",
+        (Collection<String> v) -> request.requiredVehicleParkingTags = new HashSet<>(v)
+      );
+      callWith.argument(
+        "bannedVehicleParkingTags",
+        (Collection<String> v) -> request.bannedVehicleParkingTags = new HashSet<>(v)
+      );
+      callWith.argument(
+        "preferredVehicleParkingTags",
+        (Collection<String> v) -> request.preferredVehicleParkingTags = new HashSet<>(v)
+      );
+      callWith.argument(
+        "unpreferredVehicleParkingTagPenalty",
+        (Double v) -> request.unpreferredVehicleParkingTagPenalty = v
+      );
 
       callWith.argument(
         "keepingRentedBicycleAtDestinationCost",
@@ -797,7 +823,10 @@ public class LegacyGraphQLQueryTypeImpl
         "locale",
         (String v) -> request.locale = ResourceBundleSingleton.INSTANCE.getLocale(v)
       );
-      callWith.argument("useVehicleParkingAvailabilityInformation", (Boolean v) -> request.useVehicleParkingAvailabilityInformation = v);
+      callWith.argument(
+        "useVehicleParkingAvailabilityInformation",
+        (Boolean v) -> request.useVehicleParkingAvailabilityInformation = v
+      );
       RoutingResponse res = context.getRoutingService().route(request, context.getRouter());
       return DataFetcherResult
         .<RoutingResponse>newResult()

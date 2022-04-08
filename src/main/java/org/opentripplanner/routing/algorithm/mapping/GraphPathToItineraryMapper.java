@@ -317,42 +317,46 @@ public class GraphPathToItineraryMapper {
     return out;
   }
 
-    /**
-     * Make a {@link Place} to add to a {@link Leg}.
-     *
-     * @param state The {@link State}.
-     * @return The resulting {@link Place} object.
-     */
-    private static Place makePlace(State state) {
-        Vertex vertex = state.getVertex();
-        I18NString name = vertex.getName();
+  /**
+   * Make a {@link Place} to add to a {@link Leg}.
+   *
+   * @param state The {@link State}.
+   * @return The resulting {@link Place} object.
+   */
+  private static Place makePlace(State state) {
+    Vertex vertex = state.getVertex();
+    I18NString name = vertex.getName();
 
-        //This gets nicer names instead of osm:node:id when changing mode of transport
-        //Names are generated from all the streets in a corner, same as names in origin and destination
-        //We use name in TemporaryStreetLocation since this name generation already happened when temporary location was generated
-        if (vertex instanceof StreetVertex && !(vertex instanceof TemporaryStreetLocation)) {
-            name = ((StreetVertex) vertex).getIntersectionName();
-        }
-
-        if (vertex instanceof TransitStopVertex) {
-            return Place.forStop(((TransitStopVertex) vertex).getStop());
-        } else if(vertex instanceof VehicleRentalStationVertex) {
-            return Place.forVehicleRentalPlace((VehicleRentalStationVertex) vertex);
-        } else if (vertex instanceof VehicleParkingEntranceVertex) {
-            var vehicleParking = ((VehicleParkingEntranceVertex) vertex).getVehicleParking();
-            var limit = state.getTimeAsZonedDateTime()
-              .plusSeconds(state.getOptions().vehicleParkingClosesSoonSeconds);
-            var closesSoon = false;
-            if (vehicleParking.getOpeningHours() != null) {
-                // This ignores the parking being closed for less than vehicleParkingClosesSoonSeconds
-                closesSoon = !vehicleParking.getOpeningHours()
-                  .isTraverseableAt(limit.toLocalDateTime());
-            }
-            return Place.forVehicleParkingEntrance((VehicleParkingEntranceVertex) vertex, state.getOptions(), closesSoon);
-        } else {
-            return Place.normal(vertex, name);
-        }
+    //This gets nicer names instead of osm:node:id when changing mode of transport
+    //Names are generated from all the streets in a corner, same as names in origin and destination
+    //We use name in TemporaryStreetLocation since this name generation already happened when temporary location was generated
+    if (vertex instanceof StreetVertex && !(vertex instanceof TemporaryStreetLocation)) {
+      name = ((StreetVertex) vertex).getIntersectionName();
     }
+
+    if (vertex instanceof TransitStopVertex) {
+      return Place.forStop(((TransitStopVertex) vertex).getStop());
+    } else if (vertex instanceof VehicleRentalStationVertex) {
+      return Place.forVehicleRentalPlace((VehicleRentalStationVertex) vertex);
+    } else if (vertex instanceof VehicleParkingEntranceVertex) {
+      var vehicleParking = ((VehicleParkingEntranceVertex) vertex).getVehicleParking();
+      var limit = state
+        .getTimeAsZonedDateTime()
+        .plusSeconds(state.getOptions().vehicleParkingClosesSoonSeconds);
+      var closesSoon = false;
+      if (vehicleParking.getOpeningHours() != null) {
+        // This ignores the parking being closed for less than vehicleParkingClosesSoonSeconds
+        closesSoon = !vehicleParking.getOpeningHours().isTraverseableAt(limit.toLocalDateTime());
+      }
+      return Place.forVehicleParkingEntrance(
+        (VehicleParkingEntranceVertex) vertex,
+        state.getOptions(),
+        closesSoon
+      );
+    } else {
+      return Place.normal(vertex, name);
+    }
+  }
 
   private Calendar makeCalendar(State state) {
     Calendar calendar = Calendar.getInstance(timeZone);

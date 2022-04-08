@@ -29,13 +29,13 @@ public class VehicleParkingUpdaterConfig {
     switch (sourceType) {
       case HSL_PARK:
         return new HslParkUpdaterParameters(
-                updaterRef,
-                c.asInt("facilitiesFrequencySec", 3600),
-                c.asText("facilitiesUrl", null),
-                feedId,
-                sourceType,
-                c.asInt("utilizationsFrequencySec", 600),
-                c.asText("utilizationsUrl", null)
+          updaterRef,
+          c.asInt("facilitiesFrequencySec", 3600),
+          c.asText("facilitiesUrl", null),
+          feedId,
+          sourceType,
+          c.asInt("utilizationsFrequencySec", 600),
+          c.asText("utilizationsUrl", null)
         );
       case KML:
         return new KmlUpdaterParameters(

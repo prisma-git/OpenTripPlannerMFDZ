@@ -54,11 +54,12 @@ public class VehicleParkingUpdater extends PollingGraphUpdater {
     super(parameters);
     this.source = source;
 
-        LOG.info(
-                "Creating vehicle-parking updater running every {} seconds : {}",
-                pollingPeriodSeconds, source
-        );
-    }
+    LOG.info(
+      "Creating vehicle-parking updater running every {} seconds : {}",
+      pollingPeriodSeconds,
+      source
+    );
+  }
 
   @Override
   public void setGraphUpdaterManager(WriteToGraphCallback updaterManager) {
@@ -85,10 +86,11 @@ public class VehicleParkingUpdater extends PollingGraphUpdater {
     }
     List<VehicleParking> vehicleParkings = source.getUpdates();
 
-        // Create graph writer runnable to apply these stations to the graph
-        VehicleParkingGraphWriterRunnable graphWriterRunnable =
-                new VehicleParkingGraphWriterRunnable(vehicleParkings);
-        updaterManager.execute(graphWriterRunnable);
+    // Create graph writer runnable to apply these stations to the graph
+    VehicleParkingGraphWriterRunnable graphWriterRunnable = new VehicleParkingGraphWriterRunnable(
+      vehicleParkings
+    );
+    updaterManager.execute(graphWriterRunnable);
   }
 
   private class VehicleParkingGraphWriterRunnable implements GraphWriterRunnable {
@@ -186,57 +188,56 @@ public class VehicleParkingUpdater extends PollingGraphUpdater {
       return disposableEdgeCollectionsForVertex;
     }
 
-        private List<DisposableEdgeCollection> linkVehicleParkingForRealtime(
-                VehicleParkingEntranceVertex vehicleParkingEntranceVertex
-        ) {
-
-            List<DisposableEdgeCollection> disposableEdgeCollections = new ArrayList<>();
-            if (vehicleParkingEntranceVertex.isWalkAccessible()) {
-                var disposableWalkEdges = linker.linkVertexForRealTime(
-                        vehicleParkingEntranceVertex,
-                        new TraverseModeSet(TraverseMode.WALK),
-                        LinkingDirection.BOTH_WAYS,
-                        (vertex, streetVertex) -> List.of(
-                                new StreetVehicleParkingLink(
-                                        (VehicleParkingEntranceVertex) vertex, streetVertex),
-                                new StreetVehicleParkingLink(
-                                        streetVertex, (VehicleParkingEntranceVertex) vertex)
-                        )
-                );
+    private List<DisposableEdgeCollection> linkVehicleParkingForRealtime(
+      VehicleParkingEntranceVertex vehicleParkingEntranceVertex
+    ) {
+      List<DisposableEdgeCollection> disposableEdgeCollections = new ArrayList<>();
+      if (vehicleParkingEntranceVertex.isWalkAccessible()) {
+        var disposableWalkEdges = linker.linkVertexForRealTime(
+          vehicleParkingEntranceVertex,
+          new TraverseModeSet(TraverseMode.WALK),
+          LinkingDirection.BOTH_WAYS,
+          (vertex, streetVertex) ->
+            List.of(
+              new StreetVehicleParkingLink((VehicleParkingEntranceVertex) vertex, streetVertex),
+              new StreetVehicleParkingLink(streetVertex, (VehicleParkingEntranceVertex) vertex)
+            )
+        );
         disposableEdgeCollections.add(disposableWalkEdges);
       }
 
-            if (vehicleParkingEntranceVertex.isCarAccessible()) {
-                var disposableCarEdges = linker.linkVertexForRealTime(
-                        vehicleParkingEntranceVertex,
-                        new TraverseModeSet(TraverseMode.CAR),
-                        LinkingDirection.BOTH_WAYS,
-                        (vertex, streetVertex) -> List.of(
-                                new StreetVehicleParkingLink(
-                                        (VehicleParkingEntranceVertex) vertex, streetVertex),
-                                new StreetVehicleParkingLink(
-                                        streetVertex, (VehicleParkingEntranceVertex) vertex)
-                        )
-                );
+      if (vehicleParkingEntranceVertex.isCarAccessible()) {
+        var disposableCarEdges = linker.linkVertexForRealTime(
+          vehicleParkingEntranceVertex,
+          new TraverseModeSet(TraverseMode.CAR),
+          LinkingDirection.BOTH_WAYS,
+          (vertex, streetVertex) ->
+            List.of(
+              new StreetVehicleParkingLink((VehicleParkingEntranceVertex) vertex, streetVertex),
+              new StreetVehicleParkingLink(streetVertex, (VehicleParkingEntranceVertex) vertex)
+            )
+        );
         disposableEdgeCollections.add(disposableCarEdges);
       }
 
       return disposableEdgeCollections;
     }
 
-        private void removeVehicleParkingEdgesFromGraph(
-                VehicleParkingEntranceVertex entranceVertex,
-                Graph graph
-        ) {
-            entranceVertex.getIncoming()
-                    .stream()
-                    .filter(VehicleParkingEdge.class::isInstance)
-                    .forEach(graph::removeEdge);
-            entranceVertex.getOutgoing()
-                    .stream()
-                    .filter(VehicleParkingEdge.class::isInstance)
-                    .forEach(graph::removeEdge);
-            graph.remove(entranceVertex);
-        }
+    private void removeVehicleParkingEdgesFromGraph(
+      VehicleParkingEntranceVertex entranceVertex,
+      Graph graph
+    ) {
+      entranceVertex
+        .getIncoming()
+        .stream()
+        .filter(VehicleParkingEdge.class::isInstance)
+        .forEach(graph::removeEdge);
+      entranceVertex
+        .getOutgoing()
+        .stream()
+        .filter(VehicleParkingEdge.class::isInstance)
+        .forEach(graph::removeEdge);
+      graph.remove(entranceVertex);
     }
+  }
 }

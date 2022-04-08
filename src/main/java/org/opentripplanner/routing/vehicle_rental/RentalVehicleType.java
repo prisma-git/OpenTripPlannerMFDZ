@@ -91,8 +91,8 @@ public class RentalVehicleType implements Serializable, Comparable<RentalVehicle
         case BICYCLE -> BICYCLE;
         case CAR -> CAR;
         case MOPED -> MOPED;
-          case SCOOTER -> BICYCLE; // this is a hotfix for the mfdz fork
-          case OTHER -> OTHER;
+        case SCOOTER -> BICYCLE; // this is a hotfix for the mfdz fork
+        case OTHER -> OTHER;
       };
     }
   }

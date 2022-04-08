@@ -77,16 +77,16 @@ public class VehicleRentalStationService implements Serializable {
     double minLat,
     double maxLon,
     double maxLat
-    ) {
-        Envelope envelope = new Envelope(
-                new Coordinate(minLon, minLat),
-                new Coordinate(maxLon, maxLat)
-        );
+  ) {
+    Envelope envelope = new Envelope(
+      new Coordinate(minLon, minLat),
+      new Coordinate(maxLon, maxLat)
+    );
 
-        return vehicleRentalStations
-                .values()
-                .stream()
-            .filter(b -> envelope.contains(new Coordinate(b.getLongitude(), b.getLatitude())))
-                .collect(Collectors.toList());
-    }
+    return vehicleRentalStations
+      .values()
+      .stream()
+      .filter(b -> envelope.contains(new Coordinate(b.getLongitude(), b.getLatitude())))
+      .collect(Collectors.toList());
+  }
 }

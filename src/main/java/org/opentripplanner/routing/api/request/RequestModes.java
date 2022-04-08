@@ -71,11 +71,12 @@ public class RequestModes {
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this)
-            .add("accessMode", accessMode)
-            .add("egressMode", egressMode)
-            .add("directMode", directMode)
-            .add("transitModes", transitModes)
+    return MoreObjects
+      .toStringHelper(this)
+      .add("accessMode", accessMode)
+      .add("egressMode", egressMode)
+      .add("directMode", directMode)
+      .add("transitModes", transitModes)
       .toString();
   }
 }

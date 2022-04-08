@@ -70,9 +70,9 @@ public class Place {
       name,
       WgsCoordinate.creatOptionalCoordinate(lat, lon),
       VertexType.NORMAL,
-                null,
-                null,
-                null
+      null,
+      null,
+      null
     );
   }
 
@@ -117,8 +117,9 @@ public class Place {
 
   public static Place forVehicleParkingEntrance(
     VehicleParkingEntranceVertex vertex,
-    RoutingRequest request
-  , boolean closesSoon) {
+    RoutingRequest request,
+    boolean closesSoon
+  ) {
     TraverseMode traverseMode = null;
     if (request.streetSubRequestModes.getCar()) {
       traverseMode = TraverseMode.CAR;
@@ -140,7 +141,7 @@ public class Place {
         .vehicleParking(vertex.getVehicleParking())
         .entrance(vertex.getParkingEntrance())
         .realtime(realTime)
-                        .closesSoon(closesSoon)
+        .closesSoon(closesSoon)
         .build()
     );
   }

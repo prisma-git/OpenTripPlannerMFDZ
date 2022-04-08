@@ -1,11 +1,11 @@
 package org.opentripplanner.routing.graphfinder;
 
 import java.util.ArrayList;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.ArrayList;
-import java.util.List;
 import org.locationtech.jts.geom.LineString;
 import org.opentripplanner.model.StopLocation;
 import org.opentripplanner.routing.core.State;

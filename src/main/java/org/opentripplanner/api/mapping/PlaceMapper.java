@@ -60,8 +60,7 @@ public class PlaceMapper {
       api.stopId = FeedScopedIdMapper.mapToApi(domain.stop.getId());
       api.stopCode = domain.stop.getCode();
       api.platformCode =
-        domain.stop instanceof Stop
-                    ? ((Stop) domain.stop).getPlatformCode() : null;
+        domain.stop instanceof Stop ? ((Stop) domain.stop).getPlatformCode() : null;
       api.zoneId = domain.stop instanceof Stop ? ((Stop) domain.stop).getFirstZoneAsString() : null;
     }
 
@@ -70,7 +69,7 @@ public class PlaceMapper {
       api.lat = domain.coordinate.latitude();
     }
 
-        api.vertexType = VertexTypeMapper.mapVertexType(domain.getVertexType());
+    api.vertexType = VertexTypeMapper.mapVertexType(domain.getVertexType());
 
     api.arrival = arrival;
     api.departure = departure;

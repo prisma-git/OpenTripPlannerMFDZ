@@ -1,8 +1,12 @@
 package org.opentripplanner.ext.flex.template;
 
 import java.time.ZonedDateTime;
+import java.time.ZonedDateTime;
+import java.util.Collection;
 import java.util.Collection;
 import java.util.List;
+import java.util.List;
+import java.util.Locale;
 import org.opentripplanner.ext.flex.FlexParameters;
 import org.opentripplanner.ext.flex.FlexServiceDate;
 import org.opentripplanner.ext.flex.edgetype.FlexTripEdge;
@@ -17,11 +21,6 @@ import org.opentripplanner.routing.graph.Graph;
 import org.opentripplanner.routing.graph.Vertex;
 import org.opentripplanner.routing.graphfinder.NearbyStop;
 import org.opentripplanner.routing.spt.GraphPath;
-
-import java.time.ZonedDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
 
 public class FlexAccessTemplate extends FlexAccessEgressTemplate {
 
@@ -43,7 +42,7 @@ public class FlexAccessTemplate extends FlexAccessEgressTemplate {
     boolean arriveBy,
     int departureTime,
     ZonedDateTime startOfTime,
-          Locale locale
+    Locale locale
   ) {
     List<Edge> egressEdges = egress.edges;
 

@@ -20,10 +20,20 @@ public enum TraverseMode {
   AIRPLANE,
   TROLLEYBUS,
   MONORAIL,
-    CARPOOL;
+  CARPOOL;
 
   private static final EnumSet<TraverseMode> TRANSIT_MODES = EnumSet.of(
-        AIRPLANE, BUS, CABLE_CAR, FERRY, FUNICULAR, GONDOLA, RAIL, SUBWAY, TRAM, CARPOOL, TRANSIT,
+    AIRPLANE,
+    BUS,
+    CABLE_CAR,
+    FERRY,
+    FUNICULAR,
+    GONDOLA,
+    RAIL,
+    SUBWAY,
+    TRAM,
+    CARPOOL,
+    TRANSIT,
     TROLLEYBUS,
     MONORAIL
   );
@@ -52,8 +62,8 @@ public enum TraverseMode {
         return TraverseMode.GONDOLA;
       case FUNICULAR:
         return TraverseMode.FUNICULAR;
-            case CARPOOL:
-                return TraverseMode.CARPOOL;
+      case CARPOOL:
+        return TraverseMode.CARPOOL;
       case TROLLEYBUS:
         return TraverseMode.TROLLEYBUS;
       default:

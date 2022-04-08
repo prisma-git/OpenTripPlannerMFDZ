@@ -35,20 +35,22 @@ public class VehicleParkingsLayerTest {
 
   @Before
   public void setUp() throws OpeningHoursParseException {
-        vehicleParking = VehicleParking.builder()
-                .id(new FeedScopedId("id", "id"))
-                .name(TranslatedString.getI18NString(Map.of("", "name", "de", "DE")))
-                .x(1)
-                .y(2)
-                .bicyclePlaces(true)
-                .carPlaces(true)
-                .wheelchairAccessibleCarPlaces(false)
-                .imageUrl("image")
-                .detailsUrl("details")
-                .note(new NonLocalizedString("note"))
-                .tags(List.of("tag1", "tag2"))
-                .openingHours(OsmOpeningHours.parseFromOsm("Mo-Fr 07:30-9:30"))
-                .feeHours(null)
+    vehicleParking =
+      VehicleParking
+        .builder()
+        .id(new FeedScopedId("id", "id"))
+        .name(TranslatedString.getI18NString(Map.of("", "name", "de", "DE")))
+        .x(1)
+        .y(2)
+        .bicyclePlaces(true)
+        .carPlaces(true)
+        .wheelchairAccessibleCarPlaces(false)
+        .imageUrl("image")
+        .detailsUrl("details")
+        .note(new NonLocalizedString("note"))
+        .tags(List.of("tag1", "tag2"))
+        .openingHours(OsmOpeningHours.parseFromOsm("Mo-Fr 07:30-9:30"))
+        .feeHours(null)
         .state(VehicleParkingState.OPERATIONAL)
         .capacity(VehicleParkingSpaces.builder().bicycleSpaces(5).carSpaces(6).build())
         .availability(

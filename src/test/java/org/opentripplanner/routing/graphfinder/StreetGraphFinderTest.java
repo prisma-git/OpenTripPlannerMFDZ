@@ -16,9 +16,9 @@ import org.opentripplanner.routing.RoutingService;
 import org.opentripplanner.routing.algorithm.GraphRoutingTest;
 import org.opentripplanner.routing.edgetype.StreetTraversalPermission;
 import org.opentripplanner.routing.graph.GraphIndex;
-import org.opentripplanner.routing.vertextype.VehicleRentalStationVertex;
 import org.opentripplanner.routing.vertextype.IntersectionVertex;
 import org.opentripplanner.routing.vertextype.TransitStopVertex;
+import org.opentripplanner.routing.vertextype.VehicleRentalStationVertex;
 import org.opentripplanner.routing.vertextype.VehicleRentalStationVertex;
 
 class StreetGraphFinderTest extends GraphRoutingTest {
@@ -399,8 +399,7 @@ class StreetGraphFinderTest extends GraphRoutingTest {
   private List<NearbyStop> simplify(List<NearbyStop> closestStops) {
     return closestStops
       .stream()
-      .map(ns -> new NearbyStop(ns.stop, ns.distance, null, null, null
-        ))
+      .map(ns -> new NearbyStop(ns.stop, ns.distance, null, null, null))
       .collect(Collectors.toList());
   }
 }

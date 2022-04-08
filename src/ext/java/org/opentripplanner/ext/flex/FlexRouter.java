@@ -132,8 +132,9 @@ public class FlexRouter {
             egress,
             arriveBy,
             departureTime,
-            startOfTime
-          , locale);
+            startOfTime,
+            locale
+          );
           if (graphPath != null) {
             Itinerary itinerary = graphPathToItineraryMapper.generateItinerary(graphPath);
             var fareService = graph.getService(FareService.class);

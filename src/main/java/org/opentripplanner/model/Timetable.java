@@ -298,40 +298,46 @@ public class Timetable implements Serializable {
               }
             }
 
-                        if (update.hasDeparture()) {
-                            StopTimeEvent departure = update.getDeparture();
-                            if (departure.hasDelay()) {
-                                delay = departure.getDelay();
-                                if (departure.hasTime()) {
-                                    newTimes.updateDepartureTime(i,
-                                            (int) (departure.getTime() - today));
-                                } else {
-                                    newTimes.updateDepartureDelay(i, delay);
-                                }
-                            } else if (departure.hasTime()) {
-                                newTimes.updateDepartureTime(i,
-                                        (int) (departure.getTime() - today));
-                                delay = newTimes.getDepartureDelay(i);
-                            } else {
-                                LOG.error("Departure time at index {} is erroneous.", i);
-                                return null;
-                            }
-                        } else {
-                            if (delay == null) {
-                                //newTimes.cancelPickupForStop(i); TODO This needs to cancel on a StopTime object so that a new StopPattern/TripPattern can be constructed
-                            } else {
-                                newTimes.updateDepartureDelay(i, delay);
-                            }
-                        }
-                        if (newTimes.getDepartureTime(i) < newTimes.getArrivalTime(i)) {
-                            LOG.warn("Departure time at index {} is earlier then the arrival time for {}", i, newTimes.getTrip().getId());
-                            return null;
-                        }
-                        if (i > 0 && newTimes.getArrivalTime(i) <= newTimes.getDepartureTime(i - 1)) {
-                            LOG.warn("Arrival time at index {} is earlier or equal to the previous departure time for {}", i, newTimes.getTrip().getId());
-                            return null;
-                        }
-                    }
+            if (update.hasDeparture()) {
+              StopTimeEvent departure = update.getDeparture();
+              if (departure.hasDelay()) {
+                delay = departure.getDelay();
+                if (departure.hasTime()) {
+                  newTimes.updateDepartureTime(i, (int) (departure.getTime() - today));
+                } else {
+                  newTimes.updateDepartureDelay(i, delay);
+                }
+              } else if (departure.hasTime()) {
+                newTimes.updateDepartureTime(i, (int) (departure.getTime() - today));
+                delay = newTimes.getDepartureDelay(i);
+              } else {
+                LOG.error("Departure time at index {} is erroneous.", i);
+                return null;
+              }
+            } else {
+              if (delay == null) {
+                //newTimes.cancelPickupForStop(i); TODO This needs to cancel on a StopTime object so that a new StopPattern/TripPattern can be constructed
+              } else {
+                newTimes.updateDepartureDelay(i, delay);
+              }
+            }
+            if (newTimes.getDepartureTime(i) < newTimes.getArrivalTime(i)) {
+              LOG.warn(
+                "Departure time at index {} is earlier then the arrival time for {}",
+                i,
+                newTimes.getTrip().getId()
+              );
+              return null;
+            }
+            if (i > 0 && newTimes.getArrivalTime(i) <= newTimes.getDepartureTime(i - 1)) {
+              LOG.warn(
+                "Arrival time at index {} is earlier or equal to the previous departure time for {}",
+                i,
+                newTimes.getTrip().getId()
+              );
+              return null;
+            }
+          }
 
           if (updates.hasNext()) {
             update = updates.next();

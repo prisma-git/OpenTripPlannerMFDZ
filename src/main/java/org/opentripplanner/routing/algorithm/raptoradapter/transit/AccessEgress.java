@@ -28,11 +28,7 @@ public class AccessEgress implements RaptorTransfer {
 
   private final ZonedDateTime startOfTime;
 
-  public AccessEgress(
-          int toFromStop,
-          State lastState,
-          ZonedDateTime startOfTime
-  ) {
+  public AccessEgress(int toFromStop, State lastState, ZonedDateTime startOfTime) {
     this.toFromStop = toFromStop;
     this.durationInSeconds = (int) lastState.getElapsedTimeSeconds();
     this.generalizedCost = RaptorCostConverter.toRaptorCost(lastState.getWeight());
@@ -62,16 +58,17 @@ public class AccessEgress implements RaptorTransfer {
       return requestedDepartureTime;
     }
 
-    var time = startOfTime.plusSeconds(requestedDepartureTime)
-            .toLocalDateTime();
+    var time = startOfTime.plusSeconds(requestedDepartureTime).toLocalDateTime();
     var iterations = 0;
 
-    DATETIME_SEARCH:
-    while (iterations < MAX_TIME_RESTRICTION_ITERATIONS) {
+    DATETIME_SEARCH:while (iterations < MAX_TIME_RESTRICTION_ITERATIONS) {
       for (final TimeRestrictionWithOffset timeRestriction : timeRestrictions) {
-        var timeAtRestriction = time.plusSeconds(timeRestriction.getOffsetInSecondsFromStartOfSearch());
-        var traversableAt = timeRestriction.getTimeRestriction()
-                .earliestDepartureTime(timeAtRestriction);
+        var timeAtRestriction = time.plusSeconds(
+          timeRestriction.getOffsetInSecondsFromStartOfSearch()
+        );
+        var traversableAt = timeRestriction
+          .getTimeRestriction()
+          .earliestDepartureTime(timeAtRestriction);
 
         if (traversableAt.isEmpty()) {
           break DATETIME_SEARCH;
@@ -85,10 +82,7 @@ public class AccessEgress implements RaptorTransfer {
         }
       }
 
-      return (int) Duration.between(
-              startOfTime,
-              time.atZone(startOfTime.getZone())
-      ).getSeconds();
+      return (int) Duration.between(startOfTime, time.atZone(startOfTime.getZone())).getSeconds();
     }
 
     return -1;
@@ -101,17 +95,17 @@ public class AccessEgress implements RaptorTransfer {
       return requestedArrivalTime;
     }
 
-    var time = startOfTime.plusSeconds(requestedArrivalTime)
-            .toLocalDateTime();
+    var time = startOfTime.plusSeconds(requestedArrivalTime).toLocalDateTime();
     var iterations = 0;
 
-    DATETIME_SEARCH:
-    while (iterations < MAX_TIME_RESTRICTION_ITERATIONS) {
+    DATETIME_SEARCH:while (iterations < MAX_TIME_RESTRICTION_ITERATIONS) {
       for (final TimeRestrictionWithOffset timeRestriction : timeRestrictions) {
-        var offsetFromArrival = timeRestriction.getOffsetInSecondsFromStartOfSearch() - durationInSeconds;
+        var offsetFromArrival =
+          timeRestriction.getOffsetInSecondsFromStartOfSearch() - durationInSeconds;
         var timeAtRestriction = time.plusSeconds(offsetFromArrival);
-        var traversableAt = timeRestriction.getTimeRestriction()
-                .latestArrivalTime(timeAtRestriction);
+        var traversableAt = timeRestriction
+          .getTimeRestriction()
+          .latestArrivalTime(timeAtRestriction);
 
         if (traversableAt.isEmpty()) {
           break DATETIME_SEARCH;
@@ -125,10 +119,7 @@ public class AccessEgress implements RaptorTransfer {
         }
       }
 
-      return (int) Duration.between(
-              startOfTime,
-              time.atZone(startOfTime.getZone())
-      ).getSeconds();
+      return (int) Duration.between(startOfTime, time.atZone(startOfTime.getZone())).getSeconds();
     }
 
     return -1;

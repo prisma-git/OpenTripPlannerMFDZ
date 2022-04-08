@@ -22,9 +22,9 @@ public class ItineraryFiltersMapper {
       c.asLinearFunction("transitGeneralizedCostLimit", dft.transitGeneralizedCostLimit),
       c.asLinearFunction("nonTransitGeneralizedCostLimit", dft.nonTransitGeneralizedCostLimit),
       c.asDouble("bikeRentalDistanceRatio", dft.bikeRentalDistanceRatio),
-        c.asDouble("parkAndRideDurationRatio", dft.parkAndRideDurationRatio),
-        c.asBoolean("flexOnlyToDestination", dft.flexOnlyToDestination),
-        c.asDouble("minBikeParkingDistance", dft.minBikeParkingDistance)
+      c.asDouble("parkAndRideDurationRatio", dft.parkAndRideDurationRatio),
+      c.asBoolean("flexOnlyToDestination", dft.flexOnlyToDestination),
+      c.asDouble("minBikeParkingDistance", dft.minBikeParkingDistance)
     );
   }
 }

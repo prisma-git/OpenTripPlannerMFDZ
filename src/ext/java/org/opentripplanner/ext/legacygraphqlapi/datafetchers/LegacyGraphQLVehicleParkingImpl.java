@@ -14,9 +14,7 @@ public class LegacyGraphQLVehicleParkingImpl
 
   @Override
   public DataFetcher<Boolean> anyCarPlaces() {
-    return environment ->
-                getSource(environment).hasAnyCarPlaces()
-        ;
+    return environment -> getSource(environment).hasAnyCarPlaces();
   }
 
   @Override
@@ -74,15 +72,16 @@ public class LegacyGraphQLVehicleParkingImpl
   public DataFetcher<String> note() {
     return environment -> {
       var note = getSource(environment).getNote();
-            return note != null ? note.toString(environment.getLocale()) : null;
-        };
-    }
+      return note != null ? note.toString(environment.getLocale()) : null;
+    };
+  }
 
-    public DataFetcher<String> feeHours() {
-        return environment -> {
-            var feeHours = getSource(environment).getFeeHours();
-            return feeHours instanceof I18NString
-                    ? ((I18NString) feeHours).toString(environment.getLocale()) : null;
+  public DataFetcher<String> feeHours() {
+    return environment -> {
+      var feeHours = getSource(environment).getFeeHours();
+      return feeHours instanceof I18NString
+        ? ((I18NString) feeHours).toString(environment.getLocale())
+        : null;
     };
   }
 
@@ -92,13 +91,14 @@ public class LegacyGraphQLVehicleParkingImpl
   }
 
   @Override
-    public DataFetcher<String> openingHours() {
-        return environment -> {
-            var openingHours = getSource(environment).getOpeningHours();
-            return openingHours instanceof I18NString
-                    ? ((I18NString) openingHours).toString(environment.getLocale()) : null;
-        };
-    }
+  public DataFetcher<String> openingHours() {
+    return environment -> {
+      var openingHours = getSource(environment).getOpeningHours();
+      return openingHours instanceof I18NString
+        ? ((I18NString) openingHours).toString(environment.getLocale())
+        : null;
+    };
+  }
 
   public DataFetcher<VehicleParkingState> state() {
     return environment -> getSource(environment).getState();

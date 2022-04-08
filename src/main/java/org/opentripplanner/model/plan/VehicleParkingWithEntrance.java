@@ -14,18 +14,18 @@ public class VehicleParkingWithEntrance {
    */
   private final boolean realtime;
 
-    private final boolean closesSoon;
+  private final boolean closesSoon;
 
   VehicleParkingWithEntrance(
     VehicleParking vehicleParking,
     VehicleParkingEntrance entrance,
-            boolean realtime,
-            boolean closesSoon
+    boolean realtime,
+    boolean closesSoon
   ) {
     this.vehicleParking = vehicleParking;
     this.entrance = entrance;
     this.realtime = realtime;
-        this.closesSoon = closesSoon;
+    this.closesSoon = closesSoon;
   }
 
   public static VehicleParkingWithEntranceBuilder builder() {
@@ -49,7 +49,7 @@ public class VehicleParkingWithEntrance {
     private VehicleParking vehicleParking;
     private VehicleParkingEntrance entrance;
     private boolean realtime;
-        private boolean closesSoon;
+    private boolean closesSoon;
 
     VehicleParkingWithEntranceBuilder() {}
 
@@ -68,15 +68,13 @@ public class VehicleParkingWithEntrance {
       return this;
     }
 
-        public VehicleParkingWithEntranceBuilder closesSoon(
-                boolean closesSoon
-        ) {
-            this.closesSoon = closesSoon;
-            return this;
-        }
+    public VehicleParkingWithEntranceBuilder closesSoon(boolean closesSoon) {
+      this.closesSoon = closesSoon;
+      return this;
+    }
 
     public VehicleParkingWithEntrance build() {
-            return new VehicleParkingWithEntrance(vehicleParking, entrance, realtime, closesSoon);
+      return new VehicleParkingWithEntrance(vehicleParking, entrance, realtime, closesSoon);
     }
   }
 }

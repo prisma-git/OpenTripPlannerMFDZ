@@ -39,8 +39,8 @@ public class GraphSerializationTest {
    */
   @Test
   @Ignore
-    public void testRoundTripSerializationForGTFSGraph() throws Exception {
-        testRoundTrip(ConstantsForTests.buildNewPortlandGraph(true));
+  public void testRoundTripSerializationForGTFSGraph() throws Exception {
+    testRoundTrip(ConstantsForTests.buildNewPortlandGraph(true));
   }
 
   /**

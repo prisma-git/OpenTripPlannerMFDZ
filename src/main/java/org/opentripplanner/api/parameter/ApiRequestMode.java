@@ -25,8 +25,8 @@ public enum ApiRequestMode {
   AIRPLANE(fromMainModeEnum(TransitMode.AIRPLANE)),
   TROLLEYBUS(fromMainModeEnum(TransitMode.TROLLEYBUS)),
   MONORAIL(fromMainModeEnum(TransitMode.MONORAIL)),
-    FLEX(),
-    CARPOOL(fromMainModeEnum(TransitMode.CARPOOL));
+  FLEX(),
+  CARPOOL(fromMainModeEnum(TransitMode.CARPOOL));
 
   private final Set<AllowedTransitMode> transitModes;
 

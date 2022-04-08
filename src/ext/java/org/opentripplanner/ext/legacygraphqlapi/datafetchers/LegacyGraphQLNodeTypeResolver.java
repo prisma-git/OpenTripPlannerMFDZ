@@ -15,14 +15,14 @@ import org.opentripplanner.model.TripPattern;
 import org.opentripplanner.model.TripTimeOnDate;
 import org.opentripplanner.routing.alertpatch.TransitAlert;
 import org.opentripplanner.routing.core.FareRuleSet;
+import org.opentripplanner.routing.core.FareRuleSet;
+import org.opentripplanner.routing.graphfinder.NearbyStop;
 import org.opentripplanner.routing.graphfinder.NearbyStop;
 import org.opentripplanner.routing.graphfinder.PatternAtStop;
 import org.opentripplanner.routing.graphfinder.PlaceAtDistance;
 import org.opentripplanner.routing.vehicle_parking.VehicleParking;
-import org.opentripplanner.routing.graphfinder.NearbyStop;
-import org.opentripplanner.routing.vehicle_rental.VehicleRentalStation;
-import org.opentripplanner.routing.core.FareRuleSet;
 import org.opentripplanner.routing.vehicle_parking.VehicleParking;
+import org.opentripplanner.routing.vehicle_rental.VehicleRentalStation;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalVehicle;
 
 public class LegacyGraphQLNodeTypeResolver implements TypeResolver {
@@ -88,7 +88,9 @@ public class LegacyGraphQLNodeTypeResolver implements TypeResolver {
     if (o instanceof Trip) {
       return schema.getObjectType("Trip");
     }
-    if (o instanceof VehicleParking) { return schema.getObjectType("VehicleParking"); }
+    if (o instanceof VehicleParking) {
+      return schema.getObjectType("VehicleParking");
+    }
     return null;
   }
 

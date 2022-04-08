@@ -44,8 +44,10 @@ public class VehicleRentalLayerBuilder extends LayerBuilder<VehicleRentalPlace> 
     return service
       .getVehicleRentalPlaces()
       .stream()
-      .filter(vehicleRentalPlace -> !vehicleRentalPlace.isFloatingVehicle() || vehicleRentalPlace.isAllowPickup())
-        .map(vehicleRentalStation -> {
+      .filter(vehicleRentalPlace ->
+        !vehicleRentalPlace.isFloatingVehicle() || vehicleRentalPlace.isAllowPickup()
+      )
+      .map(vehicleRentalStation -> {
         Coordinate coordinate = new Coordinate(
           vehicleRentalStation.getLongitude(),
           vehicleRentalStation.getLatitude()

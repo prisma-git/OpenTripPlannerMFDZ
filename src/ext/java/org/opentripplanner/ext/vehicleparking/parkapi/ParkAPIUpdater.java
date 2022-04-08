@@ -81,14 +81,15 @@ abstract class ParkAPIUpdater extends GenericJsonDataSource<VehicleParking> {
       .map(c -> hasPlaces(capacity.getWheelchairAccessibleCarSpaces()))
       .orElse(false);
 
-        return VehicleParking.builder()
-                .id(vehicleParkId)
-                .name(new NonLocalizedString(jsonNode.path("name").asText()))
-                .state(state)
-                .x(x)
-                .y(y)
-                .openingHours(parseOpeningHours(jsonNode.path("opening_hours")))
-                .feeHours(parseOpeningHours(jsonNode.path("fee_hours")))
+    return VehicleParking
+      .builder()
+      .id(vehicleParkId)
+      .name(new NonLocalizedString(jsonNode.path("name").asText()))
+      .state(state)
+      .x(x)
+      .y(y)
+      .openingHours(parseOpeningHours(jsonNode.path("opening_hours")))
+      .feeHours(parseOpeningHours(jsonNode.path("fee_hours")))
       .detailsUrl(jsonNode.has("url") ? jsonNode.get("url").asText() : null)
       .imageUrl(jsonNode.has("image_url") ? jsonNode.get("image_url").asText() : null)
       .note(note)
@@ -102,24 +103,24 @@ abstract class ParkAPIUpdater extends GenericJsonDataSource<VehicleParking> {
       .build();
   }
 
-    @SneakyThrows
-    private TimeRestriction parseOpeningHours(JsonNode jsonNode) {
-        if (jsonNode == null || jsonNode.asText().isBlank()) {
-            return null;
-        }
-
-        return OsmOpeningHours.parseFromOsm(jsonNode.asText());
+  @SneakyThrows
+  private TimeRestriction parseOpeningHours(JsonNode jsonNode) {
+    if (jsonNode == null || jsonNode.asText().isBlank()) {
+      return null;
     }
 
-    protected VehicleParkingSpaces parseVehicleSpaces(
-            JsonNode node,
-            String bicycleTag,
-            String carTag,
-            String wheelchairAccessibleCarTag
-    ) {
-        var bicycleSpaces = parseSpacesValue(node, bicycleTag);
-        var carSpaces = parseSpacesValue(node, carTag);
-        var wheelchairAccessibleCarSpaces = parseSpacesValue(node, wheelchairAccessibleCarTag);
+    return OsmOpeningHours.parseFromOsm(jsonNode.asText());
+  }
+
+  protected VehicleParkingSpaces parseVehicleSpaces(
+    JsonNode node,
+    String bicycleTag,
+    String carTag,
+    String wheelchairAccessibleCarTag
+  ) {
+    var bicycleSpaces = parseSpacesValue(node, bicycleTag);
+    var carSpaces = parseSpacesValue(node, carTag);
+    var wheelchairAccessibleCarSpaces = parseSpacesValue(node, wheelchairAccessibleCarTag);
 
     if (bicycleSpaces == null && carSpaces == null && wheelchairAccessibleCarSpaces == null) {
       return null;

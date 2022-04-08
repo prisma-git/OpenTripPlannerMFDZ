@@ -68,9 +68,10 @@ public class AllowedTransitMode {
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this)
-            .add("mainMode", mainMode)
-            .add("subMode", subMode)
-            .toString();
+    return MoreObjects
+      .toStringHelper(this)
+      .add("mainMode", mainMode)
+      .add("subMode", subMode)
+      .toString();
   }
 }

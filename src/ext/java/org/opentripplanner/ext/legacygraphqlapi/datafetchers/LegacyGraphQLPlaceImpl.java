@@ -132,7 +132,6 @@ public class LegacyGraphQLPlaceImpl implements LegacyGraphQLDataFetchers.LegacyG
     };
   }
 
-
   @Override
   public DataFetcher<VehicleParking> bikePark() {
     return this::getVehicleParking;
@@ -144,7 +143,7 @@ public class LegacyGraphQLPlaceImpl implements LegacyGraphQLDataFetchers.LegacyG
   }
 
   public DataFetcher<VehicleParkingWithEntrance> vehicleParkingWithEntrance() {
-    return (environment) -> getSource(environment).place.getVehicleParkingWithEntrance();
+    return environment -> getSource(environment).place.getVehicleParkingWithEntrance();
   }
 
   private VehicleParking getVehicleParking(DataFetchingEnvironment environment) {

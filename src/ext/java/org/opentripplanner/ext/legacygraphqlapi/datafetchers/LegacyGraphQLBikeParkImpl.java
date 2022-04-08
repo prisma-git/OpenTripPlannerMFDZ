@@ -8,10 +8,10 @@ import org.opentripplanner.routing.vehicle_parking.VehicleParking;
 
 public class LegacyGraphQLBikeParkImpl implements LegacyGraphQLDataFetchers.LegacyGraphQLBikePark {
 
-    @Override
-    public DataFetcher<String> bikeParkId() {
-        return environment -> getSource(environment).getId().toString();
-
+  @Override
+  public DataFetcher<String> bikeParkId() {
+    return environment -> getSource(environment).getId().toString();
+  }
 
   @Override
   public DataFetcher<Relay.ResolvedGlobalId> id() {
@@ -24,11 +24,11 @@ public class LegacyGraphQLBikeParkImpl implements LegacyGraphQLDataFetchers.Lega
     return environment -> getSource(environment).getY();
   }
 
-
   @Override
   public DataFetcher<Double> lon() {
     return environment -> getSource(environment).getX();
   }
+
   @Override
   public DataFetcher<String> name() {
     return environment -> getSource(environment).getName().toString();

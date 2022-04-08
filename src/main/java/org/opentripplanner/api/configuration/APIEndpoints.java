@@ -45,7 +45,7 @@ public class APIEndpoints {
     add(Routers.class);
     add(PlannerResource.class);
     add(IndexAPI.class);
-        add(EncryptedRedirect.class);
+    add(EncryptedRedirect.class);
 
     // Add feature enabled APIs, these can be enabled by default, some is not.
     // See the OTPFeature enum for details.

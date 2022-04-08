@@ -37,7 +37,7 @@ public class AccessEgressRouter {
 
     //TODO: Investigate why this is needed for flex
     RoutingRequest nearbyRequest = rr.getStreetSearchRequest(streetMode);
-        nearbyRequest.ignoreAndCollectTimeRestrictions = true;
+    nearbyRequest.ignoreAndCollectTimeRestrictions = true;
 
     NearbyStopFinder nearbyStopFinder = new NearbyStopFinder(
       rctx.graph,

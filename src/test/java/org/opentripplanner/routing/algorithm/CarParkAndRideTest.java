@@ -68,7 +68,8 @@ public class CarParkAndRideTest extends ParkAndRideTest {
               19.001,
               false,
               true,
-              true, null,
+              true,
+              null,
               List.of(vehicleParkingEntrance(D, "CarPark #2 Entrance", true, true))
             );
 

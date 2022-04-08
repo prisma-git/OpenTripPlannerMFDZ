@@ -11,16 +11,15 @@ public class FlexAccessEgressAdapter extends AccessEgress {
   private final FlexAccessEgress flexAccessEgress;
 
   public FlexAccessEgressAdapter(
-          FlexAccessEgress flexAccessEgress,
-
+    FlexAccessEgress flexAccessEgress,
     StopIndexForRaptor stopIndex,
-          ZonedDateTime startOfTime,
-          boolean isEgress
+    ZonedDateTime startOfTime,
+    boolean isEgress
   ) {
     super(
       stopIndex.indexOf(flexAccessEgress.stop),
-        isEgress ? flexAccessEgress.lastState.reverse() : flexAccessEgress.lastState,
-        startOfTime
+      isEgress ? flexAccessEgress.lastState.reverse() : flexAccessEgress.lastState,
+      startOfTime
     );
     this.flexAccessEgress = flexAccessEgress;
   }

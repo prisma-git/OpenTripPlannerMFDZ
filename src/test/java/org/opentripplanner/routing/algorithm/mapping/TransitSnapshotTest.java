@@ -102,9 +102,9 @@ public class TransitSnapshotTest extends SnapshotTestBase {
 
   @Test
   @Disabled
-    // TODO: this goes into an infinite recursion for some reason
-    public void test_trip_planning_with_walk_only_stop_collection() {
-        RoutingRequest request = createTestRequest(2009, 11, 17, 10, 0, 0);
+  // TODO: this goes into an infinite recursion for some reason
+  public void test_trip_planning_with_walk_only_stop_collection() {
+    RoutingRequest request = createTestRequest(2009, 11, 17, 10, 0, 0);
 
     request.modes =
       new RequestModes(

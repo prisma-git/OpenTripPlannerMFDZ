@@ -21,7 +21,7 @@ public class VehicleParkingEdge extends Edge implements TimeRestrictedEdge {
 
   private static final long serialVersionUID = 1L;
 
-    @Getter
+  @Getter
   private final VehicleParking vehicleParking;
 
   public VehicleParkingEdge(VehicleParkingEntranceVertex vehicleParkingEntranceVertex) {
@@ -36,17 +36,14 @@ public class VehicleParkingEdge extends Edge implements TimeRestrictedEdge {
     this.vehicleParking = fromVehicleParkingEntranceVertex.getVehicleParking();
   }
 
-    private TimeRestriction getTimeRestriction(int parkingTime) {
-        var openingHours = vehicleParking.getOpeningHours();
-        if (openingHours == null) {
-            return null;
-        }
-
-        return TimeRestrictionWithTimeSpan.of(
-                vehicleParking.getOpeningHours(),
-                parkingTime
-        );
+  private TimeRestriction getTimeRestriction(int parkingTime) {
+    var openingHours = vehicleParking.getOpeningHours();
+    if (openingHours == null) {
+      return null;
     }
+
+    return TimeRestrictionWithTimeSpan.of(vehicleParking.getOpeningHours(), parkingTime);
+  }
 
   public VehicleParking getVehicleParking() {
     return vehicleParking;
@@ -127,10 +124,10 @@ public class VehicleParkingEdge extends Edge implements TimeRestrictedEdge {
       return null;
     }
 
-        var timeRestriction = getTimeRestriction(parkingTime);
-        if (isTraversalBlockedByTimeRestriction(s0, true, timeRestriction)) {
-            return null;
-        }
+    var timeRestriction = getTimeRestriction(parkingTime);
+    if (isTraversalBlockedByTimeRestriction(s0, true, timeRestriction)) {
+      return null;
+    }
 
     StateEditor s0e = s0.edit(this);
 
@@ -138,7 +135,7 @@ public class VehicleParkingEdge extends Edge implements TimeRestrictedEdge {
     s0e.incrementTimeInSeconds(parkingTime);
     s0e.setVehicleParked(false, mode);
 
-        updateEditorWithTimeRestriction(s0, s0e, timeRestriction, getVehicleParking());
+    updateEditorWithTimeRestriction(s0, s0e, timeRestriction, getVehicleParking());
 
     return s0e.makeState();
   }
@@ -177,14 +174,14 @@ public class VehicleParkingEdge extends Edge implements TimeRestrictedEdge {
       return null;
     }
 
-        var timeRestriction = getTimeRestriction(parkingTime);
-        if (isTraversalBlockedByTimeRestriction(s0, false, timeRestriction)) {
-            return null;
-        }
+    var timeRestriction = getTimeRestriction(parkingTime);
+    if (isTraversalBlockedByTimeRestriction(s0, false, timeRestriction)) {
+      return null;
+    }
 
     StateEditor s0e = s0.edit(this);
 
-        updateEditorWithTimeRestriction(s0, s0e, timeRestriction, getVehicleParking());
+    updateEditorWithTimeRestriction(s0, s0e, timeRestriction, getVehicleParking());
 
     s0e.incrementWeight(parkingCost);
     s0e.incrementTimeInSeconds(parkingTime);

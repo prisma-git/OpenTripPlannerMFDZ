@@ -54,21 +54,21 @@ public abstract class DominanceFunction implements Serializable {
       return false;
     }
 
-        if (a.hasEnteredNoThruTrafficArea() != b.hasEnteredNoThruTrafficArea()) {
-            return false;
-        }
+    if (a.hasEnteredNoThruTrafficArea() != b.hasEnteredNoThruTrafficArea()) {
+      return false;
+    }
 
-        /*
-         * When creating AccessEgress paths for RAPTOR states with have different time restrictions
-         * have to be considered, since a non-optimal VehicleParking could be used after the optimal
-         * VehicleParking is closed.
-         *
-         * Simply using the time restrictions isn't enough, since simply re-traversing edges in a
-         * loop would create new states.
-         */
-        if (!Objects.equals(a.getTimeRestrictionSources(), b.getTimeRestrictionSources())) {
-            return false;
-        }
+    /*
+     * When creating AccessEgress paths for RAPTOR states with have different time restrictions
+     * have to be considered, since a non-optimal VehicleParking could be used after the optimal
+     * VehicleParking is closed.
+     *
+     * Simply using the time restrictions isn't enough, since simply re-traversing edges in a
+     * loop would create new states.
+     */
+    if (!Objects.equals(a.getTimeRestrictionSources(), b.getTimeRestrictionSources())) {
+      return false;
+    }
 
     // Since a Vertex may be arrived at using a no-thru restricted path and one without such
     // restrictions, treat the two as separate so one doesn't dominate the other.

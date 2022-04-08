@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-
 import java.util.Set;
 import org.opentripplanner.routing.algorithm.astar.NegativeWeightException;
 import org.opentripplanner.routing.api.request.RoutingRequest;
@@ -439,15 +438,15 @@ public class State implements Cloneable {
     return time;
   }
 
-    public ZonedDateTime getTimeAsZonedDateTime() {
-        return Instant.ofEpochMilli(getTimeInMillis())
-                .atZone(getOptions().rctx.graph.getTimeZone().toZoneId());
-    }
+  public ZonedDateTime getTimeAsZonedDateTime() {
+    return Instant
+      .ofEpochMilli(getTimeInMillis())
+      .atZone(getOptions().rctx.graph.getTimeZone().toZoneId());
+  }
 
-    public LocalDateTime getTimeAsLocalDateTime() {
-        return getTimeAsZonedDateTime()
-                .toLocalDateTime();
-    }
+  public LocalDateTime getTimeAsLocalDateTime() {
+    return getTimeAsZonedDateTime().toLocalDateTime();
+  }
 
   public void timeshiftBySeconds(int timeShift) {
     time += (timeShift * 1000L);
@@ -626,30 +625,30 @@ public class State implements Cloneable {
     }
   }
 
-    private State reversedClone() {
-        // We no longer compensate for schedule slack (minTransferTime) here.
-        // It is distributed symmetrically over all preboard and prealight edges.
-        State newState = new State(this.vertex, getTimeSeconds(), stateData.opt.reversedClone());
-        // TODO Check if those two lines are needed:
-        newState.stateData.vehicleRentalState = stateData.vehicleRentalState;
-        newState.stateData.carPickupState = stateData.carPickupState;
-        newState.stateData.vehicleParked = stateData.vehicleParked;
-        newState.stateData.timeRestrictions = new ArrayList<>(getTimeRestrictions());
-        newState.stateData.timeRestrictionSources = new HashSet<>(getTimeRestrictionSources());
-        return newState;
-    }
+  private State reversedClone() {
+    // We no longer compensate for schedule slack (minTransferTime) here.
+    // It is distributed symmetrically over all preboard and prealight edges.
+    State newState = new State(this.vertex, getTimeSeconds(), stateData.opt.reversedClone());
+    // TODO Check if those two lines are needed:
+    newState.stateData.vehicleRentalState = stateData.vehicleRentalState;
+    newState.stateData.carPickupState = stateData.carPickupState;
+    newState.stateData.vehicleParked = stateData.vehicleParked;
+    newState.stateData.timeRestrictions = new ArrayList<>(getTimeRestrictions());
+    newState.stateData.timeRestrictionSources = new HashSet<>(getTimeRestrictionSources());
+    return newState;
+  }
 
-    public List<TimeRestrictionWithOffset> getTimeRestrictions() {
-        if (stateData.timeRestrictions == null) {
-            return List.of();
-        }
-        return stateData.timeRestrictions;
+  public List<TimeRestrictionWithOffset> getTimeRestrictions() {
+    if (stateData.timeRestrictions == null) {
+      return List.of();
     }
+    return stateData.timeRestrictions;
+  }
 
-    public Set<Object> getTimeRestrictionSources() {
-        if (stateData.timeRestrictions == null) {
-            return Set.of();
-        }
-        return stateData.timeRestrictionSources;
+  public Set<Object> getTimeRestrictionSources() {
+    if (stateData.timeRestrictions == null) {
+      return Set.of();
     }
+    return stateData.timeRestrictionSources;
+  }
 }
