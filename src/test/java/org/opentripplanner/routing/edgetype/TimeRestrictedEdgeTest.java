@@ -10,6 +10,7 @@ import java.time.ZonedDateTime;
 import org.junit.jupiter.api.Test;
 import org.opentripplanner.routing.algorithm.GraphRoutingTest;
 import org.opentripplanner.routing.algorithm.astar.AStar;
+import org.opentripplanner.routing.algorithm.astar.AStarBuilder;
 import org.opentripplanner.routing.algorithm.raptoradapter.router.street.AccessEgressRouter;
 import org.opentripplanner.routing.algorithm.raptoradapter.transit.TransitTuningParameters;
 import org.opentripplanner.routing.algorithm.raptoradapter.transit.mappers.AccessEgressMapper;
@@ -17,6 +18,7 @@ import org.opentripplanner.routing.algorithm.raptoradapter.transit.mappers.Trans
 import org.opentripplanner.routing.api.request.RoutingRequest;
 import org.opentripplanner.routing.api.request.StreetMode;
 import org.opentripplanner.routing.core.OsmOpeningHours;
+import org.opentripplanner.routing.core.RoutingContext;
 import org.opentripplanner.routing.core.State;
 import org.opentripplanner.routing.core.StateEditor;
 import org.opentripplanner.routing.core.TimeRestriction;
@@ -179,9 +181,10 @@ public class TimeRestrictedEdgeTest extends GraphRoutingTest {
     var options = new RoutingRequest().getStreetSearchRequest(StreetMode.WALK);
     options.setDateTime(START_OF_TIME.toInstant());
     options.arriveBy = arriveBy;
-    options.setRoutingContext(graph, A, C);
 
-    var tree = new AStar().getShortestPathTree(options);
+    var context = new RoutingContext(options, graph, A, C);
+
+    var tree = AStarBuilder.oneToOne().setContext(context).getShortestPathTree();
     var path = tree.getPath(arriveBy ? A : C);
 
     if (path == null) {
@@ -200,9 +203,9 @@ public class TimeRestrictedEdgeTest extends GraphRoutingTest {
 
   private void assertAccess(int earliestDepartureTime, int latestArrivalTime) {
     var rr = new RoutingRequest().getStreetSearchRequest(StreetMode.WALK);
-    rr.setRoutingContext(graph, A, null);
+    var context = new RoutingContext(rr, graph, A, null);
 
-    var stops = AccessEgressRouter.streetSearch(rr, StreetMode.WALK, false);
+    var stops = AccessEgressRouter.streetSearch(context, StreetMode.WALK, false);
     assertEquals(1, stops.size(), "nearby access stops");
 
     var accessEgress = new AccessEgressMapper(graph.getTransitLayer().getStopIndex())
@@ -218,9 +221,9 @@ public class TimeRestrictedEdgeTest extends GraphRoutingTest {
 
   private void assertEgress(int earliestDepartureTime, int latestArrivalTime) {
     var rr = new RoutingRequest().getStreetSearchRequest(StreetMode.WALK);
-    rr.setRoutingContext(graph, null, A);
+    var context = new RoutingContext(rr, graph, null, A);
 
-    var stops = AccessEgressRouter.streetSearch(rr, StreetMode.WALK, true);
+    var stops = AccessEgressRouter.streetSearch(context, StreetMode.WALK, true);
     assertEquals(1, stops.size(), "nearby egress stops");
 
     var accessEgress = new AccessEgressMapper(graph.getTransitLayer().getStopIndex())

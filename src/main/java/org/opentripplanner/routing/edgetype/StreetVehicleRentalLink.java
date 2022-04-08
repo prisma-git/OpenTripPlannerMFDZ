@@ -90,10 +90,6 @@ public class StreetVehicleRentalLink extends Edge {
     return false;
   }
 
-  public Vertex getFromVertex() {
-    return fromv;
-  }
-
   @Override
   public I18NString getName() {
     return vehicleRentalStationVertex.getName();

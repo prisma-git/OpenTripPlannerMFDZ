@@ -8,7 +8,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.opentripplanner.routing.algorithm.astar.AStar;
+import org.opentripplanner.routing.algorithm.astar.AStarBuilder;
 import org.opentripplanner.routing.algorithm.raptoradapter.router.street.AccessEgressRouter;
 import org.opentripplanner.routing.algorithm.raptoradapter.transit.TransitTuningParameters;
 import org.opentripplanner.routing.algorithm.raptoradapter.transit.mappers.AccessEgressMapper;
@@ -16,6 +16,7 @@ import org.opentripplanner.routing.algorithm.raptoradapter.transit.mappers.Trans
 import org.opentripplanner.routing.api.request.RoutingRequest;
 import org.opentripplanner.routing.api.request.StreetMode;
 import org.opentripplanner.routing.core.OsmOpeningHours;
+import org.opentripplanner.routing.core.RoutingContext;
 import org.opentripplanner.routing.core.TimeRestriction;
 import org.opentripplanner.routing.graph.Graph;
 import org.opentripplanner.routing.vertextype.StreetVertex;
@@ -101,9 +102,9 @@ public class ParkAndRideOpeningHoursTest extends GraphRoutingTest {
   private void assertParkAndRideAccess(int earliestDepartureTime, int latestArrivalTime) {
     var rr = new RoutingRequest().getStreetSearchRequest(StreetMode.CAR_TO_PARK);
     rr.carParkTime = 60;
-    rr.setRoutingContext(graph, A, null);
+    var context = new RoutingContext(rr, graph, A, null);
 
-    var stops = AccessEgressRouter.streetSearch(rr, StreetMode.CAR_TO_PARK, false);
+    var stops = AccessEgressRouter.streetSearch(context, StreetMode.CAR_TO_PARK, false);
     assertEquals(1, stops.size(), "nearby access stops");
 
     var accessEgress = new AccessEgressMapper(graph.getTransitLayer().getStopIndex())
@@ -127,9 +128,10 @@ public class ParkAndRideOpeningHoursTest extends GraphRoutingTest {
     options.setDateTime(START_OF_TIME.toInstant());
     options.carParkTime = CAR_PARK_TIME;
     options.arriveBy = arriveBy;
-    options.setRoutingContext(graph, A, S);
+    var context = new RoutingContext(options, graph, A, S);
 
-    var tree = new AStar().getShortestPathTree(options);
+    var tree = AStarBuilder.oneToOne().setContext(context).getShortestPathTree();
+
     var path = tree.getPath(arriveBy ? A : S);
 
     if (path == null) {

@@ -1,5 +1,9 @@
 package org.opentripplanner.carpool;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import org.junit.jupiter.api.Test;
 import org.opentripplanner.GtfsTest;
 import org.opentripplanner.model.FeedScopedId;
 import org.opentripplanner.model.TransitMode;
@@ -11,6 +15,7 @@ public class CarpoolTest extends GtfsTest {
     return "mfdz_gtfs.zip";
   }
 
+  @Test
   public void testImport() {
     var routeId = FeedScopedId.parseId("FEED:3");
     var route = router.graph.index.getRouteForId(routeId);

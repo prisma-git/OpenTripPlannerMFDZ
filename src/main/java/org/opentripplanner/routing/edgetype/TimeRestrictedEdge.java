@@ -73,7 +73,7 @@ public interface TimeRestrictedEdge {
     if (s0.getOptions().ignoreAndCollectTimeRestrictions) {
       s1.addTimeRestriction(TimeRestrictionWithOffset.of(timeRestriction, offset), source);
     } else {
-      var zoneId = s0.getOptions().rctx.graph.getTimeZone().toZoneId();
+      var zoneId = s0.getRoutingContext().graph.getTimeZone().toZoneId();
       var now = s1.getZonedDateTime();
       var time = s0.getOptions().arriveBy
         ? timeRestriction.latestArrivalTime(now.toLocalDateTime())

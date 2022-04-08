@@ -1,7 +1,5 @@
 package org.opentripplanner.updater.vehicle_parking;
 
-import static org.opentripplanner.routing.vehicle_parking.VehicleParkingState.OPERATIONAL;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -63,7 +61,7 @@ public class VehicleParkingUpdater extends PollingGraphUpdater {
 
   @Override
   public void setGraphUpdaterManager(WriteToGraphCallback updaterManager) {
-    this.updaterManager = updaterManager;
+    this.saveResultOnGraph = updaterManager;
   }
 
   @Override
@@ -90,7 +88,7 @@ public class VehicleParkingUpdater extends PollingGraphUpdater {
     VehicleParkingGraphWriterRunnable graphWriterRunnable = new VehicleParkingGraphWriterRunnable(
       vehicleParkings
     );
-    updaterManager.execute(graphWriterRunnable);
+    saveResultOnGraph.execute(graphWriterRunnable);
   }
 
   private class VehicleParkingGraphWriterRunnable implements GraphWriterRunnable {

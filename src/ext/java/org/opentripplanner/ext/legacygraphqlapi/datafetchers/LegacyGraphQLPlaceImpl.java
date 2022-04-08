@@ -93,11 +93,6 @@ public class LegacyGraphQLPlaceImpl implements LegacyGraphQLDataFetchers.LegacyG
   }
 
   @Override
-  public DataFetcher<VehicleParking> vehicleParking() {
-    return this::getVehicleParking;
-  }
-
-  @Override
   public DataFetcher<VehicleRentalStation> vehicleRentalStation() {
     return environment -> {
       Place place = getSource(environment).place;
@@ -130,16 +125,6 @@ public class LegacyGraphQLPlaceImpl implements LegacyGraphQLDataFetchers.LegacyG
           throw new IllegalStateException("Unhandled vertexType: " + place.getVertexType().name());
       }
     };
-  }
-
-  @Override
-  public DataFetcher<VehicleParking> bikePark() {
-    return this::getVehicleParking;
-  }
-
-  @Override
-  public DataFetcher<VehicleParking> carPark() {
-    return this::getVehicleParking;
   }
 
   public DataFetcher<VehicleParkingWithEntrance> vehicleParkingWithEntrance() {

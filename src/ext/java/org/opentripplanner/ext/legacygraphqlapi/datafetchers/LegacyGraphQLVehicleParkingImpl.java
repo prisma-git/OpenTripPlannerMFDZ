@@ -24,7 +24,7 @@ public class LegacyGraphQLVehicleParkingImpl
 
   @Override
   public DataFetcher<Boolean> bicyclePlaces() {
-    return environment -> getSource(environment).hasBicyclePlaces(environment.getLocale());
+    return environment -> getSource(environment).hasBicyclePlaces();
   }
 
   @Override

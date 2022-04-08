@@ -441,7 +441,7 @@ public class State implements Cloneable {
   public ZonedDateTime getTimeAsZonedDateTime() {
     return Instant
       .ofEpochMilli(getTimeInMillis())
-      .atZone(getOptions().rctx.graph.getTimeZone().toZoneId());
+      .atZone(getRoutingContext().graph.getTimeZone().toZoneId());
   }
 
   public LocalDateTime getTimeAsLocalDateTime() {
@@ -628,7 +628,12 @@ public class State implements Cloneable {
   private State reversedClone() {
     // We no longer compensate for schedule slack (minTransferTime) here.
     // It is distributed symmetrically over all preboard and prealight edges.
-    State newState = new State(this.vertex, getTimeSeconds(), stateData.opt.reversedClone());
+    State newState = new State(
+      this.vertex,
+      getTimeSeconds(),
+      stateData.opt.reversedClone(),
+      stateData.rctx
+    );
     // TODO Check if those two lines are needed:
     newState.stateData.vehicleRentalState = stateData.vehicleRentalState;
     newState.stateData.carPickupState = stateData.carPickupState;
