@@ -22,7 +22,7 @@ public class LegacyGraphQLPlaceImpl implements LegacyGraphQLDataFetchers.LegacyG
 
   @Override
   public DataFetcher<Long> arrivalTime() {
-    return environment -> getSource(environment).arrival.getTime().getTime();
+    return environment -> getSource(environment).arrival.toInstant().toEpochMilli();
   }
 
   @Override
@@ -50,7 +50,7 @@ public class LegacyGraphQLPlaceImpl implements LegacyGraphQLDataFetchers.LegacyG
 
   @Override
   public DataFetcher<Long> departureTime() {
-    return environment -> getSource(environment).departure.getTime().getTime();
+    return environment -> getSource(environment).departure.toInstant().toEpochMilli();
   }
 
   @Override

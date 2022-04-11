@@ -88,6 +88,13 @@ public class ItineraryFilterParameters {
   public DoubleFunction<Double> nonTransitGeneralizedCostLimit;
 
   /**
+   * This is used to filter out journeys that have either same first or last trip.
+   * If two journeys starts or ends with exactly same transit leg (same trip id and same service day),
+   * one of them will be filtered out.
+   */
+  public boolean filterItinerariesWithSameFirstOrLastTrip;
+
+  /**
    * Minimum biking distance at the beginning of the itinerary.
    */
   public final double minBikeParkingDistance;
@@ -103,6 +110,7 @@ public class ItineraryFilterParameters {
     this.flexOnlyToDestination = false;
     this.transitGeneralizedCostLimit = RequestFunctions.createLinearFunction(3600, 2);
     this.nonTransitGeneralizedCostLimit = RequestFunctions.createLinearFunction(3600, 2);
+    this.filterItinerariesWithSameFirstOrLastTrip = false;
   }
 
   public ItineraryFilterParameters(
@@ -114,6 +122,7 @@ public class ItineraryFilterParameters {
     DoubleFunction<Double> nonTransitGeneralizedCostLimit,
     double bikeRentalDistanceRatio,
     double parkAndRideDurationRatio,
+    boolean filterItinerariesWithSameFirstOrLastTrip,
     boolean flexOnlyToDestination,
     double minBikeParkingDistance
   ) {
@@ -124,6 +133,7 @@ public class ItineraryFilterParameters {
     this.transitGeneralizedCostLimit = transitGeneralizedCostLimit;
     this.nonTransitGeneralizedCostLimit = nonTransitGeneralizedCostLimit;
     this.bikeRentalDistanceRatio = bikeRentalDistanceRatio;
+    this.filterItinerariesWithSameFirstOrLastTrip = filterItinerariesWithSameFirstOrLastTrip;
     this.parkAndRideDurationRatio = parkAndRideDurationRatio;
     this.flexOnlyToDestination = flexOnlyToDestination;
     this.minBikeParkingDistance = minBikeParkingDistance;
