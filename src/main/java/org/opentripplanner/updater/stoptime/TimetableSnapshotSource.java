@@ -604,6 +604,8 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
         ? new FeedScopedId(feedId, tripDescriptor.getRouteId())
         : new FeedScopedId(feedId, tripId);
 
+      var ext = MfdzTripExtension.ofTripDescriptor(tripDescriptor);
+
       route = new Route(id);
 
       // Create dummy agency for added trips
@@ -612,6 +614,7 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
         .getAgencies()
         .stream()
         .filter(a -> a.getId().getFeedId().equals(feedId))
+        .filter(a -> a.getId().getId().equals(ext.agencyId().orElse(null)))
         .findFirst()
         .orElse(dummyAgency);
       route.setAgency(agency);
@@ -623,6 +626,8 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
 
       // Create route name
       route.setLongName(tripId);
+      route.setShortName(tripId);
+      route.setUrl(ext.routeUrl().orElse(null));
     }
 
     // Create new Trip
