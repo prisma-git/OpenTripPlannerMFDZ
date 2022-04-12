@@ -1,13 +1,14 @@
 package org.opentripplanner.graph_builder.module;
 
 import com.beust.jcommander.internal.Lists;
-import com.beust.jcommander.internal.Sets;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.locationtech.jts.geom.Coordinate;
@@ -104,6 +105,8 @@ public class NearbyStopFinder {
     /* Track the closest stop on each flex trip nearby. */
     MinMap<FlexTrip, NearbyStop> closestStopForFlexTrip = new MinMap<>();
 
+    List<NearbyStop> overrideStops = new ArrayList<>();
+
     /* Iterate over nearby stops via the street network or using straight-line distance, depending on the graph. */
     for (NearbyStop nearbyStop : findNearbyStops(
       vertex,
@@ -117,6 +120,10 @@ public class NearbyStopFinder {
         for (TripPattern pattern : graph.index.getPatternsForStop(ts1)) {
           closestStopForPattern.putMin(pattern, nearbyStop);
         }
+
+        if(ts1.getId().getFeedId().equals("mfdz")) {
+          overrideStops.add(nearbyStop);
+        }
       }
       if (OTPFeature.FlexRouting.isOn()) {
         for (FlexTrip trip : graph.index.getFlexIndex().flexTripsByStop.get(ts1)) {
@@ -126,9 +133,10 @@ public class NearbyStopFinder {
     }
 
     /* Make a transfer from the origin stop to each destination stop that was the closest stop on any pattern. */
-    Set<NearbyStop> uniqueStops = Sets.newHashSet();
+    Set<NearbyStop> uniqueStops = new HashSet<>();
     uniqueStops.addAll(closestStopForFlexTrip.values());
     uniqueStops.addAll(closestStopForPattern.values());
+    uniqueStops.addAll(overrideStops);
     return uniqueStops;
   }
 
