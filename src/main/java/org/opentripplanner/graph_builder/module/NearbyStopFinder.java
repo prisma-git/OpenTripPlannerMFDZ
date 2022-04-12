@@ -121,7 +121,7 @@ public class NearbyStopFinder {
           closestStopForPattern.putMin(pattern, nearbyStop);
         }
 
-        if(ts1.getId().getFeedId().equals("mfdz")) {
+        if (ts1.getId().getFeedId().equals("mfdz")) {
           overrideStops.add(nearbyStop);
         }
       }
