@@ -103,7 +103,7 @@ public class FlexAccessTemplate extends FlexAccessEgressTemplate {
 
     return graphPathToItineraryMapper
       .generateItinerary(new GraphPath(state))
-      .getItineraryShiftedToStartAt(startTime);
+      .withTimeShiftToStartAt(startTime);
   }
 
   protected List<Edge> getTransferEdges(PathTransfer transfer) {

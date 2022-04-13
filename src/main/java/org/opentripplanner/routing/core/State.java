@@ -1,6 +1,7 @@
 package org.opentripplanner.routing.core;
 
 import java.time.Instant;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.opentripplanner.model.base.ToStringBuilder;
 import org.opentripplanner.routing.algorithm.astar.NegativeWeightException;
 import org.opentripplanner.routing.api.request.RoutingRequest;
 import org.opentripplanner.routing.edgetype.StreetEdge;
@@ -52,7 +54,7 @@ public class State implements Cloneable {
   public State(RoutingContext rctx) {
     this(
       rctx.fromVertices == null ? null : rctx.fromVertices.iterator().next(),
-      rctx.opt.getDateTime().getEpochSecond(),
+      rctx.opt.getDateTime(),
       rctx.opt,
       rctx
     );
@@ -64,7 +66,7 @@ public class State implements Cloneable {
    */
   public State(Vertex vertex, RoutingRequest opt, RoutingContext routingContext) {
     // Since you explicitly specify, the vertex, we don't set the backEdge.
-    this(vertex, opt.getDateTime().getEpochSecond(), opt, routingContext);
+    this(vertex, opt.getDateTime(), opt, routingContext);
   }
 
   /**
@@ -73,36 +75,11 @@ public class State implements Cloneable {
    */
   public State(
     Vertex vertex,
-    long timeSeconds,
+    Instant timeSeconds,
     RoutingRequest options,
     RoutingContext routingContext
   ) {
-    this(vertex, timeSeconds, timeSeconds, options, routingContext, false, false, false);
-  }
-
-  /**
-   * Create an initial state, forcing vertex, back edge and time to the specified values. Useful for
-   * reusing a RoutingContext in TransitIndex, tests, etc.
-   */
-  public State(
-    Vertex vertex,
-    long timeSeconds,
-    RoutingRequest options,
-    RoutingContext routingContext,
-    boolean carPickupStateInCar,
-    boolean bikeRentalFloatingState,
-    boolean keptRentedVehicleAtDestination
-  ) {
-    this(
-      vertex,
-      timeSeconds,
-      timeSeconds,
-      options,
-      routingContext,
-      carPickupStateInCar,
-      bikeRentalFloatingState,
-      keptRentedVehicleAtDestination
-    );
+    this(vertex, timeSeconds, options, routingContext, false, false, false);
   }
 
   /**
@@ -112,8 +89,7 @@ public class State implements Cloneable {
    */
   public State(
     Vertex vertex,
-    long timeSeconds,
-    long startTime,
+    Instant startTime,
     RoutingRequest options,
     RoutingContext routingContext,
     boolean carPickupStateInCar,
@@ -166,7 +142,7 @@ public class State implements Cloneable {
           : options.streetSubRequestModes.getBicycle() ? TraverseMode.BICYCLE : TraverseMode.CAR;
     }
     this.walkDistance = 0;
-    this.time = timeSeconds * 1000;
+    this.time = startTime.toEpochMilli();
   }
 
   /**
@@ -182,15 +158,7 @@ public class State implements Cloneable {
                for forward/reverse searches to be symmetric both initial states need to be created. */
       if (request.carPickup) {
         states.add(
-          new State(
-            vertex,
-            request.getDateTime().getEpochSecond(),
-            request,
-            routingContext,
-            true,
-            false,
-            false
-          )
+          new State(vertex, request.getDateTime(), request, routingContext, true, false, false)
         );
       }
 
@@ -198,35 +166,17 @@ public class State implements Cloneable {
                for forward/reverse searches to be symmetric an additional RENTING_FLOATING state needs to be created. */
       if (request.vehicleRental && request.arriveBy) {
         states.add(
-          new State(
-            vertex,
-            request.getDateTime().getEpochSecond(),
-            request,
-            routingContext,
-            false,
-            true,
-            false
-          )
+          new State(vertex, request.getDateTime(), request, routingContext, false, true, false)
         );
 
         if (request.allowKeepingRentedVehicleAtDestination) {
           states.add(
-            new State(
-              vertex,
-              request.getDateTime().getEpochSecond(),
-              request,
-              routingContext,
-              false,
-              true,
-              true
-            )
+            new State(vertex, request.getDateTime(), request, routingContext, false, true, true)
           );
         }
       }
 
-      states.add(
-        new State(vertex, request.getDateTime().getEpochSecond(), request, routingContext)
-      );
+      states.add(new State(vertex, request.getDateTime(), request, routingContext));
     }
     return states;
   }
@@ -237,24 +187,6 @@ public class State implements Cloneable {
    */
   public StateEditor edit(Edge e) {
     return new StateEditor(this, e);
-  }
-
-  public String toStringVerbose() {
-    return (
-      "<State " +
-      new Date(getTimeInMillis()) +
-      " w=" +
-      this.getWeight() +
-      " t=" +
-      this.getElapsedTimeSeconds() +
-      " d=" +
-      this.getWalkDistance() +
-      " r=" +
-      this.isRentingVehicle() +
-      " pr=" +
-      this.isVehicleParked() +
-      ">"
-    );
   }
 
   /*
@@ -273,7 +205,7 @@ public class State implements Cloneable {
 
   /** returns the length of the trip in seconds up to this state */
   public long getElapsedTimeSeconds() {
-    return Math.abs(getTimeSeconds() - stateData.startTime);
+    return Math.abs(getTimeSeconds() - stateData.startTime.getEpochSecond());
   }
 
   public boolean isCompatibleVehicleRentalState(State state) {
@@ -378,10 +310,6 @@ public class State implements Cloneable {
     return this.backEdge;
   }
 
-  public long getStartTimeSeconds() {
-    return stateData.startTime;
-  }
-
   /**
    * Optional next result that allows {@link Edge} to return multiple results.
    *
@@ -434,14 +362,12 @@ public class State implements Cloneable {
     return stateData.currentMode;
   }
 
-  public long getTimeInMillis() {
-    return time;
+  public Instant getTime() {
+    return Instant.ofEpochMilli(time);
   }
 
   public ZonedDateTime getTimeAsZonedDateTime() {
-    return Instant
-      .ofEpochMilli(getTimeInMillis())
-      .atZone(getRoutingContext().graph.getTimeZone().toZoneId());
+    return getTime().atZone(getRoutingContext().graph.getTimeZone().toZoneId());
   }
 
   public LocalDateTime getTimeAsLocalDateTime() {
@@ -593,23 +519,20 @@ public class State implements Cloneable {
   }
 
   public String toString() {
-    return (
-      "<State " +
-      new Date(getTimeInMillis()) +
-      " [" +
-      weight +
-      "] " +
-      (isRentingVehicle() ? "VEHICLE_RENT " : "") +
-      (isVehicleParked() ? "VEHICLE_PARKED " : "") +
-      vertex +
-      ">"
-    );
+    return ToStringBuilder
+      .of(State.class)
+      .addTime("time", getTime())
+      .addNum("weight", weight)
+      .addObj("vertex", vertex)
+      .addBoolIfTrue("VEHICLE_RENT", isRentingVehicle())
+      .addBoolIfTrue("VEHICLE_PARKED", isVehicleParked())
+      .toString();
   }
 
   void checkNegativeWeight() {
     double dw = this.weight - backState.weight;
     if (dw < 0) {
-      throw new NegativeWeightException(String.valueOf(dw) + " on edge " + backEdge);
+      throw new NegativeWeightException(dw + " on edge " + backEdge);
     }
   }
 
@@ -630,7 +553,7 @@ public class State implements Cloneable {
     // It is distributed symmetrically over all preboard and prealight edges.
     State newState = new State(
       this.vertex,
-      getTimeSeconds(),
+      getTime(),
       stateData.opt.reversedClone(),
       stateData.rctx
     );

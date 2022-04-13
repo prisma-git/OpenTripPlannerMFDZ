@@ -129,9 +129,12 @@ public class FaresTest {
     var onPeakStartTime = TestUtils.dateInstant("America/Los_Angeles", 2016, 5, 24, 8, 0, 0);
     var peakItinerary = getItineraries(from, to, onPeakStartTime, router).get(1);
     var leg = peakItinerary.legs.get(0);
-
     assertTrue(leg.getStartTime().toLocalTime().isAfter(LocalTime.parse("08:00")));
-    assertTrue(leg.getStartTime().toLocalTime().isBefore(LocalTime.parse("09:00")));
+    var startTime = leg.getStartTime().toLocalTime();
+    assertTrue(
+      startTime.isBefore(LocalTime.parse("09:00")),
+      "Leg's start should be before 09:00 but is " + startTime
+    );
 
     assertEquals(new Money(USD, 275), peakItinerary.fare.getFare(FareType.regular));
   }
