@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.locks.ReentrantLock;
+import org.opentripplanner.api.mapping.RouteTypeMapper;
+import org.opentripplanner.gtfs.mapping.TransitModeMapper;
 import org.opentripplanner.model.Agency;
 import org.opentripplanner.model.FeedScopedId;
 import org.opentripplanner.model.Route;
@@ -614,19 +616,22 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
         .getAgencies()
         .stream()
         .filter(a -> a.getId().getFeedId().equals(feedId))
-        .filter(a -> a.getId().getId().equals(ext.agencyId().orElse(null)))
+        .filter(a -> ext.agencyId().stream().toList().contains(a.getId().getId()))
         .findFirst()
         .orElse(dummyAgency);
       route.setAgency(agency);
 
       // Guess the route type as it doesn't exist yet in the specifications
       // Bus. Used for short- and long-distance bus routes.
-      route.setGtfsType(1700);
-      route.setMode(TransitMode.CARPOOL);
+      var type = ext.routeType().orElse(1700);
+      var mode = TransitModeMapper.mapMode(type);
+      route.setGtfsType(type);
+      route.setMode(mode);
 
       // Create route name
-      route.setLongName(tripId);
-      route.setShortName(tripId);
+      var name = ext.routeLongName().orElse(null);
+      route.setLongName(name);
+      route.setShortName(name);
       route.setUrl(ext.routeUrl().orElse(null));
     }
 

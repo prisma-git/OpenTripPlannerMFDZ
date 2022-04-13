@@ -34,6 +34,7 @@ public class GtfsRealtimeHttpTripUpdateSource implements TripUpdateSource {
     this.feedId = config.getFeedId();
     this.url = config.getUrl();
     this.registry.add(Mfdz.tripDescriptor);
+    this.registry.add(Mfdz.stopTimeProperties);
   }
 
   @Override
