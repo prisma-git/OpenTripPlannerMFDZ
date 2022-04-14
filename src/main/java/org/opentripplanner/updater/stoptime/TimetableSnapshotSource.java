@@ -475,8 +475,37 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
       return false;
     }
 
+    final List<StopTimeUpdate> stopTimeUpdates = tripUpdate
+      .getStopTimeUpdateList()
+      .stream()
+      .filter(StopTimeUpdate::hasStopId)
+      .filter(st -> {
+        var stopFound = getStopForStopId(feedId, st.getStopId()) != null;
+        if (!stopFound) {
+          warn(
+            feedId,
+            tripId,
+            "Stop '{}' not found in graph. Removing from new trip.",
+            st.getStopId()
+          );
+        }
+        return stopFound;
+      })
+      .toList();
+
+    if (stopTimeUpdates.size() < 2) {
+      _warn.accept(
+        "After filtering out unusable stops, trip contains fewer than 2 stops. Skipping."
+      );
+      return false;
+    }
+
     // Check whether all stop times are available and all stops exist
-    final var stops = checkNewStopTimeUpdatesAndFindStops(feedId, tripUpdate);
+    final var stops = checkNewStopTimeUpdatesAndFindStops(
+      feedId,
+      stopTimeUpdates,
+      tripUpdate.getTrip()
+    );
     if (stops == null) {
       return false;
     }
@@ -489,7 +518,7 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
       deduplicator,
       graphIndex,
       serviceCodes,
-      tripUpdate,
+      stopTimeUpdates,
       tripDescriptor,
       stops,
       feedId,
@@ -501,37 +530,21 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
    * Check stop time updates of trip update that results in a new trip (ADDED or MODIFIED) and find
    * all stops of that trip.
    *
-   * @param feedId     feed id this trip update is intented for
-   * @param tripUpdate trip update
+   * @param feedId feed id this trip update is intented for
    * @return stops when stop time updates are correct; null if there are errors
    */
   private List<StopLocation> checkNewStopTimeUpdatesAndFindStops(
     final String feedId,
-    final TripUpdate tripUpdate
+    final List<StopTimeUpdate> stopTimeUpdates,
+    final TripDescriptor trip
   ) {
     Integer previousStopSequence = null;
     Long previousTime = null;
 
-    var tripId = Optional
-      .ofNullable(tripUpdate.getTrip())
-      .map(TripDescriptor::getTripId)
-      .orElse("<null>");
+    var tripId = Optional.ofNullable(trip).map(TripDescriptor::getTripId).orElse("<null>");
 
     Consumer<String> _warn = (String message) ->
       TimetableSnapshotSource.warn(feedId, tripId, message);
-
-    final List<StopTimeUpdate> stopTimeUpdates = tripUpdate
-      .getStopTimeUpdateList()
-      .stream()
-      .filter(StopTimeUpdate::hasStopId)
-      .filter(st -> {
-        var stopFound = getStopForStopId(feedId, st.getStopId()) != null;
-        if (!stopFound) {
-          warn(feedId, tripId, "Stop '{}' not found in graph. Removing from new trip.");
-        }
-        return stopFound;
-      })
-      .toList();
 
     final List<StopLocation> stops = new ArrayList<>(stopTimeUpdates.size());
 
@@ -633,7 +646,7 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
     final Deduplicator deduplicator,
     final GraphIndex graphIndex,
     final Map<FeedScopedId, Integer> serviceCodes,
-    final TripUpdate tripUpdate,
+    final List<StopTimeUpdate> stopTimeUpdates,
     final TripDescriptor tripDescriptor,
     final List<StopLocation> stops,
     final String feedId,
@@ -642,7 +655,7 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
     // Preconditions
     Preconditions.checkNotNull(stops);
     Preconditions.checkArgument(
-      tripUpdate.getStopTimeUpdateCount() == stops.size(),
+      stopTimeUpdates.size() == stops.size(),
       "number of stop should match the number of stop time updates"
     );
 
@@ -724,7 +737,7 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
       graphIndex,
       serviceCodes,
       trip,
-      tripUpdate,
+      stopTimeUpdates,
       stops,
       serviceDate,
       RealTimeState.ADDED
@@ -738,7 +751,7 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
    * @param graphIndex    graph's index
    * @param serviceCodes  graph's service codes
    * @param trip          trip
-   * @param tripUpdate    trip update containing stop time updates
+   * @param stopTimeUpdates    trip update containing stop time updates
    * @param stops         list of stops corresponding to stop time updates
    * @param serviceDate   service date of trip
    * @param realTimeState real-time state of new trip
@@ -749,7 +762,7 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
     final GraphIndex graphIndex,
     final Map<FeedScopedId, Integer> serviceCodes,
     final Trip trip,
-    final TripUpdate tripUpdate,
+    final List<StopTimeUpdate> stopTimeUpdates,
     final List<StopLocation> stops,
     final ServiceDate serviceDate,
     final RealTimeState realTimeState
@@ -757,7 +770,7 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
     // Preconditions
     Preconditions.checkNotNull(stops);
     Preconditions.checkArgument(
-      tripUpdate.getStopTimeUpdateCount() == stops.size(),
+      stopTimeUpdates.size() == stops.size(),
       "number of stop should match the number of stop time updates"
     );
 
@@ -769,9 +782,9 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
     final long midnightSecondsSinceEpoch = serviceCalendar.getTimeInMillis() / MILLIS_PER_SECOND;
 
     // Create StopTimes
-    final List<StopTime> stopTimes = new ArrayList<>(tripUpdate.getStopTimeUpdateCount());
-    for (int index = 0; index < tripUpdate.getStopTimeUpdateCount(); ++index) {
-      final StopTimeUpdate stopTimeUpdate = tripUpdate.getStopTimeUpdate(index);
+    final List<StopTime> stopTimes = new ArrayList<>(stopTimeUpdates.size());
+    for (int index = 0; index < stopTimeUpdates.size(); ++index) {
+      final StopTimeUpdate stopTimeUpdate = stopTimeUpdates.get(index);
       final var stop = stops.get(index);
 
       // Create stop time
@@ -994,7 +1007,11 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
     }
 
     // Check whether all stop times are available and all stops exist
-    var stops = checkNewStopTimeUpdatesAndFindStops(feedId, tripUpdate);
+    var stops = checkNewStopTimeUpdatesAndFindStops(
+      feedId,
+      tripUpdate.getStopTimeUpdateList(),
+      tripUpdate.getTrip()
+    );
     if (stops == null) {
       return false;
     }
@@ -1059,7 +1076,7 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
       graphIndex,
       serviceCodes,
       trip,
-      tripUpdate,
+      tripUpdate.getStopTimeUpdateList(),
       stops,
       serviceDate,
       RealTimeState.MODIFIED
