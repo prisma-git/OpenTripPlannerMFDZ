@@ -3,6 +3,7 @@ package org.opentripplanner.model;
 
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
+import org.opentripplanner.model.base.ToStringBuilder;
 
 public final class Trip extends TransitEntity {
 

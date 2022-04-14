@@ -698,7 +698,8 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
 
       // Guess the route type as it doesn't exist yet in the specifications
       // Bus. Used for short- and long-distance bus routes.
-      var type = ext.routeType().orElse(1700);
+      //var type = ext.routeType().orElse(1700);
+      int type = 1700;
       var mode = TransitModeMapper.mapMode(type);
       route.setGtfsType(type);
       route.setMode(mode);
@@ -747,14 +748,14 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
   /**
    * Add a (new) trip to the graph and the buffer
    *
-   * @param deduplicator  deduplicator for different types
-   * @param graphIndex    graph's index
-   * @param serviceCodes  graph's service codes
-   * @param trip          trip
-   * @param stopTimeUpdates    trip update containing stop time updates
-   * @param stops         list of stops corresponding to stop time updates
-   * @param serviceDate   service date of trip
-   * @param realTimeState real-time state of new trip
+   * @param deduplicator    deduplicator for different types
+   * @param graphIndex      graph's index
+   * @param serviceCodes    graph's service codes
+   * @param trip            trip
+   * @param stopTimeUpdates trip update containing stop time updates
+   * @param stops           list of stops corresponding to stop time updates
+   * @param serviceDate     service date of trip
+   * @param realTimeState   real-time state of new trip
    * @return true if successful
    */
   private boolean addTripToGraphAndBuffer(
@@ -863,6 +864,14 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
     // Make sure that updated trip times have the correct real time state
     newTripTimes.setRealTimeState(realTimeState);
 
+    final List<StopLocation> stops1 = pattern.getStops();
+    LOG.trace(
+      "New pattern with mode {} on {} from {} to {}",
+      trip.getRoute().getMode(),
+      serviceDate.asISO8601(),
+      stops1.get(1).getName(),
+      stops1.get(stops1.size() - 1).getName()
+    );
     // Add new trip times to the buffer
     return buffer.update(pattern, newTripTimes, serviceDate);
   }
