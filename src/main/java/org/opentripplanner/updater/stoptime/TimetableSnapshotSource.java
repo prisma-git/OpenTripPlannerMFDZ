@@ -511,15 +511,29 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
   ) {
     Integer previousStopSequence = null;
     Long previousTime = null;
-    final List<StopTimeUpdate> stopTimeUpdates = tripUpdate.getStopTimeUpdateList();
-    final List<StopLocation> stops = new ArrayList<>(stopTimeUpdates.size());
+
     var tripId = Optional
       .ofNullable(tripUpdate.getTrip())
       .map(TripDescriptor::getTripId)
-      .orElse("unknown");
+      .orElse("<null>");
 
     Consumer<String> _warn = (String message) ->
       TimetableSnapshotSource.warn(feedId, tripId, message);
+
+    final List<StopTimeUpdate> stopTimeUpdates = tripUpdate
+      .getStopTimeUpdateList()
+      .stream()
+      .filter(StopTimeUpdate::hasStopId)
+      .filter(st -> {
+        var stopFound = getStopForStopId(feedId, st.getStopId()) != null;
+        if (!stopFound) {
+          warn(feedId, tripId, "Stop '{}' not found in graph. Removing from new trip.");
+        }
+        return stopFound;
+      })
+      .toList();
+
+    final List<StopLocation> stops = new ArrayList<>(stopTimeUpdates.size());
 
     for (int index = 0; index < stopTimeUpdates.size(); ++index) {
       final StopTimeUpdate stopTimeUpdate = stopTimeUpdates.get(index);
