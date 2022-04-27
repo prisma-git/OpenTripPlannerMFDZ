@@ -2,6 +2,7 @@ package org.opentripplanner.routing.api.request;
 
 import java.util.function.DoubleFunction;
 import org.opentripplanner.routing.algorithm.filterchain.ItineraryListFilterChainBuilder;
+import org.opentripplanner.routing.algorithm.filterchain.filter.AccessibilityScoreFilter;
 
 /**
  * Group by Similarity filter parameters
@@ -95,6 +96,13 @@ public class ItineraryFilterParameters {
   public boolean filterItinerariesWithSameFirstOrLastTrip;
 
   /**
+   * Whether to compute the experimental accessibility score currently being tested at IBI.
+   *
+   * {@link AccessibilityScoreFilter}
+   */
+  public boolean accessibilityScore;
+
+  /**
    * Minimum biking distance at the beginning of the itinerary.
    */
   public final double minBikeParkingDistance;
@@ -111,6 +119,7 @@ public class ItineraryFilterParameters {
     this.transitGeneralizedCostLimit = RequestFunctions.createLinearFunction(3600, 2);
     this.nonTransitGeneralizedCostLimit = RequestFunctions.createLinearFunction(3600, 2);
     this.filterItinerariesWithSameFirstOrLastTrip = false;
+    this.accessibilityScore = false;
   }
 
   public ItineraryFilterParameters(
@@ -123,6 +132,7 @@ public class ItineraryFilterParameters {
     double bikeRentalDistanceRatio,
     double parkAndRideDurationRatio,
     boolean filterItinerariesWithSameFirstOrLastTrip,
+    boolean accessibilityScore,
     boolean flexOnlyToDestination,
     double minBikeParkingDistance
   ) {
@@ -137,6 +147,7 @@ public class ItineraryFilterParameters {
     this.parkAndRideDurationRatio = parkAndRideDurationRatio;
     this.flexOnlyToDestination = flexOnlyToDestination;
     this.minBikeParkingDistance = minBikeParkingDistance;
+    this.accessibilityScore = accessibilityScore;
   }
 
   public static ItineraryFilterParameters createDefault() {

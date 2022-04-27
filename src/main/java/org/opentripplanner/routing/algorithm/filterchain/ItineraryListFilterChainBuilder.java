@@ -24,13 +24,13 @@ import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.RemoveP
 import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.RemoveTransitIfStreetOnlyIsBetterFilter;
 import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.RemoveWalkOnlyFilter;
 import org.opentripplanner.routing.algorithm.filterchain.deletionflagger.TransitGeneralizedCostFilter;
+import org.opentripplanner.routing.algorithm.filterchain.filter.AccessibilityScoreFilter;
 import org.opentripplanner.routing.algorithm.filterchain.filter.DeletionFlaggingFilter;
 import org.opentripplanner.routing.algorithm.filterchain.filter.GroupByFilter;
 import org.opentripplanner.routing.algorithm.filterchain.filter.RemoveDeletionFlagForLeastTransfersItinerary;
 import org.opentripplanner.routing.algorithm.filterchain.filter.SameFirstOrLastTripFilter;
 import org.opentripplanner.routing.algorithm.filterchain.filter.SortingFilter;
 import org.opentripplanner.routing.algorithm.filterchain.groupids.GroupByAllSameStations;
-import org.opentripplanner.routing.algorithm.filterchain.groupids.GroupBySameFirstOrLastTrip;
 import org.opentripplanner.routing.algorithm.filterchain.groupids.GroupByTripIdAndDistance;
 
 /**
@@ -56,6 +56,7 @@ public class ItineraryListFilterChainBuilder {
   private DoubleFunction<Double> nonTransitGeneralizedCostLimit;
   private Instant latestDepartureTimeLimit = null;
   private Consumer<Itinerary> maxLimitReachedSubscriber;
+  private boolean accessibilityScore;
   private double minBikeParkingDistance = NOT_SET;
   private boolean removeBikeOnlyParkAndRideItineraries;
   private boolean reverseFilteringDirection;
@@ -226,6 +227,11 @@ public class ItineraryListFilterChainBuilder {
     return this;
   }
 
+  public ItineraryListFilterChainBuilder withAccessibilityScore(boolean enable) {
+    this.accessibilityScore = enable;
+    return this;
+  }
+
   @SuppressWarnings("CollectionAddAllCanBeReplacedWithConstructor")
   /**
    * Should the direction of the final filtering for max number of itineraries be swapped.
@@ -272,6 +278,10 @@ public class ItineraryListFilterChainBuilder {
     if (sameFirstOrLastTripFilter) {
       filters.add(new SortingFilter(generalizedCostComparator()));
       filters.add(new SameFirstOrLastTripFilter());
+    }
+
+    if (accessibilityScore) {
+      filters.add(new AccessibilityScoreFilter());
     }
 
     // Filter transit itineraries on generalized-cost

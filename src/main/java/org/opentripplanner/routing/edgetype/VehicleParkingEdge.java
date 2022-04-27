@@ -117,7 +117,7 @@ public class VehicleParkingEdge extends Edge implements TimeRestrictedEdge {
     if (
       !vehicleParking.hasSpacesAvailable(
         mode,
-        options.wheelchairAccessible,
+        options.wheelchairAccessibility.enabled(),
         options.useVehicleParkingAvailabilityInformation
       )
     ) {
@@ -167,7 +167,7 @@ public class VehicleParkingEdge extends Edge implements TimeRestrictedEdge {
     if (
       !vehicleParking.hasSpacesAvailable(
         s0.getNonTransitMode(),
-        options.wheelchairAccessible,
+        options.wheelchairAccessibility.enabled(),
         options.useVehicleParkingAvailabilityInformation
       )
     ) {
