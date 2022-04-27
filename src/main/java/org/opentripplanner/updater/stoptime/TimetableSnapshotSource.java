@@ -12,11 +12,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Consumer;
 import org.opentripplanner.gtfs.mapping.TransitModeMapper;
 import org.opentripplanner.model.Agency;
 import org.opentripplanner.model.FeedScopedId;
@@ -243,7 +241,6 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
             case UNSCHEDULED -> handleUnscheduledTrip();
             case CANCELED -> handleCanceledTrip(tripId, serviceDate);
             case REPLACEMENT -> validateAndHandleModifiedTrip(
-
               tripUpdate,
               tripDescriptor,
               tripId,
@@ -427,10 +424,8 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
     //
 
     // Check whether trip id already exists in graph
-    final Trip trip = getTripForTripId( tripId);
+    final Trip trip = getTripForTripId(tripId);
 
-    Consumer<String> _warn = (String message) ->
-      TimetableSnapshotSource.warn(feedId, tripId, message);
     if (trip != null) {
       // TODO: should we support this and add a new instantiation of this trip (making it
       // frequency based)?
@@ -456,21 +451,18 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
       .stream()
       .filter(StopTimeUpdate::hasStopId)
       .filter(st -> {
-        var stopFound = getStopForStopId(feedId, st.getStopId()) != null;
+        var stopId = new FeedScopedId(tripId.getFeedId(), st.getStopId());
+        var stopFound = getStopForStopId(stopId) != null;
         if (!stopFound) {
-          warn(
-            feedId,
-            tripId,
-            "Stop '{}' not found in graph. Removing from new trip.",
-            st.getStopId()
-          );
+          warn(tripId, "Stop '{}' not found in graph. Removing from new trip.", st.getStopId());
         }
         return stopFound;
       })
       .toList();
 
     if (stopTimeUpdates.size() < 2) {
-      _warn.accept(
+      warn(
+        tripId,
         "After filtering out unusable stops, trip contains fewer than 2 stops. Skipping."
       );
       return false;
@@ -489,7 +481,7 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
     //
     // Handle added trip
     //
-    return handleAddedTrip(tripUpdate, tripDescriptor, stops, tripId, serviceDate);
+    return handleAddedTrip(stopTimeUpdates, tripDescriptor, stops, tripId, serviceDate);
   }
 
   /**
@@ -587,7 +579,6 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
   /**
    * Handle GTFS-RT TripUpdate message containing an ADDED trip.
    *
-   * @param tripUpdate     GTFS-RT TripUpdate message
    * @param tripDescriptor GTFS-RT TripDescriptor
    * @param stops          the stops of each StopTimeUpdate in the TripUpdate message
    * @param serviceDate    service date for added trip
@@ -636,15 +627,15 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
       var dummyAgency = new Agency(
         new FeedScopedId(tripId.getFeedId(), "Dummy"),
         "Dummy",
-        timeZone.toString());
+        timeZone.toString()
+      );
       var agency = routingService
         .getAgencies()
         .stream()
-        .filter(a -> a.getId().getFeedId().equals(feedId))
+        .filter(a -> a.getId().getFeedId().equals(tripId.getFeedId()))
         .filter(a -> ext.agencyId().stream().toList().contains(a.getId().getId()))
         .findFirst()
-        .orElse(dummyAgency
-      );
+        .orElse(dummyAgency);
       route.setAgency(agency);
       // Guess the route type as it doesn't exist yet in the specifications
       // Bus. Used for short- and long-distance bus routes.
@@ -904,10 +895,8 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
     //
 
     // Check whether trip id already exists in graph
-    Trip trip = getTripForTripId( tripId);
+    Trip trip = getTripForTripId(tripId);
 
-    Consumer<String> _warn = (String message) ->
-      TimetableSnapshotSource.warn(feedId, tripId, message);
     if (trip == null) {
       // TODO: should we support this and consider it an ADDED trip?
       warn(tripId, "Feed does not contain trip id of MODIFIED trip, skipping.");
@@ -985,7 +974,13 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
     cancelPreviouslyAddedTrip(tripId, serviceDate);
 
     // Add new trip
-    return addTripToGraphAndBuffer(trip, tripUpdate.getStopTimeUpdateList(), stops, serviceDate, RealTimeState.MODIFIED);
+    return addTripToGraphAndBuffer(
+      trip,
+      tripUpdate.getStopTimeUpdateList(),
+      stops,
+      serviceDate,
+      RealTimeState.MODIFIED
+    );
   }
 
   private boolean handleCanceledTrip(FeedScopedId tripId, final ServiceDate serviceDate) {
