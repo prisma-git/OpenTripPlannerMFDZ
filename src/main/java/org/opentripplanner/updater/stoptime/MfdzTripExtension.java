@@ -5,7 +5,6 @@ import static java.util.Optional.empty;
 import com.google.transit.realtime.GtfsRealtime;
 import de.mfdz.Mfdz;
 import java.util.Optional;
-import org.geotools.xml.xsi.XSISimpleTypes;
 
 public record MfdzTripExtension(
   Optional<String> routeUrl,
