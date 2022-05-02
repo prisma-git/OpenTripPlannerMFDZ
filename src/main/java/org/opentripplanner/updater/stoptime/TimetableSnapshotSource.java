@@ -747,8 +747,10 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
       if (stopTimeUpdate.hasStopSequence()) {
         stopTime.setStopSequence(stopTimeUpdate.getStopSequence());
       }
-      stopTime.setPickupType(SCHEDULED); // Regularly scheduled pickup
-      stopTime.setDropOffType(SCHEDULED); // Regularly scheduled drop off
+
+      var extension = MfdzStopTimeExtension.ofStopTime(stopTimeUpdate.getStopTimeProperties());
+      stopTime.setPickupType(extension.pickup().orElse(SCHEDULED));
+      stopTime.setDropOffType(extension.dropOff().orElse(SCHEDULED));
       // Add stop time to list
       stopTimes.add(stopTime);
     }
