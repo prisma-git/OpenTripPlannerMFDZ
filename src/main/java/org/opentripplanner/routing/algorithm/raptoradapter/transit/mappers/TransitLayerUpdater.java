@@ -65,6 +65,8 @@ public class TransitLayerUpdater {
       return;
     }
 
+    updatedTimetables = removeUpdatesOutsideOfTransitValidity(updatedTimetables);
+
     long startTime = System.currentTimeMillis();
 
     // Make a shallow copy of the realtime transit layer. Only the objects that are copied will be
@@ -230,5 +232,24 @@ public class TransitLayerUpdater {
       updatedTimetables.size(),
       System.currentTimeMillis() - startTime
     );
+  }
+
+  private Set<Timetable> removeUpdatesOutsideOfTransitValidity(Set<Timetable> updatedTimetables) {
+    return updatedTimetables
+      .stream()
+      .filter(tt -> {
+        var coveredByFeed = graph.transitFeedCovers(
+          tt.getServiceDate().toLocalDate().atStartOfDay(graph.getTimeZone().toZoneId()).toInstant()
+        );
+        if (!coveredByFeed) {
+          LOG.error(
+            "Update for pattern {} on {} not covered by any transit feed. Dropping.",
+            tt.getPattern(),
+            tt.getServiceDate()
+          );
+        }
+        return coveredByFeed;
+      })
+      .collect(Collectors.toSet());
   }
 }
