@@ -1,12 +1,13 @@
 package org.opentripplanner.routing.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opentripplanner.routing.core.TraverseMode.CAR;
 
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentripplanner.model.Agency;
 import org.opentripplanner.model.FeedScopedId;
 import org.opentripplanner.model.GenericLocation;
@@ -55,6 +56,21 @@ public class RoutingRequestTest {
   }
 
   @Test
+  public void shouldCloneObjectFields() {
+    var req = new RoutingRequest();
+
+    var clone = req.clone();
+
+    assertNotSame(clone, req);
+    assertNotSame(clone.itineraryFilters, req.itineraryFilters);
+    assertNotSame(clone.raptorDebugging, req.raptorDebugging);
+    assertNotSame(clone.raptorOptions, req.raptorOptions);
+
+    assertEquals(50, req.numItineraries);
+    assertEquals(50, clone.numItineraries);
+  }
+
+  @Test
   public void testPreferencesPenaltyForRoute() {
     Agency agency = new Agency(AGENCY_ID, "A", TIMEZONE);
     Route route = new Route(ROUTE_ID);
@@ -85,13 +101,13 @@ public class RoutingRequestTest {
       RoutingRequest routingRequest = tc.createRoutingRequest();
 
       assertEquals(
-        tc.toString(),
         tc.expectedCost,
-        routingRequest.preferencesPenaltyForRoute(route)
+        routingRequest.preferencesPenaltyForRoute(route),
+        tc.toString()
       );
 
       if (tc.prefAgency || tc.prefRoute) {
-        assertEquals(tc.toString(), 0, routingRequest.preferencesPenaltyForRoute(otherRoute));
+        assertEquals(0, routingRequest.preferencesPenaltyForRoute(otherRoute), tc.toString());
       }
     }
   }

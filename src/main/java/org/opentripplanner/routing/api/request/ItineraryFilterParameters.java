@@ -122,6 +122,21 @@ public class ItineraryFilterParameters {
     this.accessibilityScore = false;
   }
 
+  public ItineraryFilterParameters(ItineraryFilterParameters i) {
+    this.debug = i.debug;
+    this.groupSimilarityKeepOne = i.groupSimilarityKeepOne;
+    this.groupSimilarityKeepThree = i.groupSimilarityKeepThree;
+    this.groupedOtherThanSameLegsMaxCostMultiplier = i.groupedOtherThanSameLegsMaxCostMultiplier;
+    this.bikeRentalDistanceRatio = i.bikeRentalDistanceRatio;
+    this.parkAndRideDurationRatio = i.parkAndRideDurationRatio;
+    this.transitGeneralizedCostLimit = i.transitGeneralizedCostLimit;
+    this.nonTransitGeneralizedCostLimit = i.nonTransitGeneralizedCostLimit;
+    this.filterItinerariesWithSameFirstOrLastTrip = i.filterItinerariesWithSameFirstOrLastTrip;
+    this.accessibilityScore = i.accessibilityScore;
+    this.minBikeParkingDistance = i.minBikeParkingDistance;
+    this.flexOnlyToDestination = i.flexOnlyToDestination;
+  }
+
   public ItineraryFilterParameters(
     boolean debug,
     double groupSimilarityKeepOne,

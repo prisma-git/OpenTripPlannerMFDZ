@@ -1169,6 +1169,7 @@ public class RoutingRequest implements Cloneable, Serializable {
 
       clone.raptorOptions = new RaptorOptions(this.raptorOptions);
       clone.raptorDebugging = new DebugRaptor(this.raptorDebugging);
+      clone.itineraryFilters = new ItineraryFilterParameters(this.itineraryFilters);
 
       return clone;
     } catch (CloneNotSupportedException e) {
