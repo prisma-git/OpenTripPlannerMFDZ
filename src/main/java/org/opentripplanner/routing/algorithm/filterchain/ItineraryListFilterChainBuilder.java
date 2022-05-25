@@ -32,6 +32,8 @@ import org.opentripplanner.routing.algorithm.filterchain.filter.SameFirstOrLastT
 import org.opentripplanner.routing.algorithm.filterchain.filter.SortingFilter;
 import org.opentripplanner.routing.algorithm.filterchain.groupids.GroupByAllSameStations;
 import org.opentripplanner.routing.algorithm.filterchain.groupids.GroupByTripIdAndDistance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Create a filter chain based on the given config.
@@ -60,6 +62,8 @@ public class ItineraryListFilterChainBuilder {
   private double minBikeParkingDistance = NOT_SET;
   private boolean removeBikeOnlyParkAndRideItineraries;
   private boolean reverseFilteringDirection;
+
+  private static Logger LOG = LoggerFactory.getLogger(ItineraryListFilterChainBuilder.class);
 
   public ItineraryListFilterChainBuilder(SortOrder sortOrder) {
     this.sortOrder = sortOrder;
@@ -349,6 +353,7 @@ public class ItineraryListFilterChainBuilder {
       }
     }
 
+    LOG.error("maxNumberOfItineriers {}, debug {}", maxNumberOfItineraries, debug);
     // Remove itineraries if max limit is set
     if (maxNumberOfItineraries > 0) {
       filters.add(new SortingFilter(SortOrderComparator.comparator(sortOrder)));
