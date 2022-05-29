@@ -21,19 +21,20 @@ public class LatestDepartureTimeFilter implements ItineraryDeletionFlagger {
   }
 
   @Override
+  public Predicate<Itinerary> predicate() {
+    return it -> it.startTime().toInstant().isAfter(limit);
+  }
+
+  @Override
   public List<Itinerary> getFlaggedItineraries(List<Itinerary> itineraries) {
+    var transitItineraries = itineraries.stream().filter(Itinerary::hasTransit).toList();
     var flagged = itineraries.stream().filter(predicate()).toList();
     // if all are flagged, don't do it as you will have no results left
-    if (flagged.size() == itineraries.size()) {
+    if (flagged.size() == transitItineraries.size()) {
       return List.of();
     } else {
       return flagged;
     }
-  }
-
-  @Override
-  public Predicate<Itinerary> predicate() {
-    return it -> it.startTime().toInstant().isAfter(limit);
   }
 
   @Override
