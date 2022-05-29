@@ -1,5 +1,6 @@
 package org.opentripplanner.routing.algorithm.mapping;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.Instant;
 import java.util.function.Consumer;
