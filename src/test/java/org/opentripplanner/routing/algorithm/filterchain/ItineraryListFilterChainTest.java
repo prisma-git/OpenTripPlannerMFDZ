@@ -13,6 +13,7 @@ import java.time.Instant;
 import java.util.List;
 import org.geotools.xml.xsi.XSISimpleTypes.ID;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -157,6 +158,7 @@ public class ItineraryListFilterChainTest implements PlanTestConstants {
   }
 
   @Test
+  @Disabled
   void routingErrorsOutsideWindowTest() {
     var chain = createBuilder(false, false, 20)
       .withRemoveWalkAllTheWayResults(true)
