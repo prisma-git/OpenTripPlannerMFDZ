@@ -10,7 +10,7 @@ public class LegacyGraphQLCarParkImpl implements LegacyGraphQLDataFetchers.Legac
 
   @Override
   public DataFetcher<String> carParkId() {
-    return environment -> getSource(environment).getId().getId();
+    return environment -> getSource(environment).getId().toString();
   }
 
   @Override
