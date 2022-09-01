@@ -48,9 +48,7 @@ public class AccessEgressMapper {
   ) {
     return flexAccessEgresses
       .stream()
-      .map(flexAccessEgress ->
-        new FlexAccessEgressAdapter(flexAccessEgress, stopIndex, startOfTime, isEgress)
-      )
+      .map(flexAccessEgress -> new FlexAccessEgressAdapter(flexAccessEgress, startOfTime, isEgress))
       .collect(Collectors.toList());
   }
 }

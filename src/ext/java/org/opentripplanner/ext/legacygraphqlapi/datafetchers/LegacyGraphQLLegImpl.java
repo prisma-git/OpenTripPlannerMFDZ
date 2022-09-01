@@ -15,7 +15,10 @@ import org.opentripplanner.model.plan.Leg;
 import org.opentripplanner.model.plan.StopArrival;
 import org.opentripplanner.model.plan.WalkStep;
 import org.opentripplanner.routing.RoutingService;
+import org.opentripplanner.routing.alertpatch.TransitAlert;
+import org.opentripplanner.transit.model.network.Route;
 import org.opentripplanner.transit.model.organization.Agency;
+import org.opentripplanner.transit.model.timetable.Trip;
 
 public class LegacyGraphQLLegImpl implements LegacyGraphQLDataFetchers.LegacyGraphQLLeg {
 
