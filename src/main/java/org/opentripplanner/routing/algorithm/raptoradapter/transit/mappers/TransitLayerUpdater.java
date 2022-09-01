@@ -238,8 +238,8 @@ public class TransitLayerUpdater {
     return updatedTimetables
       .stream()
       .filter(tt -> {
-        var coveredByFeed = graph.transitFeedCovers(
-          tt.getServiceDate().toLocalDate().atStartOfDay(graph.getTimeZone().toZoneId()).toInstant()
+        var coveredByFeed = transitModel.transitFeedCovers(
+          tt.getServiceDate().atStartOfDay(transitModel.getTimeZone()).toInstant()
         );
         if (!coveredByFeed) {
           LOG.error(

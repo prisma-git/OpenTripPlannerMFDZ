@@ -24,7 +24,7 @@ public class RemoveBikeParkWithShortBikingFilter implements ItineraryListFilter 
 
   private boolean filterItinerariesWithShortBikeParkingLeg(Itinerary itinerary) {
     double bikeParkingDistance = 0;
-    for (var leg : itinerary.legs) {
+    for (var leg : itinerary.getLegs()) {
       if (leg.isTransitLeg()) {
         break;
       }

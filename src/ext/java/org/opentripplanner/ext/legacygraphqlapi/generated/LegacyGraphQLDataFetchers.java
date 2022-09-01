@@ -2,9 +2,12 @@
 package org.opentripplanner.ext.legacygraphqlapi.generated;
 
 import graphql.relay.Connection;
+import graphql.relay.Connection;
+import graphql.relay.Edge;
 import graphql.relay.Edge;
 import graphql.schema.DataFetcher;
 import graphql.schema.TypeResolver;
+import java.util.Map;
 import java.util.Map;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -12,6 +15,10 @@ import org.opentripplanner.api.resource.DebugOutput;
 import org.opentripplanner.common.model.P2;
 import org.opentripplanner.ext.legacygraphqlapi.generated.LegacyGraphQLTypes.LegacyGraphQLInputField;
 import org.opentripplanner.ext.legacygraphqlapi.generated.LegacyGraphQLTypes.LegacyGraphQLRoutingErrorCode;
+import org.opentripplanner.ext.legacygraphqlapi.model.LegacyGraphQLRouteTypeModel;
+import org.opentripplanner.ext.legacygraphqlapi.model.LegacyGraphQLStopOnRouteModel;
+import org.opentripplanner.ext.legacygraphqlapi.model.LegacyGraphQLStopOnTripModel;
+import org.opentripplanner.ext.legacygraphqlapi.model.LegacyGraphQLUnknownModel;
 import org.opentripplanner.model.StopTimesInPattern;
 import org.opentripplanner.model.SystemNotice;
 import org.opentripplanner.model.TripTimeOnDate;
@@ -29,11 +36,14 @@ import org.opentripplanner.routing.graphfinder.NearbyStop;
 import org.opentripplanner.routing.graphfinder.PatternAtStop;
 import org.opentripplanner.routing.graphfinder.PlaceAtDistance;
 import org.opentripplanner.routing.vehicle_parking.VehicleParking;
+import org.opentripplanner.routing.vehicle_parking.VehicleParking;
+import org.opentripplanner.routing.vehicle_parking.VehicleParking;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingSpaces;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingState;
 import org.opentripplanner.routing.vehicle_rental.RentalVehicleType;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalPlace;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalStation;
+import org.opentripplanner.routing.vehicle_rental.VehicleRentalStationUris;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalStationUris;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalVehicle;
 import org.opentripplanner.transit.model.network.Route;
@@ -83,6 +93,8 @@ public class LegacyGraphQLDataFetchers {
     public DataFetcher<String> alertHeaderText();
 
     public DataFetcher<Iterable<Map.Entry<String, String>>> alertHeaderTextTranslations();
+
+    public DataFetcher<String> alertId();
 
     public DataFetcher<String> alertSeverityLevel();
 
@@ -329,6 +341,8 @@ public class LegacyGraphQLDataFetchers {
   public interface LegacyGraphQLLeg {
     public DataFetcher<Agency> agency();
 
+    public DataFetcher<Iterable<TransitAlert>> alerts();
+
     public DataFetcher<Integer> arrivalDelay();
 
     public DataFetcher<Integer> departureDelay();
@@ -474,7 +488,7 @@ public class LegacyGraphQLDataFetchers {
 
     public DataFetcher<Object> stop();
 
-    public DataFetcher<VehicleParking> vehicleParking();
+    public DataFetcher<org.opentripplanner.model.plan.VehicleParkingWithEntrance> vehicleParkingWithEntrance();
 
     public DataFetcher<VehicleRentalStation> vehicleRentalStation();
 
@@ -927,6 +941,8 @@ public class LegacyGraphQLDataFetchers {
 
     public DataFetcher<String> detailsUrl();
 
+    public DataFetcher<String> feeHours();
+
     public DataFetcher<graphql.relay.Relay.ResolvedGlobalId> id();
 
     public DataFetcher<String> imageUrl();
@@ -938,6 +954,8 @@ public class LegacyGraphQLDataFetchers {
     public DataFetcher<String> name();
 
     public DataFetcher<String> note();
+
+    public DataFetcher<String> openingHours();
 
     public DataFetcher<Boolean> realtime();
 
@@ -957,6 +975,14 @@ public class LegacyGraphQLDataFetchers {
     public DataFetcher<Integer> carSpaces();
 
     public DataFetcher<Integer> wheelchairAccessibleCarSpaces();
+  }
+
+  public interface LegacyGraphQLVehicleParkingWithEntrance {
+    public DataFetcher<Boolean> closesSoon();
+
+    public DataFetcher<Boolean> realtime();
+
+    public DataFetcher<VehicleParking> vehicleParking();
   }
 
   /** Realtime vehicle position */
