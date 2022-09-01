@@ -4,7 +4,7 @@
 # at opentripplanner.readthedocs.org
 
 site_name: OpenTripPlanner 2
-site_url: http://docs.opentripplanner.org
+site_url: https://docs.opentripplanner.org
 repo_url: https://github.com/opentripplanner/OpenTripPlanner
 docs_dir: docs
 site_dir: target/mkdocs
@@ -26,9 +26,11 @@ pages:
 - 'Usage':
     - Basic Tutorial: 'Basic-Tutorial.md'
     - Getting OTP: 'Getting-OTP.md'
+    - Container image: 'Container-Image.md'
     - Configuration:
         - Introduction: 'Configuration.md'
         - Build: 'BuildConfiguration.md'
+        - "Boarding locations": 'BoardingLocations.md'
         - Router: 'RouterConfiguration.md'
         - Accessibility: 'Accessibility.md'
     - Preparing OSM Data: 'Preparing-OSM.md'
@@ -49,7 +51,8 @@ pages:
     - Google Cloud Storage: 'sandbox/GoogleCloudStorage.md'
     - HSL Legacy GraphQL API: 'sandbox/LegacyGraphQLApi.md'
     - Transmodel(NeTEx) GraphQL API: 'sandbox/TransmodelApi.md'
-    - SIRI Updater: 'sandbox/SiriUpdator.md'
+    - SIRI Updater (Google Cloud): 'sandbox/SiriUpdator.md'
+    - SIRI Updater (Azure): 'sandbox/SiriAzureUpdater.md'
     - Vehicle Rental Service Directory API support: 'sandbox/VehicleRentalServiceDirectory.md'
     - Smoove Bike Rental Updator Support: 'sandbox/SmooveBikeRental.md'
     - Mapbox Vector Tiles API: 'sandbox/MapboxVectorTilesApi.md'
@@ -60,3 +63,7 @@ pages:
     - Data Overlay: 'sandbox/DataOverlay.md'
     - Vehicle Parking Updaters: 'sandbox/VehicleParking.md'
     - Vehicle-to-stop Heuristics: 'sandbox/VehicleToStopHeuristics.md'
+    - Geocoder API: 'sandbox/GeocoderAPI.md'
+    - Travel time isochrones: 'sandbox/TravelTime.md'
+    - IBI accessibility score: 'sandbox/IBIAccessibilityScore.md'
+    - Fares: 'sandbox/Fares.md'

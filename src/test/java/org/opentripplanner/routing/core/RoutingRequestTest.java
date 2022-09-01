@@ -6,20 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opentripplanner.routing.core.TraverseMode.CAR;
 
-import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.opentripplanner.model.Agency;
-import org.opentripplanner.model.FeedScopedId;
 import org.opentripplanner.model.GenericLocation;
-import org.opentripplanner.model.Route;
 import org.opentripplanner.routing.api.request.RoutingRequest;
 
 public class RoutingRequestTest {
-
-  private static final FeedScopedId AGENCY_ID = new FeedScopedId("F", "A1");
-  private static final FeedScopedId ROUTE_ID = new FeedScopedId("F", "R1");
-  private static final FeedScopedId OTHER_ID = new FeedScopedId("F", "X");
-  public static final String TIMEZONE = "Europe/Paris";
 
   @Test
   public void testRequest() {
@@ -70,103 +61,7 @@ public class RoutingRequestTest {
     assertEquals(50, clone.numItineraries);
   }
 
-  @Test
-  public void testPreferencesPenaltyForRoute() {
-    Agency agency = new Agency(AGENCY_ID, "A", TIMEZONE);
-    Route route = new Route(ROUTE_ID);
-    route.setShortName("R");
-    route.setAgency(agency);
-
-    Agency otherAgency = new Agency(OTHER_ID, "OtherA", TIMEZONE);
-    Route otherRoute = new Route(OTHER_ID);
-    otherRoute.setShortName("OtherR");
-    otherRoute.setAgency(otherAgency);
-
-    List<String> testCases = List.of(
-      // !prefAgency | !prefRoute | unPrefA | unPrefR | expected cost
-      "       -      |      -     |    -    |    -    |     0",
-      "       -      |      -     |    -    |    x    |   300",
-      "       -      |      -     |    x    |    -    |   300",
-      "       -      |      x     |    -    |    -    |   300",
-      "       x      |      -     |    -    |    -    |   300",
-      "       -      |      -     |    x    |    x    |   300",
-      "       x      |      x     |    -    |    -    |   300",
-      "       x      |      -     |    -    |    x    |   600",
-      "       -      |      x     |    x    |    -    |   600",
-      "       x      |      x     |    x    |    x    |   600"
-    );
-
-    for (String it : testCases) {
-      RoutePenaltyTC tc = new RoutePenaltyTC(it);
-      RoutingRequest routingRequest = tc.createRoutingRequest();
-
-      assertEquals(
-        tc.expectedCost,
-        routingRequest.preferencesPenaltyForRoute(route),
-        tc.toString()
-      );
-
-      if (tc.prefAgency || tc.prefRoute) {
-        assertEquals(0, routingRequest.preferencesPenaltyForRoute(otherRoute), tc.toString());
-      }
-    }
-  }
-
   private GenericLocation randomLocation() {
     return new GenericLocation(Math.random(), Math.random());
-  }
-
-  private static class RoutePenaltyTC {
-
-    final boolean prefAgency;
-    final boolean prefRoute;
-    final boolean unPrefAgency;
-    final boolean unPrefRoute;
-    public final int expectedCost;
-
-    RoutePenaltyTC(String input) {
-      String[] cells = input.replace(" ", "").split("\\|");
-      this.prefAgency = "x".equalsIgnoreCase(cells[0]);
-      this.prefRoute = "x".equalsIgnoreCase(cells[1]);
-      this.unPrefAgency = "x".equalsIgnoreCase(cells[2]);
-      this.unPrefRoute = "x".equalsIgnoreCase(cells[3]);
-      this.expectedCost = Integer.parseInt(cells[4]);
-    }
-
-    @Override
-    public String toString() {
-      final StringBuilder sb = new StringBuilder();
-      if (prefAgency) {
-        sb.append(", prefAgency=X");
-      }
-      if (prefRoute) {
-        sb.append(", prefRoute=X");
-      }
-      if (unPrefAgency) {
-        sb.append(", unPrefAgency=X");
-      }
-      if (unPrefRoute) {
-        sb.append(", unPrefRoute=X");
-      }
-
-      return "RoutePenaltyTC {" + sb.substring(sb.length() == 0 ? 0 : 2) + "}";
-    }
-
-    RoutingRequest createRoutingRequest() {
-      RoutingRequest request = new RoutingRequest();
-      if (prefAgency) {
-        request.setPreferredAgencies(List.of(OTHER_ID));
-      }
-      if (prefRoute) {
-        request.setPreferredRoutes(List.of(OTHER_ID));
-      }
-      if (unPrefAgency) {
-        request.setUnpreferredAgencies(List.of(AGENCY_ID));
-      }
-      if (unPrefRoute) {
-        request.setUnpreferredRoutes(List.of(ROUTE_ID));
-      }
-      return request;
-    }
   }
 }

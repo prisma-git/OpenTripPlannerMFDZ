@@ -5,14 +5,13 @@ import org.opentripplanner.ext.flex.flexpathcalculator.FlexPath;
 import org.opentripplanner.ext.flex.flexpathcalculator.FlexPathCalculator;
 import org.opentripplanner.ext.flex.template.FlexAccessEgressTemplate;
 import org.opentripplanner.ext.flex.trip.FlexTrip;
-import org.opentripplanner.model.StopLocation;
-import org.opentripplanner.model.Trip;
 import org.opentripplanner.routing.core.State;
 import org.opentripplanner.routing.core.StateEditor;
 import org.opentripplanner.routing.core.TraverseMode;
 import org.opentripplanner.routing.graph.Edge;
 import org.opentripplanner.routing.graph.Vertex;
-import org.opentripplanner.util.I18NString;
+import org.opentripplanner.transit.model.basic.I18NString;
+import org.opentripplanner.transit.model.site.StopLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,11 +55,6 @@ public class FlexTripEdge extends Edge {
 
   public int getTimeInSeconds() {
     return flexPath.durationSeconds;
-  }
-
-  @Override
-  public Trip getTrip() {
-    return trip.getTrip();
   }
 
   @Override

@@ -1,21 +1,28 @@
 package org.opentripplanner.standalone.config;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.opentripplanner.standalone.config.JsonSupport.jsonNodeForTest;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import org.junit.Test;
+import java.util.Set;
+import org.junit.jupiter.api.Test;
+import org.opentripplanner.ext.fares.impl.DefaultFareServiceImpl;
 
 public class BuildConfigTest {
 
   @Test
-  public void testParsePeriodDate() {
-    // Given
-    JsonNode node = jsonNodeForTest("{ 'parentStopLinking' : true }");
+  public void boardingLocationRefs() {
+    var node = jsonNodeForTest("{ 'boardingLocationTags' : ['a-ha', 'royksopp'] }");
 
-    BuildConfig subject = new BuildConfig(node, "Test", false);
+    var subject = new BuildConfig(node, "Test", false);
 
-    // Then
-    assertTrue(subject.parentStopLinking);
+    assertEquals(Set.of("a-ha", "royksopp"), subject.boardingLocationTags);
+  }
+
+  @Test
+  public void fareService() {
+    var node = jsonNodeForTest("{ 'fares' : \"highestFareInFreeTransferWindow\" }");
+    var conf = new BuildConfig(node, "Test", false);
+    assertInstanceOf(DefaultFareServiceImpl.class, conf.fareServiceFactory.makeFareService());
   }
 }

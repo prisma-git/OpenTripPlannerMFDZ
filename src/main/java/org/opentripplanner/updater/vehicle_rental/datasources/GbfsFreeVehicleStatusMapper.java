@@ -4,12 +4,12 @@ import java.time.Instant;
 import java.util.Map;
 import org.entur.gbfs.v2_2.free_bike_status.GBFSBike;
 import org.entur.gbfs.v2_2.free_bike_status.GBFSRentalUris;
-import org.opentripplanner.model.FeedScopedId;
 import org.opentripplanner.routing.vehicle_rental.RentalVehicleType;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalStationUris;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalSystem;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalVehicle;
-import org.opentripplanner.util.NonLocalizedString;
+import org.opentripplanner.transit.model.basic.NonLocalizedString;
+import org.opentripplanner.transit.model.framework.FeedScopedId;
 
 public class GbfsFreeVehicleStatusMapper {
 
@@ -44,9 +44,7 @@ public class GbfsFreeVehicleStatusMapper {
       rentalVehicle.isDisabled = vehicle.getIsDisabled() != null ? vehicle.getIsDisabled() : false;
       rentalVehicle.lastReported =
         vehicle.getLastReported() != null
-          ? Instant
-            .ofEpochSecond((long) (double) vehicle.getLastReported())
-            .atZone(system.timezone.toZoneId())
+          ? Instant.ofEpochSecond((long) (double) vehicle.getLastReported())
           : null;
       rentalVehicle.currentRangeMeters = vehicle.getCurrentRangeMeters();
       rentalVehicle.pricingPlanId = vehicle.getPricingPlanId();

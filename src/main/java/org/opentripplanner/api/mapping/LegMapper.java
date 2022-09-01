@@ -21,12 +21,15 @@ public class LegMapper {
   private final PlaceMapper placeMapper;
   private final boolean addIntermediateStops;
 
+  private final I18NStringMapper i18NStringMapper;
+
   public LegMapper(Locale locale, boolean addIntermediateStops) {
     this.walkStepMapper = new WalkStepMapper(locale);
     this.streetNoteMaperMapper = new StreetNoteMaperMapper(locale);
     this.alertMapper = new AlertMapper(locale);
     this.placeMapper = new PlaceMapper(locale);
     this.addIntermediateStops = addIntermediateStops;
+    this.i18NStringMapper = new I18NStringMapper(locale);
   }
 
   public List<ApiLeg> mapLegs(List<Leg> domain) {
@@ -83,7 +86,7 @@ public class LegMapper {
     api.realTime = domain.getRealTime();
     api.isNonExactFrequency = domain.getNonExactFrequency();
     api.headway = domain.getHeadway();
-    api.distance = domain.getDistanceMeters();
+    api.distance = round3Decimals(domain.getDistanceMeters());
     api.generalizedCost = domain.getGeneralizedCost();
     api.pathway = domain.getPathwayId() != null;
     api.mode = TraverseModeMapper.mapToApi(domain.getMode());
@@ -98,18 +101,18 @@ public class LegMapper {
       api.agencyBrandingUrl = agency.getBrandingUrl();
 
       var route = domain.getRoute();
-      api.route = route.getLongName();
+      api.route = i18NStringMapper.mapToApi(route.getLongName());
       api.routeColor = route.getColor();
       api.routeType = domain.getRouteType();
       api.routeId = FeedScopedIdMapper.mapToApi(route.getId());
       api.routeShortName = route.getShortName();
-      api.routeLongName = route.getLongName();
+      api.routeLongName = i18NStringMapper.mapToApi(route.getLongName());
       api.routeTextColor = route.getTextColor();
 
       var trip = domain.getTrip();
       api.tripId = FeedScopedIdMapper.mapToApi(trip.getId());
-      api.tripShortName = trip.getTripShortName();
-      api.tripBlockId = trip.getBlockId();
+      api.tripShortName = trip.getShortName();
+      api.tripBlockId = trip.getGtfsBlockId();
     } else if (domain.getPathwayId() != null) {
       api.route = FeedScopedIdMapper.mapToApi(domain.getPathwayId());
     } else {
@@ -119,13 +122,13 @@ public class LegMapper {
 
     api.interlineWithPreviousLeg = domain.isInterlinedWithPreviousLeg();
     api.headsign = domain.getHeadsign();
-    api.serviceDate = ServiceDateMapper.mapToApi(domain.getServiceDate());
+    api.serviceDate = LocalDateMapper.mapToApi(domain.getServiceDate());
     api.routeBrandingUrl = domain.getRouteBrandingUrl();
     if (addIntermediateStops) {
       api.intermediateStops = placeMapper.mapStopArrivals(domain.getIntermediateStops());
     }
     api.legGeometry = PolylineEncoder.encodeGeometry(domain.getLegGeometry());
-    api.legElevation = mapElevation(domain.getLegElevation());
+    api.legElevation = mapElevation(domain.getRoundedLegElevation());
     api.steps = walkStepMapper.mapWalkSteps(domain.getWalkSteps());
     api.alerts =
       concatenateAlerts(
@@ -144,6 +147,10 @@ public class LegMapper {
     api.accessibilityScore = domain.accessibilityScore();
 
     return api;
+  }
+
+  private Double round3Decimals(double value) {
+    return Math.round(value * 1000d) / 1000d;
   }
 
   private static String getBoardAlightMessage(PickDrop boardAlightType) {

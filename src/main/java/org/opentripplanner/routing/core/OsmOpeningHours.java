@@ -13,7 +13,7 @@ import java.util.Locale;
 import java.util.Optional;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
-import org.opentripplanner.util.I18NString;
+import org.opentripplanner.transit.model.basic.I18NString;
 
 /**
  *

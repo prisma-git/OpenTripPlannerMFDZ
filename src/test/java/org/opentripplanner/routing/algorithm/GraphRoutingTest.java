@@ -7,17 +7,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.locationtech.jts.geom.Coordinate;
-import org.opentripplanner.common.geometry.GeometryUtils;
-import org.opentripplanner.model.Agency;
-import org.opentripplanner.model.Entrance;
-import org.opentripplanner.model.FeedScopedId;
-import org.opentripplanner.model.Route;
-import org.opentripplanner.model.Stop;
+import org.opentripplanner.TestOtpModel;
 import org.opentripplanner.model.StopTime;
-import org.opentripplanner.model.TransitMode;
-import org.opentripplanner.model.TripPattern;
-import org.opentripplanner.model.WgsCoordinate;
-import org.opentripplanner.model.WheelChairBoarding;
 import org.opentripplanner.routing.algorithm.astar.AStarBuilder;
 import org.opentripplanner.routing.api.request.RoutingRequest;
 import org.opentripplanner.routing.core.RoutingContext;
@@ -54,13 +45,27 @@ import org.opentripplanner.routing.vertextype.StreetVertex;
 import org.opentripplanner.routing.vertextype.TemporaryVertex;
 import org.opentripplanner.routing.vertextype.TransitEntranceVertex;
 import org.opentripplanner.routing.vertextype.TransitStopVertex;
+import org.opentripplanner.routing.vertextype.TransitStopVertexBuilder;
 import org.opentripplanner.routing.vertextype.VehicleParkingEntranceVertex;
-import org.opentripplanner.routing.vertextype.VehicleRentalStationVertex;
-import org.opentripplanner.util.NonLocalizedString;
+import org.opentripplanner.routing.vertextype.VehicleRentalPlaceVertex;
+import org.opentripplanner.transit.model._data.TransitModelForTest;
+import org.opentripplanner.transit.model.basic.NonLocalizedString;
+import org.opentripplanner.transit.model.basic.TransitMode;
+import org.opentripplanner.transit.model.basic.WheelchairAccessibility;
+import org.opentripplanner.transit.model.framework.Deduplicator;
+import org.opentripplanner.transit.model.framework.FeedScopedId;
+import org.opentripplanner.transit.model.network.Route;
+import org.opentripplanner.transit.model.network.TripPattern;
+import org.opentripplanner.transit.model.organization.Agency;
+import org.opentripplanner.transit.model.site.Entrance;
+import org.opentripplanner.transit.model.site.PathwayMode;
+import org.opentripplanner.transit.model.site.RegularStop;
+import org.opentripplanner.transit.service.StopModel;
+import org.opentripplanner.transit.service.TransitModel;
+import org.opentripplanner.util.geometry.GeometryUtils;
 
 public abstract class GraphRoutingTest {
 
-  public static final String TEST_FEED_ID = "testFeed";
   public static final String TEST_VEHICLE_RENTAL_NETWORK = "test network";
 
   public static String graphPathToString(GraphPath graphPath) {
@@ -76,8 +81,11 @@ public abstract class GraphRoutingTest {
       .collect(Collectors.joining(" - "));
   }
 
-  protected Graph graphOf(Builder builder) {
-    return builder.graph();
+  protected TestOtpModel modelOf(Builder builder) {
+    builder.build();
+    Graph graph = builder.graph();
+    TransitModel transitModel = builder.transitModel();
+    return new TestOtpModel(graph, transitModel).index();
   }
 
   protected GraphPath routeParkAndRide(
@@ -95,13 +103,24 @@ public abstract class GraphRoutingTest {
 
   public abstract static class Builder {
 
-    private final Graph graph = new Graph();
+    private final Graph graph;
+    private final TransitModel transitModel;
+
+    protected Builder() {
+      var deduplicator = new Deduplicator();
+      var stopModel = new StopModel();
+      graph = new Graph(deduplicator);
+      transitModel = new TransitModel(stopModel, deduplicator);
+    }
 
     public abstract void build();
 
     public Graph graph() {
-      build();
       return graph;
+    }
+
+    public TransitModel transitModel() {
+      return transitModel;
     }
 
     public <T> T v(String label) {
@@ -200,8 +219,8 @@ public abstract class GraphRoutingTest {
         var from = onboardVertices.get(i - 1);
         var to = onboardVertices.get(i);
 
-        edges.add(new ElevatorHopEdge(from, to, permission));
-        edges.add(new ElevatorHopEdge(to, from, permission));
+        edges.add(new ElevatorHopEdge(from, to, permission, WheelchairAccessibility.POSSIBLE));
+        edges.add(new ElevatorHopEdge(to, from, permission, WheelchairAccessibility.POSSIBLE));
       }
 
       return edges;
@@ -209,37 +228,25 @@ public abstract class GraphRoutingTest {
 
     // -- Transit network (pathways, linking)
     public Entrance entranceEntity(String id, double latitude, double longitude) {
-      return new Entrance(
-        new FeedScopedId(TEST_FEED_ID, id),
-        new NonLocalizedString(id),
-        id,
-        null,
-        WgsCoordinate.creatOptionalCoordinate(latitude, longitude),
-        WheelChairBoarding.NO_INFORMATION,
-        null
-      );
+      return Entrance
+        .of(TransitModelForTest.id(id))
+        .withName(new NonLocalizedString(id))
+        .withCode(id)
+        .withCoordinate(latitude, longitude)
+        .build();
     }
 
-    public Stop stopEntity(String id, double latitude, double longitude) {
-      return new Stop(
-        new FeedScopedId(TEST_FEED_ID, id),
-        new NonLocalizedString(id),
-        id,
-        null,
-        WgsCoordinate.creatOptionalCoordinate(latitude, longitude),
-        WheelChairBoarding.NO_INFORMATION,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
-      );
+    public RegularStop stopEntity(String id, double latitude, double longitude) {
+      var stop = TransitModelForTest.stop(id).withCoordinate(latitude, longitude).build();
+      transitModel.mergeStopModels(StopModel.of().withRegularStop(stop).build());
+      return stop;
     }
 
     public TransitStopVertex stop(String id, double latitude, double longitude) {
-      return new TransitStopVertex(graph, stopEntity(id, latitude, longitude), null);
+      return new TransitStopVertexBuilder()
+        .withGraph(graph)
+        .withStop(stopEntity(id, latitude, longitude))
+        .build();
     }
 
     public TransitEntranceVertex entrance(String id, double latitude, double longitude) {
@@ -282,7 +289,8 @@ public abstract class GraphRoutingTest {
         length,
         0,
         0,
-        false
+        false,
+        PathwayMode.WALKWAY
       );
     }
 
@@ -334,13 +342,13 @@ public abstract class GraphRoutingTest {
       return vehicleRentalStation;
     }
 
-    public VehicleRentalStationVertex vehicleRentalStation(
+    public VehicleRentalPlaceVertex vehicleRentalStation(
       String id,
       double latitude,
       double longitude,
       String network
     ) {
-      var vertex = new VehicleRentalStationVertex(
+      var vertex = new VehicleRentalPlaceVertex(
         graph,
         vehicleRentalStationEntity(id, latitude, longitude, network)
       );
@@ -348,7 +356,7 @@ public abstract class GraphRoutingTest {
       return vertex;
     }
 
-    public VehicleRentalStationVertex vehicleRentalStation(
+    public VehicleRentalPlaceVertex vehicleRentalStation(
       String id,
       double latitude,
       double longitude
@@ -356,15 +364,15 @@ public abstract class GraphRoutingTest {
       return vehicleRentalStation(id, latitude, longitude, TEST_VEHICLE_RENTAL_NETWORK);
     }
 
-    public StreetVehicleRentalLink link(StreetVertex from, VehicleRentalStationVertex to) {
+    public StreetVehicleRentalLink link(StreetVertex from, VehicleRentalPlaceVertex to) {
       return new StreetVehicleRentalLink(from, to);
     }
 
-    public StreetVehicleRentalLink link(VehicleRentalStationVertex from, StreetVertex to) {
+    public StreetVehicleRentalLink link(VehicleRentalPlaceVertex from, StreetVertex to) {
       return new StreetVehicleRentalLink(from, to);
     }
 
-    public List<StreetVehicleRentalLink> biLink(StreetVertex from, VehicleRentalStationVertex to) {
+    public List<StreetVehicleRentalLink> biLink(StreetVertex from, VehicleRentalPlaceVertex to) {
       return List.of(link(from, to), link(to, from));
     }
 
@@ -393,7 +401,7 @@ public abstract class GraphRoutingTest {
     ) {
       var vehicleParking = VehicleParking
         .builder()
-        .id(new FeedScopedId(TEST_FEED_ID, id))
+        .id(TransitModelForTest.id(id))
         .x(x)
         .y(y)
         .bicyclePlaces(bicyclePlaces)
@@ -418,7 +426,7 @@ public abstract class GraphRoutingTest {
     ) {
       return builder ->
         builder
-          .entranceId(new FeedScopedId(TEST_FEED_ID, id))
+          .entranceId(TransitModelForTest.id(id))
           .name(new NonLocalizedString(id))
           .x(streetVertex.getX())
           .y(streetVertex.getY())
@@ -442,20 +450,13 @@ public abstract class GraphRoutingTest {
       return List.of(link(from, to), link(to, from));
     }
 
-    public Agency agency(String name) {
-      return new Agency(new FeedScopedId("Test", name), name, null);
-    }
-
     public Route route(String id, TransitMode mode, Agency agency) {
-      var route = new Route(new FeedScopedId("Test", id));
-      route.setAgency(agency);
-      route.setMode(mode);
-      return route;
+      return TransitModelForTest.route(id).withAgency(agency).withMode(mode).build();
     }
 
     // Transit
     public void tripPattern(TripPattern tripPattern) {
-      graph.tripPatternForId.put(tripPattern.getId(), tripPattern);
+      transitModel.addTripPattern(tripPattern.getId(), tripPattern);
     }
 
     public StopTime st(TransitStopVertex s1) {

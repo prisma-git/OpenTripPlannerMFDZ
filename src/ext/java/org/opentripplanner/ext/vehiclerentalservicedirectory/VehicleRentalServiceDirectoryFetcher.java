@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import org.opentripplanner.ext.vehiclerentalservicedirectory.api.VehicleRentalServiceDirectoryFetcherParameters;
+import org.opentripplanner.graph_builder.linking.VertexLinker;
+import org.opentripplanner.routing.vehicle_rental.VehicleRentalStationService;
 import org.opentripplanner.updater.GraphUpdater;
 import org.opentripplanner.updater.vehicle_rental.VehicleRentalUpdater;
 import org.opentripplanner.updater.vehicle_rental.datasources.VehicleRentalDataSourceFactory;
@@ -26,7 +28,9 @@ public class VehicleRentalServiceDirectoryFetcher {
   private static final int DEFAULT_FREQUENCY_SEC = 15;
 
   public static List<GraphUpdater> createUpdatersFromEndpoint(
-    VehicleRentalServiceDirectoryFetcherParameters parameters
+    VehicleRentalServiceDirectoryFetcherParameters parameters,
+    VertexLinker vertexLinker,
+    VehicleRentalStationService vehicleRentalStationService
   ) {
     LOG.info("Fetching list of updaters from {}", parameters.getUrl());
 
@@ -64,7 +68,8 @@ public class VehicleRentalServiceDirectoryFetcher {
           new GbfsDataSourceParameters(
             updaterUrl.asText(),
             parameters.getLanguage(),
-            parameters.getHeaders()
+            parameters.getHeaders(),
+            parameters.getSourceNetworkName()
           )
         );
         LOG.info("Fetched updater info for {} at url {}", network, updaterUrl);
@@ -72,7 +77,12 @@ public class VehicleRentalServiceDirectoryFetcher {
         var dataSource = VehicleRentalDataSourceFactory.create(
           vehicleRentalParameters.sourceParameters()
         );
-        GraphUpdater updater = new VehicleRentalUpdater(vehicleRentalParameters, dataSource);
+        GraphUpdater updater = new VehicleRentalUpdater(
+          vehicleRentalParameters,
+          dataSource,
+          vertexLinker,
+          vehicleRentalStationService
+        );
         updaters.add(updater);
       }
     } catch (java.io.IOException e) {

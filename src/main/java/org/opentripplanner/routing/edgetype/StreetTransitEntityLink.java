@@ -2,16 +2,16 @@ package org.opentripplanner.routing.edgetype;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.LineString;
-import org.opentripplanner.common.geometry.GeometryUtils;
-import org.opentripplanner.model.Trip;
-import org.opentripplanner.model.WheelChairBoarding;
 import org.opentripplanner.routing.api.request.RoutingRequest;
 import org.opentripplanner.routing.core.State;
 import org.opentripplanner.routing.core.StateEditor;
 import org.opentripplanner.routing.graph.Edge;
 import org.opentripplanner.routing.graph.Vertex;
 import org.opentripplanner.routing.vertextype.StreetVertex;
-import org.opentripplanner.util.I18NString;
+import org.opentripplanner.transit.model.basic.I18NString;
+import org.opentripplanner.transit.model.basic.WheelchairAccessibility;
+import org.opentripplanner.util.geometry.GeometryUtils;
+import org.opentripplanner.util.lang.ToStringBuilder;
 
 /**
  * This represents the connection between a street vertex and a transit vertex.
@@ -20,43 +20,34 @@ public abstract class StreetTransitEntityLink<T extends Vertex>
   extends Edge
   implements CarPickupableEdge {
 
-  private static final long serialVersionUID = -3311099256178798981L;
   static final int STEL_TRAVERSE_COST = 1;
 
   private final T transitEntityVertex;
 
-  private final WheelChairBoarding wheelchairBoarding;
+  private final WheelchairAccessibility wheelchairAccessibility;
 
-  public StreetTransitEntityLink(StreetVertex fromv, T tov, WheelChairBoarding wheelchairBoarding) {
+  public StreetTransitEntityLink(
+    StreetVertex fromv,
+    T tov,
+    WheelchairAccessibility wheelchairAccessibility
+  ) {
     super(fromv, tov);
     this.transitEntityVertex = tov;
-    this.wheelchairBoarding = wheelchairBoarding;
+    this.wheelchairAccessibility = wheelchairAccessibility;
   }
 
-  public StreetTransitEntityLink(T fromv, StreetVertex tov, WheelChairBoarding wheelchairBoarding) {
+  public StreetTransitEntityLink(
+    T fromv,
+    StreetVertex tov,
+    WheelchairAccessibility wheelchairAccessibility
+  ) {
     super(fromv, tov);
     this.transitEntityVertex = fromv;
-    this.wheelchairBoarding = wheelchairBoarding;
-  }
-
-  public Vertex getFromVertex() {
-    return fromv;
-  }
-
-  public Vertex getToVertex() {
-    return tov;
-  }
-
-  public String getDirection() {
-    return null;
-  }
-
-  public Trip getTrip() {
-    return null;
+    this.wheelchairAccessibility = wheelchairAccessibility;
   }
 
   public String toString() {
-    return "StreetTransitLink(" + fromv + " -> " + tov + ")";
+    return ToStringBuilder.of(this.getClass()).addObj("from", fromv).addObj("to", tov).toString();
   }
 
   public boolean isRoundabout() {
@@ -86,14 +77,14 @@ public abstract class StreetTransitEntityLink<T extends Vertex>
     var accessibility = s0.getOptions().wheelchairAccessibility;
     if (accessibility.enabled()) {
       if (
-        accessibility.stops().onlyConsiderAccessible() &&
-        wheelchairBoarding != WheelChairBoarding.POSSIBLE
+        accessibility.stop().onlyConsiderAccessible() &&
+        wheelchairAccessibility != WheelchairAccessibility.POSSIBLE
       ) {
         return null;
-      } else if (wheelchairBoarding == WheelChairBoarding.NO_INFORMATION) {
-        s1.incrementWeight(req.wheelchairAccessibility.stops().unknownCost());
-      } else if (wheelchairBoarding == WheelChairBoarding.NOT_POSSIBLE) {
-        s1.incrementWeight(req.wheelchairAccessibility.stops().inaccessibleCost());
+      } else if (wheelchairAccessibility == WheelchairAccessibility.NO_INFORMATION) {
+        s1.incrementWeight(req.wheelchairAccessibility.stop().unknownCost());
+      } else if (wheelchairAccessibility == WheelchairAccessibility.NOT_POSSIBLE) {
+        s1.incrementWeight(req.wheelchairAccessibility.stop().inaccessibleCost());
       }
     }
 

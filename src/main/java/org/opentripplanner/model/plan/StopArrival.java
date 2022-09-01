@@ -1,7 +1,7 @@
 package org.opentripplanner.model.plan;
 
 import java.time.ZonedDateTime;
-import org.opentripplanner.model.base.ToStringBuilder;
+import org.opentripplanner.util.lang.ToStringBuilder;
 
 /**
  * This class is used to represent a stop arrival event mostly for intermediate visits to a stops
@@ -48,8 +48,8 @@ public class StopArrival {
   public String toString() {
     return ToStringBuilder
       .of(StopArrival.class)
-      .addTimeCal("arrival", arrival)
-      .addTimeCal("departure", departure)
+      .addTime("arrival", arrival)
+      .addTime("departure", departure)
       .addObj("place", place)
       .toString();
   }

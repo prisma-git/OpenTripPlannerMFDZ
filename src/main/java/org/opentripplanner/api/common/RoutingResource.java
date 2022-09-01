@@ -1,10 +1,11 @@
 package org.opentripplanner.api.common;
 
 import java.time.Duration;
-import java.util.GregorianCalendar;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
-import java.util.TimeZone;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
@@ -14,14 +15,12 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.opentripplanner.api.parameter.QualifiedModeSet;
 import org.opentripplanner.ext.dataoverlay.api.DataOverlayParameters;
-import org.opentripplanner.model.FeedScopedId;
 import org.opentripplanner.model.plan.pagecursor.PageCursor;
 import org.opentripplanner.routing.api.request.RoutingRequest;
 import org.opentripplanner.routing.core.BicycleOptimizeType;
-import org.opentripplanner.standalone.server.OTPServer;
-import org.opentripplanner.standalone.server.Router;
+import org.opentripplanner.standalone.api.OtpServerRequestContext;
+import org.opentripplanner.transit.model.framework.FeedScopedId;
 import org.opentripplanner.util.OTPFeature;
-import org.opentripplanner.util.ResourceBundleSingleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -165,19 +164,6 @@ public abstract class RoutingResource {
   protected Boolean wheelchair;
 
   /**
-   * The maximum distance (in meters) the user is willing to walk. Defaults to unlimited.
-   * <p>
-   * See https://github.com/opentripplanner/OpenTripPlanner/issues/2886
-   *
-   * @deprecated TODO OTP2 Regression. Not currently working in OTP2. We might not implement the
-   * old functionality the same way, but we will try to map this parameter
-   * so it does work similar as before.
-   */
-  @Deprecated
-  @QueryParam("maxWalkDistance")
-  protected Double maxWalkDistance;
-
-  /**
    * The maximum time (in seconds) of pre-transit travel when using drive-to-transit (park and ride
    * or kiss and ride). Defaults to unlimited.
    * <p>
@@ -197,10 +183,13 @@ public abstract class RoutingResource {
   protected Double bikeWalkingReluctance;
 
   /**
-   * A multiplier for how bad walking is, compared to being in transit for equal lengths of time.
-   * Defaults to 2. Empirically, values between 10 and 20 seem to correspond well to the concept of
-   * not wanting to walk too much without asking for totally ridiculous itineraries, but this
-   * observation should in no way be taken as scientific or definitive. Your mileage may vary.
+   * A multiplier for how bad walking is, compared to being in transit for equal
+   * lengths of time. Empirically, values between 2 and 4 seem to correspond
+   * well to the concept of not wanting to walk too much without asking for
+   * totally ridiculous itineraries, but this observation should in no way be
+   * taken as scientific or definitive. Your mileage may vary. See
+   * https://github.com/opentripplanner/OpenTripPlanner/issues/4090 for impact on
+   * performance with high values. Default value: 2.0
    */
   @QueryParam("walkReluctance")
   protected Double walkReluctance;
@@ -379,6 +368,13 @@ public abstract class RoutingResource {
    */
   @QueryParam("bikeBoardCost")
   protected Integer bikeBoardCost;
+
+  /**
+   * Factor for how much the walk safety is considered in routing. Value should be between 0 and 1.
+   * If the value is set to be 0, safety is ignored. Default is 1.0.
+   */
+  @QueryParam("walkSafetyFactor")
+  protected Double walkSafetyFactor;
 
   @QueryParam("allowKeepingRentedBicycleAtDestination")
   protected Boolean allowKeepingRentedBicycleAtDestination;
@@ -706,7 +702,7 @@ public abstract class RoutingResource {
    * semantic equality checks.
    */
   @Context
-  protected OTPServer otpServer;
+  protected OtpServerRequestContext serverContext;
 
   /**
    * Range/sanity check the query parameter fields and build a Request object from them.
@@ -714,30 +710,29 @@ public abstract class RoutingResource {
    * @param queryParameters incoming request parameters
    */
   protected RoutingRequest buildRequest(MultivaluedMap<String, String> queryParameters) {
-    Router router = otpServer.getRouter();
-    RoutingRequest request = router.copyDefaultRoutingRequest();
+    RoutingRequest request = serverContext.defaultRoutingRequest();
 
-    // The routing request should already contain defaults, which are set when it is initialized or in the JSON
-    // router configuration and cloned. We check whether each parameter was supplied before overwriting the default.
+    // The routing request should already contain defaults, which are set when it is initialized or
+    // in the JSON router configuration and cloned. We check whether each parameter was supplied
+    // before overwriting the default.
     if (fromPlace != null) request.from = LocationStringParser.fromOldStyleString(fromPlace);
 
     if (toPlace != null) request.to = LocationStringParser.fromOldStyleString(toPlace);
 
     {
       //FIXME: move into setter method on routing request
-      TimeZone tz;
-      tz = router.graph.getTimeZone();
+      ZoneId tz = serverContext.transitService().getTimeZone();
       if (date == null && time != null) { // Time was provided but not date
         LOG.debug("parsing ISO datetime {}", time);
         try {
           // If the time query param doesn't specify a timezone, use the graph's default. See issue #1373.
           DatatypeFactory df = javax.xml.datatype.DatatypeFactory.newInstance();
           XMLGregorianCalendar xmlGregCal = df.newXMLGregorianCalendar(time);
-          GregorianCalendar gregCal = xmlGregCal.toGregorianCalendar();
+          ZonedDateTime dateTime = xmlGregCal.toGregorianCalendar().toZonedDateTime();
           if (xmlGregCal.getTimezone() == DatatypeConstants.FIELD_UNDEFINED) {
-            gregCal.setTimeZone(tz);
+            dateTime = dateTime.withZoneSameLocal(tz);
           }
-          request.setDateTime(gregCal.toInstant());
+          request.setDateTime(dateTime.toInstant());
         } catch (DatatypeConfigurationException e) {
           request.setDateTime(date, time, tz);
         }
@@ -852,6 +847,9 @@ public abstract class RoutingResource {
     if (bikeBoardCost != null) {
       request.setBikeBoardCost(bikeBoardCost);
     }
+    if (walkSafetyFactor != null) {
+      request.setWalkSafetyFactor(walkSafetyFactor);
+    }
     if (bannedRoutes != null) {
       request.setBannedRoutesFromString(bannedRoutes);
     }
@@ -931,8 +929,9 @@ public abstract class RoutingResource {
       request.useVehicleParkingAvailabilityInformation = useVehicleParkingAvailabilityInformation;
     }
 
-    //getLocale function returns defaultLocale if locale is null
-    request.locale = ResourceBundleSingleton.INSTANCE.getLocale(locale);
+    if (locale != null) {
+      request.locale = Locale.forLanguageTag(locale.replaceAll("-", "_"));
+    }
 
     if (OTPFeature.DataOverlay.isOn()) {
       var queryDataOverlayParameters = DataOverlayParameters.parseQueryParams(queryParameters);

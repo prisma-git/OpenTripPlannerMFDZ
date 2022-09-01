@@ -1,16 +1,16 @@
 package org.opentripplanner.gtfs.mapping;
 
 import static java.util.Collections.singleton;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.Collections;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.FareAttribute;
 
@@ -58,7 +58,7 @@ public class FareAttributeMapperTest {
 
   @Test
   public void testMap() throws Exception {
-    org.opentripplanner.model.FareAttribute result = subject.map(FARE_ATTRIBUTE);
+    org.opentripplanner.ext.fares.model.FareAttribute result = subject.map(FARE_ATTRIBUTE);
 
     assertEquals("A:1", result.getId().toString());
     assertEquals(CURRENCY_TYPE, result.getCurrencyType());
@@ -75,7 +75,7 @@ public class FareAttributeMapperTest {
   public void testMapWithNulls() throws Exception {
     FareAttribute orginal = new FareAttribute();
     orginal.setId(ID);
-    org.opentripplanner.model.FareAttribute result = subject.map(orginal);
+    org.opentripplanner.ext.fares.model.FareAttribute result = subject.map(orginal);
 
     assertNotNull(result.getId());
     assertNull(result.getCurrencyType());
@@ -91,8 +91,8 @@ public class FareAttributeMapperTest {
   /** Mapping the same object twice, should return the the same instance. */
   @Test
   public void testMapCache() throws Exception {
-    org.opentripplanner.model.FareAttribute result1 = subject.map(FARE_ATTRIBUTE);
-    org.opentripplanner.model.FareAttribute result2 = subject.map(FARE_ATTRIBUTE);
+    org.opentripplanner.ext.fares.model.FareAttribute result1 = subject.map(FARE_ATTRIBUTE);
+    org.opentripplanner.ext.fares.model.FareAttribute result2 = subject.map(FARE_ATTRIBUTE);
 
     assertSame(result1, result2);
   }

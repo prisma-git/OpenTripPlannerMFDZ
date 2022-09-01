@@ -4,10 +4,7 @@ import static java.lang.Integer.min;
 
 import java.util.Comparator;
 import java.util.List;
-import org.opentripplanner.model.FeedScopedId;
 import org.opentripplanner.model.GenericLocation;
-import org.opentripplanner.model.TransitMode;
-import org.opentripplanner.routing.RoutingService;
 import org.opentripplanner.routing.algorithm.astar.AStarBuilder;
 import org.opentripplanner.routing.algorithm.astar.TraverseVisitor;
 import org.opentripplanner.routing.algorithm.astar.strategies.SkipEdgeStrategy;
@@ -17,6 +14,9 @@ import org.opentripplanner.routing.core.TemporaryVerticesContainer;
 import org.opentripplanner.routing.core.TraverseMode;
 import org.opentripplanner.routing.graph.Graph;
 import org.opentripplanner.routing.spt.DominanceFunction;
+import org.opentripplanner.transit.model.basic.TransitMode;
+import org.opentripplanner.transit.model.framework.FeedScopedId;
+import org.opentripplanner.transit.service.TransitService;
 
 /**
  * A GraphFinder which uses the street network to traverse the graph in order to find the nearest
@@ -48,10 +48,10 @@ public class StreetGraphFinder implements GraphFinder {
     List<FeedScopedId> filterByStops,
     List<FeedScopedId> filterByRoutes,
     List<String> filterByBikeRentalStations,
-    RoutingService routingService
+    TransitService transitService
   ) {
     PlaceFinderTraverseVisitor visitor = new PlaceFinderTraverseVisitor(
-      routingService,
+      transitService,
       filterByModes,
       filterByPlaceTypes,
       filterByStops,
@@ -63,7 +63,7 @@ public class StreetGraphFinder implements GraphFinder {
     SkipEdgeStrategy terminationStrategy = visitor.getSkipEdgeStrategy();
     findClosestUsingStreets(lat, lon, visitor, terminationStrategy);
     List<PlaceAtDistance> results = visitor.placesFound;
-    results.sort(Comparator.comparingDouble(pad -> pad.distance));
+    results.sort(Comparator.comparingDouble(PlaceAtDistance::distance));
     return results.subList(0, min(results.size(), maxResults));
   }
 
@@ -78,7 +78,6 @@ public class StreetGraphFinder implements GraphFinder {
     RoutingRequest rr = new RoutingRequest(TraverseMode.WALK);
     rr.from = new GenericLocation(null, null, lat, lon);
     rr.walkSpeed = 1;
-    rr.dominanceFunction = new DominanceFunction.LeastWalk();
     rr.setNumItineraries(1);
     // RR dateTime defaults to currentTime.
     // If elapsed time is not capped, searches are very slow.
@@ -86,6 +85,7 @@ public class StreetGraphFinder implements GraphFinder {
       AStarBuilder
         .allDirections(skipEdgeStrategy)
         .setTraverseVisitor(visitor)
+        .setDominanceFunction(new DominanceFunction.LeastWalk())
         .setContext(new RoutingContext(rr, graph, temporaryVertices))
         .getShortestPathTree();
     }

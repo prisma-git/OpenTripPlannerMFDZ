@@ -12,6 +12,8 @@ import org.opentripplanner.ext.siri.updater.SiriETGooglePubsubUpdaterParameters;
 import org.opentripplanner.ext.siri.updater.SiriETUpdaterParameters;
 import org.opentripplanner.ext.siri.updater.SiriSXUpdaterParameters;
 import org.opentripplanner.ext.siri.updater.SiriVMUpdaterParameters;
+import org.opentripplanner.ext.siri.updater.azure.SiriAzureETUpdaterParameters;
+import org.opentripplanner.ext.siri.updater.azure.SiriAzureSXUpdaterParameters;
 import org.opentripplanner.ext.vehiclerentalservicedirectory.VehicleRentalServiceDirectoryFetcher;
 import org.opentripplanner.ext.vehiclerentalservicedirectory.api.VehicleRentalServiceDirectoryFetcherParameters;
 import org.opentripplanner.standalone.config.sandbox.VehicleRentalServiceDirectoryFetcherConfig;
@@ -27,6 +29,9 @@ import org.opentripplanner.standalone.config.updaters.VehiclePositionsUpdaterCon
 import org.opentripplanner.standalone.config.updaters.VehicleRentalUpdaterConfig;
 import org.opentripplanner.standalone.config.updaters.WFSNotePollingGraphUpdaterConfig;
 import org.opentripplanner.standalone.config.updaters.WebsocketGtfsRealtimeUpdaterConfig;
+import org.opentripplanner.standalone.config.updaters.azure.SiriAzureETUpdaterConfig;
+import org.opentripplanner.standalone.config.updaters.azure.SiriAzureSXUpdaterConfig;
+import org.opentripplanner.updater.TimetableSnapshotSourceParameters;
 import org.opentripplanner.updater.UpdatersParameters;
 import org.opentripplanner.updater.alerts.GtfsRealtimeAlertsUpdaterParameters;
 import org.opentripplanner.updater.stoptime.MqttGtfsRealtimeUpdaterParameters;
@@ -59,9 +64,13 @@ public class UpdatersConfig implements UpdatersParameters {
   private static final String SIRI_ET_GOOGLE_PUBSUB_UPDATER = "siri-et-google-pubsub-updater";
   private static final String SIRI_VM_UPDATER = "siri-vm-updater";
   private static final String SIRI_SX_UPDATER = "siri-sx-updater";
+  private static final String SIRI_AZURE_ET_UPDATER = "siri-azure-et-updater";
+  private static final String SIRI_AZURE_SX_UPDATER = "siri-azure-sx-updater";
 
   private static final Map<String, BiFunction<String, NodeAdapter, ?>> CONFIG_CREATORS = new HashMap<>();
   private final Multimap<String, Object> configList = ArrayListMultimap.create();
+
+  private final TimetableSnapshotSourceParameters timetableUpdates;
 
   @Nullable
   private final VehicleRentalServiceDirectoryFetcherParameters vehicleRentalServiceDirectoryFetcherParameters;
@@ -81,6 +90,8 @@ public class UpdatersConfig implements UpdatersParameters {
     CONFIG_CREATORS.put(SIRI_ET_GOOGLE_PUBSUB_UPDATER, SiriETGooglePubsubUpdaterConfig::create);
     CONFIG_CREATORS.put(SIRI_VM_UPDATER, SiriVMUpdaterConfig::create);
     CONFIG_CREATORS.put(SIRI_SX_UPDATER, SiriSXUpdaterConfig::create);
+    CONFIG_CREATORS.put(SIRI_AZURE_ET_UPDATER, SiriAzureETUpdaterConfig::create);
+    CONFIG_CREATORS.put(SIRI_AZURE_SX_UPDATER, SiriAzureSXUpdaterConfig::create);
   }
 
   public UpdatersConfig(NodeAdapter rootAdapter) {
@@ -90,6 +101,8 @@ public class UpdatersConfig implements UpdatersParameters {
           ? rootAdapter.path("vehicleRentalServiceDirectory")
           : rootAdapter.path("bikeRentalServiceDirectory") // TODO: deprecated, remove in next major version
       );
+
+    timetableUpdates = timetableUpdates(rootAdapter.path("timetableUpdates"));
 
     List<NodeAdapter> updaters = rootAdapter.path("updaters").asList();
 
@@ -101,6 +114,26 @@ public class UpdatersConfig implements UpdatersParameters {
       }
       configList.put(type, factory.apply(type, conf));
     }
+  }
+
+  /**
+   * Read "timetableUpdates" parameters. These parameters are used to configure the
+   * TimetableSnapshotSource. Both the GTFS and Siri version uses the same parameters.
+   */
+  private TimetableSnapshotSourceParameters timetableUpdates(NodeAdapter c) {
+    var dflt = TimetableSnapshotSourceParameters.DEFAULT;
+    if (c.isEmpty()) {
+      return dflt;
+    }
+    return new TimetableSnapshotSourceParameters(
+      c.asInt("logFrequency", dflt.logFrequency()),
+      c.asInt("maxSnapshotFrequency", dflt.maxSnapshotFrequencyMs()),
+      c.asBoolean("purgeExpiredData", dflt.purgeExpiredData())
+    );
+  }
+
+  public TimetableSnapshotSourceParameters timetableSnapshotParameters() {
+    return timetableUpdates;
   }
 
   /**
@@ -176,6 +209,16 @@ public class UpdatersConfig implements UpdatersParameters {
   @Override
   public List<WFSNotePollingGraphUpdaterParameters> getWinkkiPollingGraphUpdaterParameters() {
     return getParameters(WINKKI_POLLING_UPDATER);
+  }
+
+  @Override
+  public List<SiriAzureETUpdaterParameters> getSiriAzureETUpdaterParameters() {
+    return getParameters(SIRI_AZURE_ET_UPDATER);
+  }
+
+  @Override
+  public List<SiriAzureSXUpdaterParameters> getSiriAzureSXUpdaterParameters() {
+    return getParameters(SIRI_AZURE_SX_UPDATER);
   }
 
   private <T> List<T> getParameters(String key) {

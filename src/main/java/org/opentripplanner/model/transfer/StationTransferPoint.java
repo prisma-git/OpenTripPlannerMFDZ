@@ -1,8 +1,8 @@
 package org.opentripplanner.model.transfer;
 
 import java.io.Serializable;
-import org.opentripplanner.model.Station;
-import org.opentripplanner.model.base.ValueObjectToStringBuilder;
+import org.opentripplanner.transit.model.site.Station;
+import org.opentripplanner.util.lang.ValueObjectToStringBuilder;
 
 public final class StationTransferPoint implements TransferPoint, Serializable {
 
@@ -36,9 +36,9 @@ public final class StationTransferPoint implements TransferPoint, Serializable {
   public String toString() {
     return ValueObjectToStringBuilder
       .of()
-      .addText("<Station ")
+      .addText("StationTP{")
       .addObj(station.getId())
-      .addText(">")
+      .addText("}")
       .toString();
   }
 }

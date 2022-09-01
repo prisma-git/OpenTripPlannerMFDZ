@@ -9,11 +9,11 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.opentripplanner.model.FeedScopedId;
 import org.opentripplanner.routing.core.TimeRestriction;
 import org.opentripplanner.routing.core.TraverseMode;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingEntrance.VehicleParkingEntranceBuilder;
-import org.opentripplanner.util.I18NString;
+import org.opentripplanner.transit.model.basic.I18NString;
+import org.opentripplanner.transit.model.framework.FeedScopedId;
 
 /**
  * Vehicle parking locations, which may allow bicycle and/or car parking.

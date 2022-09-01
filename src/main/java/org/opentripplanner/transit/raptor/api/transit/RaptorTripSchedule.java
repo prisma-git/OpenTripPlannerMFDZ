@@ -1,6 +1,7 @@
 package org.opentripplanner.transit.raptor.api.transit;
 
-import org.opentripplanner.model.WheelChairBoarding;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The purpose of this interface is to provide information about the trip schedule. The trip is a
@@ -115,9 +116,35 @@ public interface RaptorTripSchedule {
   }
 
   /**
-   * This index is used to lookup the transit factor/reluctance to be used with this trip schedule.
+   * Find all departure-stop-positions for a stop index after given earliest-departure-time. This is
+   * useful because trip can pass through the same stop more than once - if the stop pattern is circular.
+   * This method returns all stop positions, while the {@link #findDepartureStopPosition} only returns the first
+   * stop-position found.
+   *
+   * @return list of all valid stop positions for a given stop index
    */
-  int transitReluctanceFactorIndex();
+  default List<Integer> findDepartureStopPositions(int earliestDepartureTime, int stop) {
+    var p = pattern();
+    final int size = p.numberOfStopsInPattern();
+    int i = 0;
 
-  WheelChairBoarding wheelchairBoarding();
+    while (departure(i) < earliestDepartureTime) {
+      ++i;
+      if (i == size) {
+        return new ArrayList<>();
+      }
+    }
+
+    var stops = new ArrayList<Integer>();
+
+    while (i < size) {
+      if (stop == p.stopIndex(i)) {
+        stops.add(i);
+      }
+
+      i++;
+    }
+
+    return stops;
+  }
 }

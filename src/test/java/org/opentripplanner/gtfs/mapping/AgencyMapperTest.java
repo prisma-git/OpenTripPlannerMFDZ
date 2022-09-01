@@ -1,20 +1,19 @@
 package org.opentripplanner.gtfs.mapping;
 
 import static java.util.Collections.singleton;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.Collections;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.onebusaway.gtfs.model.Agency;
+import org.opentripplanner.transit.model._data.TransitModelForTest;
 
 public class AgencyMapperTest {
-
-  private static final String FEED_ID = "FEED";
 
   private static final Agency AGENCY = new Agency();
 
@@ -33,7 +32,7 @@ public class AgencyMapperTest {
   private static final String FARE_URL = "www.url.com/fare";
 
   private static final String BRANDING_URL = "www.url.com/brand";
-  private final AgencyMapper subject = new AgencyMapper(FEED_ID);
+  private final AgencyMapper subject = new AgencyMapper(TransitModelForTest.FEED_ID);
 
   static {
     AGENCY.setId(ID);
@@ -55,13 +54,16 @@ public class AgencyMapperTest {
 
   @Test
   public void testMap() throws Exception {
-    org.opentripplanner.model.Agency result = subject.map(AGENCY);
+    org.opentripplanner.transit.model.organization.Agency result;
 
-    assertEquals("FEED:ID", result.getId().toString());
+    result = subject.map(AGENCY);
+
+    assertEquals(TransitModelForTest.FEED_ID, result.getId().getFeedId());
+    assertEquals(ID, result.getId().getId());
     assertEquals(NAME, result.getName());
     assertEquals(LANG, result.getLang());
     assertEquals(PHONE, result.getPhone());
-    assertEquals(TIMEZONE, result.getTimezone());
+    assertEquals(TIMEZONE, result.getTimezone().getId());
     assertEquals(URL, result.getUrl());
     assertEquals(FARE_URL, result.getFareUrl());
     assertEquals(BRANDING_URL, result.getBrandingUrl());
@@ -69,16 +71,22 @@ public class AgencyMapperTest {
 
   @Test
   public void testMapWithNulls() throws Exception {
+    org.opentripplanner.transit.model.organization.Agency result;
     Agency orginal = new Agency();
     orginal.setId(ID);
-    org.opentripplanner.model.Agency result = subject.map(orginal);
+    orginal.setName(NAME);
+    orginal.setTimezone(TIMEZONE);
+    result = subject.map(orginal);
 
+    // Required
     assertNotNull(result.getId());
-    assertNull(result.getName());
+    assertNotNull(result.getName());
+    assertNotNull(result.getTimezone());
+
+    // Optional - nullable
+    assertNull(result.getUrl());
     assertNull(result.getLang());
     assertNull(result.getPhone());
-    assertNull(result.getTimezone());
-    assertNull(result.getUrl());
     assertNull(result.getFareUrl());
     assertNull(result.getBrandingUrl());
   }
@@ -86,8 +94,8 @@ public class AgencyMapperTest {
   /** Mapping the same object twice, should return the the same instance. */
   @Test
   public void testMapCache() throws Exception {
-    org.opentripplanner.model.Agency result1 = subject.map(AGENCY);
-    org.opentripplanner.model.Agency result2 = subject.map(AGENCY);
+    org.opentripplanner.transit.model.organization.Agency result1 = subject.map(AGENCY);
+    org.opentripplanner.transit.model.organization.Agency result2 = subject.map(AGENCY);
 
     assertSame(result1, result2);
   }

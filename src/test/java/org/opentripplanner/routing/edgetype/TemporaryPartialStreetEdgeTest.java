@@ -1,16 +1,15 @@
 package org.opentripplanner.routing.edgetype;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.LineString;
-import org.opentripplanner.common.geometry.GeometryUtils;
 import org.opentripplanner.graph_builder.linking.DisposableEdgeCollection;
 import org.opentripplanner.routing.api.request.RoutingRequest;
 import org.opentripplanner.routing.core.RoutingContext;
@@ -23,7 +22,8 @@ import org.opentripplanner.routing.impl.StreetVertexIndex;
 import org.opentripplanner.routing.location.TemporaryStreetLocation;
 import org.opentripplanner.routing.vertextype.IntersectionVertex;
 import org.opentripplanner.routing.vertextype.StreetVertex;
-import org.opentripplanner.util.NonLocalizedString;
+import org.opentripplanner.transit.model.basic.NonLocalizedString;
+import org.opentripplanner.util.geometry.GeometryUtils;
 
 public class TemporaryPartialStreetEdgeTest {
 
@@ -31,7 +31,7 @@ public class TemporaryPartialStreetEdgeTest {
   private IntersectionVertex v1, v2, v3, v4;
   private StreetEdge e1, e1Reverse, e2, e3;
 
-  @Before
+  @BeforeEach
   public void setUp() throws Exception {
     graph = new Graph();
 
@@ -59,7 +59,6 @@ public class TemporaryPartialStreetEdgeTest {
     );
 
     assertTrue(pEdge.isEquivalentTo(e1));
-    assertTrue(pEdge.isPartial());
     assertFalse(pEdge.isBack());
     assertFalse(pEdge.isReverseOf(e1));
     assertTrue(pEdge.isReverseOf(e1Reverse));

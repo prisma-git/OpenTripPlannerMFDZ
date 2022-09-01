@@ -1,5 +1,6 @@
 package org.opentripplanner.routing.core;
 
+import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -7,7 +8,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.opentripplanner.common.geometry.GeometryUtils;
 import org.opentripplanner.graph_builder.linking.DisposableEdgeCollection;
 import org.opentripplanner.graph_builder.linking.SameEdgeAdjuster;
 import org.opentripplanner.model.GenericLocation;
@@ -20,6 +20,7 @@ import org.opentripplanner.routing.graph.Graph;
 import org.opentripplanner.routing.graph.Vertex;
 import org.opentripplanner.routing.impl.StreetVertexIndex;
 import org.opentripplanner.routing.vertextype.TransitStopVertex;
+import org.opentripplanner.util.geometry.GeometryUtils;
 
 /**
  * This class is responsible for linking the RoutingRequest origin and destination to the Graph used
@@ -95,7 +96,13 @@ public class TemporaryVerticesContainer implements AutoCloseable {
       );
     }
 
-    if (routingErrors.size() > 0) {
+    // if from and to share any vertices, the user is already at their destination, and the result
+    // is a trivial path
+    if (from != null && to != null && !Sets.intersection(from, to).isEmpty()) {
+      routingErrors.add(new RoutingError(RoutingErrorCode.WALKING_BETTER_THAN_TRANSIT, null));
+    }
+
+    if (!routingErrors.isEmpty()) {
       throw new RoutingValidationException(routingErrors);
     }
   }

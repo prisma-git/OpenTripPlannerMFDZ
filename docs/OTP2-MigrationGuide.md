@@ -53,8 +53,8 @@ of this type:
 
 #### Parameters whose names were changed
 
-- `alightTimes` to `routingDefaults.alightSlackByMode`. Since v2.0
-- `boardTimes` to `routingDefaults.boardSlackByMode`. Since v2.0
+- `alightTimes` to `routingDefaults.alightSlackForMode`. Since v2.0
+- `boardTimes` to `routingDefaults.boardSlackForMode`. Since v2.0
 - `htmlAnnotations` to `dataImportReport`. Since v2.0
 - `maxHtmlAnnotationsPerFile` to `maxDataImportIssuesPerFile`. Since v2.0
 - `maxTransferDistance` to `maxTransferDurationSeconds`. Since v2.1
@@ -179,11 +179,11 @@ permanently from OTP2, but may require some development to support valid importa
 
 #### New parameters in OTP2
 
-- `alightSlackByMode` How much time alighting a vehicle takes for each given mode. Since 2.0
+- `alightSlackForMode` How much time alighting a vehicle takes for each given mode. Since 2.0
 - `allowedVehicleRentalNetworks` and `bannedVehicleRentalNetworks`. Since 2.1
 - `bikeReluctance`, `bikeWalkingReluctance`, `bikeWalkingSpeed`, `carReluctance`, and `walkingBike`
   Add explicit bike / bike-walking / car / walk reluctance. Since 2.1
-- `boardSlackByMode` How much time ride a vehicle takes for each given mode. Since 2.0
+- `boardSlackForMode` How much time ride a vehicle takes for each given mode. Since 2.0
 - `carPickupCost` and `carPickupTime`. Add a cost/time for CarPickup changes when a pickup or drop
   off takes place. Since 2.1
 - `maxAccessEgressDurationForMode` Limit access/egress per street mode. Since 2.2
@@ -286,4 +286,6 @@ The scripting API endpoint has been removed.
   citi-bike-nyc*, *jcdecaux*, *keolis-rennes*, *kml*, *next-bike*, *ov-fiets*, *sf-bay-area*, *
   share-bike*, *smoove*, *uip-bike*, and *vcub*. Use the standard *gtfs* updater instead, or
   reintroduce your custom updater as a Sandbox module.
+- The `logFrequency`, `maxSnapshotFrequency`, `purgeExpiredData` updater parameters are moved from 
+  the individual updaters to `timetableUpdates`(root level in the router config).  
 

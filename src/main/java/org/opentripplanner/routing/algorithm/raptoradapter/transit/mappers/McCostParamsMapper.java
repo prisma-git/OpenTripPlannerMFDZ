@@ -1,16 +1,24 @@
 package org.opentripplanner.routing.algorithm.raptoradapter.transit.mappers;
 
 import java.util.Arrays;
+import java.util.BitSet;
+import java.util.List;
 import java.util.Map;
-import org.opentripplanner.model.TransitMode;
+import java.util.Set;
+import org.opentripplanner.routing.algorithm.raptoradapter.api.DefaultTripPattern;
 import org.opentripplanner.routing.algorithm.raptoradapter.transit.cost.McCostParams;
 import org.opentripplanner.routing.algorithm.raptoradapter.transit.cost.McCostParamsBuilder;
 import org.opentripplanner.routing.api.request.RoutingRequest;
 import org.opentripplanner.routing.api.request.StreetMode;
+import org.opentripplanner.transit.model.basic.TransitMode;
+import org.opentripplanner.transit.model.framework.FeedScopedId;
 
 public class McCostParamsMapper {
 
-  public static McCostParams map(RoutingRequest request) {
+  public static McCostParams map(
+    RoutingRequest request,
+    List<? extends DefaultTripPattern> patternIndex
+  ) {
     McCostParamsBuilder builder = new McCostParamsBuilder();
 
     builder.transferCost(request.transferCost).waitReluctanceFactor(request.waitReluctance);
@@ -23,6 +31,26 @@ public class McCostParamsMapper {
     builder.transitReluctanceFactors(mapTransitReluctance(request.transitReluctanceForMode()));
 
     builder.wheelchairAccessibility(request.wheelchairAccessibility);
+
+    final Set<FeedScopedId> unpreferredRoutes = request.getUnpreferredRoutes();
+    final Set<FeedScopedId> unpreferredAgencies = request.getUnpreferredAgencies();
+
+    if (!unpreferredRoutes.isEmpty() || !unpreferredAgencies.isEmpty()) {
+      final BitSet unpreferredPatterns = new BitSet();
+      for (var pattern : patternIndex) {
+        if (
+          pattern != null &&
+          (
+            unpreferredRoutes.contains(pattern.route().getId()) ||
+            unpreferredAgencies.contains(pattern.route().getAgency().getId())
+          )
+        ) {
+          unpreferredPatterns.set(pattern.patternIndex());
+        }
+      }
+      builder.unpreferredPatterns(unpreferredPatterns);
+      builder.unpreferredCost(request.unpreferredCost);
+    }
 
     return builder.build();
   }

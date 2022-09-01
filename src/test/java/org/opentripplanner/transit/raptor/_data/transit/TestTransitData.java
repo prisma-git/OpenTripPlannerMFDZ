@@ -6,11 +6,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opentripplanner.model.transfer.ConstrainedTransfer;
 import org.opentripplanner.model.transfer.TransferConstraint;
-import org.opentripplanner.routing.algorithm.raptoradapter.transit.cost.DefaultCostCalculator;
+import org.opentripplanner.routing.algorithm.raptoradapter.api.DefaultTripPattern;
+import org.opentripplanner.routing.algorithm.raptoradapter.transit.cost.CostCalculatorFactory;
 import org.opentripplanner.routing.algorithm.raptoradapter.transit.cost.McCostParamsBuilder;
 import org.opentripplanner.routing.algorithm.transferoptimization.model.TripStopTime;
 import org.opentripplanner.routing.algorithm.transferoptimization.services.TransferServiceAdaptor;
@@ -19,6 +20,7 @@ import org.opentripplanner.transit.raptor.api.request.RaptorRequestBuilder;
 import org.opentripplanner.transit.raptor.api.transit.CostCalculator;
 import org.opentripplanner.transit.raptor.api.transit.IntIterator;
 import org.opentripplanner.transit.raptor.api.transit.RaptorConstrainedTransfer;
+import org.opentripplanner.transit.raptor.api.transit.RaptorConstrainedTripScheduleBoardingSearch;
 import org.opentripplanner.transit.raptor.api.transit.RaptorPathConstrainedTransferSearch;
 import org.opentripplanner.transit.raptor.api.transit.RaptorRoute;
 import org.opentripplanner.transit.raptor.api.transit.RaptorStopNameResolver;
@@ -87,8 +89,11 @@ public class TestTransitData
   }
 
   @Override
-  public CostCalculator multiCriteriaCostCalculator() {
-    return new DefaultCostCalculator(costParamsBuilder.build(), stopBoarAlightCost());
+  public CostCalculator<TestTripSchedule> multiCriteriaCostCalculator() {
+    return CostCalculatorFactory.createCostCalculator(
+      costParamsBuilder.build(),
+      stopBoardAlightCost()
+    );
   }
 
   @Override
@@ -109,7 +114,7 @@ public class TestTransitData
           .filter(tx -> tx.getSourceStopPos() == fromStopPosition)
           .filter(tx -> tx.getTrip().equals(toTrip))
           .filter(tx -> tx.getStopPositionInPattern() == toStopPosition)
-          .collect(Collectors.toList());
+          .toList();
 
         if (list.isEmpty()) {
           return null;
@@ -122,6 +127,7 @@ public class TestTransitData
     };
   }
 
+  @Nonnull
   @Override
   public RaptorStopNameResolver stopNameResolver() {
     // Index is translated: 1->'A', 2->'B', 3->'C' ...
@@ -133,7 +139,7 @@ public class TestTransitData
     return this.routes.stream()
       .mapToInt(route -> route.timetable().getTripSchedule(0).departure(0))
       .min()
-      .getAsInt();
+      .orElseThrow();
   }
 
   @Override
@@ -147,7 +153,21 @@ public class TestTransitData
           .departure(pattern.numberOfStopsInPattern() - 1);
       })
       .max()
-      .getAsInt();
+      .orElseThrow();
+  }
+
+  @Override
+  public RaptorConstrainedTripScheduleBoardingSearch<TestTripSchedule> transferConstraintsForwardSearch(
+    int routeIndex
+  ) {
+    return getRoute(routeIndex).transferConstraintsForwardSearch();
+  }
+
+  @Override
+  public RaptorConstrainedTripScheduleBoardingSearch<TestTripSchedule> transferConstraintsReverseSearch(
+    int routeIndex
+  ) {
+    return getRoute(routeIndex).transferConstraintsReverseSearch();
   }
 
   public TestRoute getRoute(int index) {
@@ -172,6 +192,7 @@ public class TestTransitData
   public TestTransitData withRoute(TestRoute route) {
     this.routes.add(route);
     int routeIndex = this.routes.indexOf(route);
+    ((TestTripPattern) route.pattern()).withPatternIndex(routeIndex);
     var pattern = route.pattern();
     for (int i = 0; i < pattern.numberOfStopsInPattern(); ++i) {
       int stopIndex = pattern.stopIndex(i);
@@ -211,6 +232,15 @@ public class TestTransitData
     }
   }
 
+  /**
+   * Create constraint for a given transfer. If trip passes through the stop more than once
+   * constraint will be placed on stop position for the first visit.
+   * @param fromTrip initial trip
+   * @param fromStop initial stop index
+   * @param toTrip destination trip
+   * @param toStop destination trip index
+   * @param constraint constraint to set
+   */
   public TestTransitData withConstrainedTransfer(
     TestTripSchedule fromTrip,
     int fromStop,
@@ -227,8 +257,8 @@ public class TestTransitData
     constrainedTransfers.add(
       new ConstrainedTransfer(
         null,
-        new TestTransferPoint(fromStop, fromTrip, false),
-        new TestTransferPoint(toStop, toTrip, false),
+        new TestTransferPoint(fromStop, fromStopPos, fromTrip, false),
+        new TestTransferPoint(toStop, toStopPos, toTrip, false),
         constraint
       )
     );
@@ -242,13 +272,15 @@ public class TestTransitData
   public ConstrainedTransfer findConstrainedTransfer(
     TestTripSchedule fromTrip,
     int fromStop,
+    int fromStopPosition,
     TestTripSchedule toTrip,
-    int toStop
+    int toStop,
+    int toStopPosition
   ) {
     for (ConstrainedTransfer tx : constrainedTransfers) {
       if (
-        ((TestTransferPoint) tx.getFrom()).matches(fromTrip, fromStop) &&
-        ((TestTransferPoint) tx.getTo()).matches(toTrip, toStop)
+        ((TestTransferPoint) tx.getFrom()).matches(fromTrip, fromStop, fromStopPosition) &&
+        ((TestTransferPoint) tx.getTo()).matches(toTrip, toStop, toStopPosition)
       ) {
         return tx;
       }
@@ -262,16 +294,28 @@ public class TestTransitData
       protected ConstrainedTransfer findTransfer(
         TripStopTime<TestTripSchedule> from,
         TestTripSchedule toTrip,
-        int toStop
+        int toStop,
+        int toStopPosition
       ) {
-        return findConstrainedTransfer(from.trip(), from.stop(), toTrip, toStop);
+        return findConstrainedTransfer(
+          from.trip(),
+          from.stop(),
+          from.stopPosition(),
+          toTrip,
+          toStop,
+          toStopPosition
+        );
       }
     };
   }
 
+  public List<DefaultTripPattern> getPatterns() {
+    return routes.stream().map(TestRoute::pattern).toList();
+  }
+
   /* private methods */
 
-  private int[] stopBoarAlightCost() {
+  private int[] stopBoardAlightCost() {
     // Not implemented, no test for this yet.
     return null;
   }

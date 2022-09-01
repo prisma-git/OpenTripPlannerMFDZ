@@ -950,13 +950,16 @@ enum FilterPlaceType {
     """Departure rows"""
     DEPARTURE_ROW
 
-    """Bicycle rent stations"""
-    BICYCLE_RENT
+    """Old value for VEHICLE_RENT"""
+    BICYCLE_RENT @deprecated(reason: "Use VEHICLE_RENT instead as it's clearer that it also returns rental scooters, cars...")
 
-    """Bike parks"""
+    """Vehicle (bicycles, scooters, cars ...) rental stations and vehicles"""
+    VEHICLE_RENT
+
+    """Parking lots (not rental stations) that contain spaces for bicycles"""
     BIKE_PARK
 
-    """Car parks"""
+    """Parking lots that contain spaces for cars"""
     CAR_PARK
 }
 
@@ -1133,10 +1136,64 @@ input InputUnpreferred {
     agencies: String
 
     """
-    Penalty added for using route that is unpreferred, i.e. number of seconds that
-    we are willing to wait for route that is unpreferred.
+    An cost function used to calculate penalty for an unpreferred route. Function should return
+    number of seconds that we are willing to wait for preferred route. String must be of the format:
+    `A + B x`, where A is fixed penalty and B is a multiplier of transit leg travel time x.
+    For example: `600 + 2.0 x`
     """
-    useUnpreferredRoutesPenalty: Int
+    unpreferredRouteCost: String
+
+    """
+    Penalty added for using route that is unpreferred, i.e. number of seconds that we are willing to
+    wait for route that is unpreferred.
+
+    Deprecated: Use `unpreferredRouteCost` instead.
+    """
+    useUnpreferredRoutesPenalty: Int @deprecated(reason: "Use unpreferredRouteCost instead")
+}
+
+enum RoutingErrorCode {
+    """No transit connection was found between the origin and destination withing the operating day or the next day"""
+    NO_TRANSIT_CONNECTION
+
+    """Transit connection was found, but it was outside the search window, see metadata for the next search window"""
+    NO_TRANSIT_CONNECTION_IN_SEARCH_WINDOW
+
+    """The date specified is outside the range of data currently loaded into the system"""
+    OUTSIDE_SERVICE_PERIOD
+
+    """The coordinates are outside the bounds of the data currently loaded into the system"""
+    OUTSIDE_BOUNDS
+
+    """The specified location is not close to any streets or transit stops"""
+    LOCATION_NOT_FOUND
+
+    """No stops are reachable from the location specified. You can try searching using a different access or egress mode"""
+    NO_STOPS_IN_RANGE
+
+    """The origin and destination are so close to each other, that walking is always better, but no direct mode was specified for the search"""
+    WALKING_BETTER_THAN_TRANSIT
+
+    """An unknown error happened during the search. The details have been logged to the server logs"""
+    SYSTEM_ERROR
+}
+
+enum InputField {
+    DATE_TIME
+    FROM
+    TO
+}
+
+"""Description of the reason, why the planner did not return any results"""
+type RoutingError {
+    """An enum describing the reason"""
+    code: RoutingErrorCode!
+
+    """An enum describing the field which should be changed, in order for the search to succeed"""
+    inputField: InputField
+
+    """A textual description of why the search failed. The clients are expected to have their own translations based on the code, for user visible error messages."""
+    description: String!
 }
 
 type Itinerary {
@@ -1748,6 +1805,9 @@ type Plan {
     """A list of possible error messages in cleartext"""
     messageStrings: [String]!
 
+    """A list of routing errors, and fields which caused them"""
+    routingErrors: [RoutingError!]!
+
     """
     Use the cursor to go to the next "page" of itineraries. Copy the cursor from the last response
     to the pageCursor query parameter and keep the original request as is. This will enable you to
@@ -2325,7 +2385,7 @@ type QueryType {
 
         DEPRECATED - Use walkReluctance instead
         """
-        maxWalkDistance: Float
+        maxWalkDistance: Float @deprecated(reason: "Does nothing. Use walkReluctance instead.")
 
         """
         The maximum time (in seconds) of pre-transit travel when using
@@ -2370,17 +2430,21 @@ type QueryType {
 
         """
         A multiplier for how bad walking is, compared to being in transit for equal
-        lengths of time.Empirically, values between 10 and 20 seem to correspond
+        lengths of time. Empirically, values between 2 and 4 seem to correspond
         well to the concept of not wanting to walk too much without asking for
         totally ridiculous itineraries, but this observation should in no way be
-        taken as scientific or definitive. Your mileage may vary. Default value: 2.0
+        taken as scientific or definitive. Your mileage may vary. See
+        https://github.com/opentripplanner/OpenTripPlanner/issues/4090 for impact on
+        performance with high values. Default value: 2.0
         """
         walkReluctance: Float
 
         """
         How much more reluctant is the user to walk on streets with car traffic allowed. Default value: 1.0
+
+        Deprecated, use walkSafetyFactor instead.
         """
-        walkOnStreetReluctance: Float
+        walkOnStreetReluctance: Float @deprecated(reason: "Use walkSafetyFactor instead")
 
         """
         How much worse is waiting for a transit vehicle than being on a transit
@@ -2619,6 +2683,19 @@ type QueryType {
 
         """
         Which vehicle rental networks can be used. By default, all networks are allowed.
+
+        Deprecated: Use `allowedVehicleRentalNetworks` instead.
+        """
+        allowedBikeRentalNetworks: [String] @deprecated(reason: "Use allowedBikeRentalNetworks instead")
+
+        """
+        Which vehicle rental networks can be used. By default, all networks are allowed.
+        """
+        allowedVehicleRentalNetworks: [String]
+
+        """
+        Which vehicle rental networks cannot be used. By default, all networks are allowed.
+        Which vehicle rental networks can be used. By default, all networks are allowed.
         """
         allowedVehicleRentalNetworks: [String]
 
@@ -2649,6 +2726,13 @@ type QueryType {
         Whether or not vehicle parking availability information will be used to plan park and ride trips
         """
         useVehicleParkingAvailabilityInformation: Boolean
+        bannedVehicleRentalNetworks: [String]
+
+        """
+        Factor for how much the walk safety is considered in routing. Value should be between 0 and 1.
+        If the value is set to be 0, safety is ignored. Default is 1.0.
+        """
+        walkSafetyFactor: Float
     ): Plan
 }
 
@@ -2701,7 +2785,11 @@ type Route implements Node {
     shortName: String
 
     """Long name of the route, e.g. Helsinki-Leppävaara"""
-    longName: String
+    longName(
+        """If translated longName is found from gtfs translation.txt and wanted language is not same as
+        feed's language then returns wanted translation. Otherwise uses name from routes.txt.
+        """
+        language: String): String
 
     """Transport mode of this route, e.g. `BUS`"""
     mode: Mode
@@ -2898,7 +2986,11 @@ type Stop implements Node & PlaceInterface {
     code: String
 
     """Description of the stop, usually a street name"""
-    desc: String
+    desc(
+        """If translated description is found from gtfs translation.txt and wanted language is not same as
+        feed's language then returns wanted translation. Otherwise uses descriptions from stops.txt.
+        """
+        language: String): String
 
     """ID of the zone where this stop is located"""
     zoneId: String

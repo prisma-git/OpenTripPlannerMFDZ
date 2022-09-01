@@ -1,13 +1,17 @@
 package org.opentripplanner.model;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import org.opentripplanner.model.calendar.ServiceDate;
-import org.opentripplanner.routing.core.ServiceDay;
-import org.opentripplanner.routing.trippattern.RealTimeState;
-import org.opentripplanner.routing.trippattern.TripTimes;
+import org.opentripplanner.transit.model.network.TripPattern;
+import org.opentripplanner.transit.model.site.StopLocation;
+import org.opentripplanner.transit.model.timetable.OccupancyStatus;
+import org.opentripplanner.transit.model.timetable.RealTimeState;
+import org.opentripplanner.transit.model.timetable.StopTimeKey;
+import org.opentripplanner.transit.model.timetable.Trip;
+import org.opentripplanner.transit.model.timetable.TripTimes;
 
 /**
  * Represents a Trip at a specific stop index and on a specific service day. This is a read-only
@@ -21,34 +25,29 @@ public class TripTimeOnDate {
   private final int stopIndex;
   // This is only needed because TripTimes has no reference to TripPattern
   private final TripPattern tripPattern;
-  private final ServiceDate serviceDate;
+  private final LocalDate serviceDate;
   private final long midnight;
 
-  public TripTimeOnDate(
-    TripTimes tripTimes,
-    int stopIndex,
-    TripPattern tripPattern,
-    ServiceDay serviceDay
-  ) {
+  public TripTimeOnDate(TripTimes tripTimes, int stopIndex, TripPattern tripPattern) {
     this.tripTimes = tripTimes;
     this.stopIndex = stopIndex;
     this.tripPattern = tripPattern;
-    this.serviceDate = serviceDay != null ? serviceDay.getServiceDate() : null;
-    this.midnight = serviceDay != null ? serviceDay.time(0) : UNDEFINED;
+    this.serviceDate = null;
+    this.midnight = UNDEFINED;
   }
 
   public TripTimeOnDate(
     TripTimes tripTimes,
     int stopIndex,
     TripPattern tripPattern,
-    ServiceDate serviceDate,
+    LocalDate serviceDate,
     Instant midnight
   ) {
     this.tripTimes = tripTimes;
     this.stopIndex = stopIndex;
     this.tripPattern = tripPattern;
     this.serviceDate = serviceDate;
-    this.midnight = midnight.getEpochSecond();
+    this.midnight = midnight != null ? midnight.getEpochSecond() : UNDEFINED;
   }
 
   /**
@@ -56,10 +55,10 @@ public class TripTimeOnDate {
    * StopPatterns.
    */
   public static List<TripTimeOnDate> fromTripTimes(Timetable table, Trip trip) {
-    TripTimes times = table.getTripTimes(table.getTripIndex(trip.getId()));
+    TripTimes times = table.getTripTimes(trip);
     List<TripTimeOnDate> out = new ArrayList<>();
     for (int i = 0; i < times.getNumStops(); ++i) {
-      out.add(new TripTimeOnDate(times, i, table.getPattern(), (ServiceDay) null));
+      out.add(new TripTimeOnDate(times, i, table.getPattern()));
     }
     return out;
   }
@@ -68,17 +67,18 @@ public class TripTimeOnDate {
    * Must pass in both Timetable and Trip, because TripTimes do not have a reference to
    * StopPatterns.
    *
-   * @param serviceDay service day to set, if null none is set
+   * @param serviceDate service day to set, if null none is set
    */
   public static List<TripTimeOnDate> fromTripTimes(
     Timetable table,
     Trip trip,
-    ServiceDay serviceDay
+    LocalDate serviceDate,
+    Instant midnight
   ) {
-    TripTimes times = table.getTripTimes(table.getTripIndex(trip.getId()));
+    TripTimes times = table.getTripTimes(trip);
     List<TripTimeOnDate> out = new ArrayList<>();
     for (int i = 0; i < times.getNumStops(); ++i) {
-      out.add(new TripTimeOnDate(times, i, table.getPattern(), serviceDay));
+      out.add(new TripTimeOnDate(times, i, table.getPattern(), serviceDate, midnight));
     }
     return out;
   }
@@ -112,13 +112,13 @@ public class TripTimeOnDate {
   }
 
   public int getRealtimeArrival() {
-    return isRealtime() && isCancelledStop()
+    return isCancelledStop() || isNoDataStop()
       ? tripTimes.getScheduledArrivalTime(stopIndex)
       : tripTimes.getArrivalTime(stopIndex);
   }
 
   public int getRealtimeDeparture() {
-    return isRealtime() && isCancelledStop()
+    return isCancelledStop() || isNoDataStop()
       ? tripTimes.getScheduledDepartureTime(stopIndex)
       : tripTimes.getDepartureTime(stopIndex);
   }
@@ -138,11 +138,11 @@ public class TripTimeOnDate {
   }
 
   public int getArrivalDelay() {
-    return tripTimes.getArrivalDelay(stopIndex);
+    return isCancelledStop() || isNoDataStop() ? 0 : tripTimes.getArrivalDelay(stopIndex);
   }
 
   public int getDepartureDelay() {
-    return tripTimes.getDepartureDelay(stopIndex);
+    return isCancelledStop() || isNoDataStop() ? 0 : tripTimes.getDepartureDelay(stopIndex);
   }
 
   public boolean isTimepoint() {
@@ -150,7 +150,7 @@ public class TripTimeOnDate {
   }
 
   public boolean isRealtime() {
-    return !tripTimes.isScheduled();
+    return !tripTimes.isScheduled() && !isNoDataStop();
   }
 
   public boolean isCancelledStop() {
@@ -160,24 +160,38 @@ public class TripTimeOnDate {
     );
   }
 
+  public boolean isPredictionInaccurate() {
+    return tripTimes.isPredictionInaccurate(stopIndex);
+  }
+
   /** Return {code true} if stop is cancelled, or trip is canceled/replaced */
   public boolean isCanceledEffectively() {
     return (
       isCancelledStop() ||
       tripTimes.isCanceled() ||
-      tripTimes.getTrip().getTripAlteration().isCanceledOrReplaced()
+      tripTimes.getTrip().getNetexAlteration().isCanceledOrReplaced()
     );
   }
 
+  public boolean isNoDataStop() {
+    return tripTimes.isNoDataStop(stopIndex);
+  }
+
   public RealTimeState getRealtimeState() {
-    return tripTimes.getRealTimeState();
+    return tripTimes.isNoDataStop(stopIndex)
+      ? RealTimeState.SCHEDULED
+      : tripTimes.getRealTimeState();
+  }
+
+  public OccupancyStatus getOccupancyStatus() {
+    return tripTimes.getOccupancyStatus(stopIndex);
   }
 
   public long getServiceDayMidnight() {
     return midnight;
   }
 
-  public ServiceDate getServiceDay() {
+  public LocalDate getServiceDay() {
     return serviceDate;
   }
 
@@ -186,7 +200,7 @@ public class TripTimeOnDate {
   }
 
   public String getBlockId() {
-    return tripTimes.getTrip().getBlockId();
+    return tripTimes.getTrip().getGtfsBlockId();
   }
 
   public String getHeadsign() {
@@ -210,7 +224,7 @@ public class TripTimeOnDate {
   }
 
   public StopTimeKey getStopTimeKey() {
-    return new StopTimeKey(tripTimes.getTrip().getId(), stopIndex);
+    return StopTimeKey.of(tripTimes.getTrip().getId(), stopIndex).build();
   }
 
   public BookingInfo getPickupBookingInfo() {

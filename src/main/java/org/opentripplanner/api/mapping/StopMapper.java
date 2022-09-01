@@ -5,8 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.opentripplanner.api.model.ApiStop;
 import org.opentripplanner.api.model.ApiStopShort;
-import org.opentripplanner.model.Stop;
-import org.opentripplanner.model.StopLocation;
+import org.opentripplanner.transit.model.site.StopLocation;
 
 public class StopMapper {
 
@@ -33,14 +32,16 @@ public class StopMapper {
     api.code = domain.getCode();
     api.name = domain.getName().toString();
     if (extended) {
-      api.desc = domain.getDescription();
+      String desc = domain.getDescription() != null ? domain.getDescription().toString() : null;
+      api.desc = desc;
       api.zoneId = domain.getFirstZoneAsString();
       api.url = I18NStringMapper.mapToApi(domain.getUrl(), null);
       api.locationType = 0;
       api.stationId = FeedScopedIdMapper.mapIdToApi(domain.getParentStation());
       api.parentStation = mapToParentStationOldId(domain);
       //api.stopTimezone = stop.getTimezone();
-      api.wheelchairBoarding = WheelchairBoardingMapper.mapToApi(domain.getWheelchairBoarding());
+      api.wheelchairBoarding =
+        WheelchairAccessibilityMapper.mapToApi(domain.getWheelchairAccessibility());
       //api.direction = stop.getDirection();
     }
     return api;
@@ -67,13 +68,13 @@ public class StopMapper {
   }
 
   /** @param distance in integral meters, to avoid serializing a bunch of decimal places. */
-  public static ApiStopShort mapToApiShort(Stop domain, int distance) {
+  public static ApiStopShort mapToApiShort(StopLocation domain, double distance) {
     if (domain == null) {
       return null;
     }
 
     ApiStopShort api = mapToApiShort(domain);
-    api.dist = distance;
+    api.dist = (int) distance;
 
     return api;
   }
@@ -82,7 +83,7 @@ public class StopMapper {
     if (domain == null) {
       return null;
     }
-    return domain.stream().map(StopMapper::mapToApiShort).collect(Collectors.toList());
+    return domain.stream().map(StopMapper::mapToApiShort).toList();
   }
 
   /**

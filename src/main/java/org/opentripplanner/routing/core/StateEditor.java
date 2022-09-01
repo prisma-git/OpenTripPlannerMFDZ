@@ -31,8 +31,6 @@ public class StateEditor {
 
   /* CONSTRUCTORS */
 
-  protected StateEditor() {}
-
   public StateEditor(RoutingContext routingContext, Vertex v) {
     child = new State(v, routingContext.opt, routingContext);
   }
@@ -41,48 +39,53 @@ public class StateEditor {
     child = parent.clone();
     child.backState = parent;
     child.backEdge = e;
-    // We clear child.next here, since it could have already been set in the
-    // parent
+    // We clear child.next here, since it could have already been set in the parent
     child.next = null;
+
+    final Vertex parentVertex = parent.vertex;
+
     if (e == null) {
       child.backState = null;
-      child.vertex = parent.vertex;
+      child.vertex = parentVertex;
       child.stateData = child.stateData.clone();
-    } else if (e.getFromVertex() == null || e.getToVertex() == null) {
-      child.vertex = parent.vertex;
+      return;
+    }
+
+    final Vertex fromVertex = e.getFromVertex();
+    final Vertex toVertex = e.getToVertex();
+
+    if (fromVertex == null || toVertex == null) {
+      child.vertex = parentVertex;
       child.stateData = child.stateData.clone();
       LOG.error("From or to vertex is null for {}", e);
       defectiveTraversal = true;
+      return;
+    }
+
+    // Note that we use equals(), not ==, here to allow for dynamically created vertices
+    if (parentVertex.equals(fromVertex)) {
+      // from and to vertices are the same on eg. vehicle rental and parking vertices, thus, we
+      // can't know the direction of travel from the above check. The expression below is simplified
+      // fromVertex.equals(toVertex) ? parent.getOptions().arriveBy : false;
+      traversingBackward = fromVertex.equals(toVertex) && parent.getOptions().arriveBy;
+      child.vertex = toVertex;
+    } else if (parentVertex.equals(toVertex)) {
+      traversingBackward = true;
+      child.vertex = fromVertex;
     } else {
-      // be clever
-      // Note that we use equals(), not ==, here to allow for dynamically
-      // created vertices
-      if (e.getFromVertex().equals(e.getToVertex()) && parent.vertex.equals(e.getFromVertex())) {
-        // TODO LG: We disable this test: the assumption that
-        // the from and to vertex of an edge are not the same
-        // is not true anymore: bike rental on/off edges.
-        traversingBackward = parent.getOptions().arriveBy;
-        child.vertex = e.getToVertex();
-      } else if (parent.vertex.equals(e.getFromVertex())) {
-        traversingBackward = false;
-        child.vertex = e.getToVertex();
-      } else if (parent.vertex.equals(e.getToVertex())) {
-        traversingBackward = true;
-        child.vertex = e.getFromVertex();
-      } else {
-        // Parent state is not at either end of edge.
-        LOG.warn("Edge is not connected to parent state: {}", e);
-        LOG.warn("   from   vertex: {}", e.getFromVertex());
-        LOG.warn("   to     vertex: {}", e.getToVertex());
-        LOG.warn("   parent vertex: {}", parent.vertex);
-        defectiveTraversal = true;
-      }
-      if (traversingBackward != parent.getOptions().arriveBy) {
-        LOG.error(
-          "Actual traversal direction does not match traversal direction in TraverseOptions."
-        );
-        defectiveTraversal = true;
-      }
+      // Parent state is not at either end of edge.
+      LOG.warn("Edge is not connected to parent state: {}", e);
+      LOG.warn("   from   vertex: {}", fromVertex);
+      LOG.warn("   to     vertex: {}", toVertex);
+      LOG.warn("   parent vertex: {}", parentVertex);
+      defectiveTraversal = true;
+    }
+
+    if (traversingBackward != parent.getOptions().arriveBy) {
+      LOG.error(
+        "Actual traversal direction does not match traversal direction in TraverseOptions."
+      );
+      defectiveTraversal = true;
     }
   }
 
@@ -127,18 +130,10 @@ public class StateEditor {
   }
 
   public String toString() {
-    return "<StateEditor " + child + ">";
+    return "StateEditor{" + child + "}";
   }
 
   /* PUBLIC METHODS TO MODIFY A STATE BEFORE IT IS USED */
-
-  /**
-   * Tell the stateEditor to return null when makeState() is called, no matter what other editing
-   * has been done. This allows graph patches to block traversals.
-   */
-  public void blockTraversal() {
-    this.defectiveTraversal = true;
-  }
 
   /* Incrementors */
 
@@ -170,11 +165,7 @@ public class StateEditor {
    * backward when traversing backward.
    */
   public void incrementTimeInSeconds(int seconds) {
-    incrementTimeInMilliseconds(seconds * 1000L);
-  }
-
-  public void incrementTimeInMilliseconds(long milliseconds) {
-    if (milliseconds < 0) {
+    if (seconds < 0) {
       LOG.warn(
         "A state's time is being incremented by a negative amount while traversing edge " +
         child.getBackEdge()
@@ -182,7 +173,7 @@ public class StateEditor {
       defectiveTraversal = true;
       return;
     }
-    child.time += (traversingBackward ? -milliseconds : milliseconds);
+    child.time += (traversingBackward ? -seconds : seconds);
   }
 
   public void incrementWalkDistance(double length) {
@@ -304,29 +295,18 @@ public class StateEditor {
    */
   public void setFromState(State state) {
     cloneStateDataAsNeeded();
+    child.stateData.currentMode = state.stateData.currentMode;
     child.stateData.carPickupState = state.stateData.carPickupState;
     child.stateData.vehicleParked = state.stateData.vehicleParked;
     child.stateData.backWalkingBike = state.stateData.backWalkingBike;
-  }
-
-  public void setNonTransitOptionsFromState(State state) {
-    cloneStateDataAsNeeded();
-    child.stateData.currentMode = state.getNonTransitMode();
-    child.stateData.vehicleParked = state.isVehicleParked();
-    child.stateData.vehicleRentalState = state.stateData.vehicleRentalState;
   }
 
   public void setCarPickupState(CarPickupState carPickupState) {
     cloneStateDataAsNeeded();
     child.stateData.carPickupState = carPickupState;
     switch (carPickupState) {
-      case WALK_TO_PICKUP:
-      case WALK_FROM_DROP_OFF:
-        child.stateData.currentMode = TraverseMode.WALK;
-        break;
-      case IN_CAR:
-        child.stateData.currentMode = TraverseMode.CAR;
-        break;
+      case WALK_TO_PICKUP, WALK_FROM_DROP_OFF -> child.stateData.currentMode = TraverseMode.WALK;
+      case IN_CAR -> child.stateData.currentMode = TraverseMode.CAR;
     }
   }
 
@@ -339,7 +319,7 @@ public class StateEditor {
   }
 
   public void setTimeSeconds(long seconds) {
-    child.time = seconds * 1000;
+    child.time = seconds;
   }
 
   /* PUBLIC GETTER METHODS */
@@ -387,6 +367,8 @@ public class StateEditor {
   public State getBackState() {
     return child.getBackState();
   }
+
+  /* PRIVATE METHODS */
 
   /**
    * To be called before modifying anything in the child's StateData. Makes sure that changes are

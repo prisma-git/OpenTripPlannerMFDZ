@@ -1,68 +1,45 @@
 package org.opentripplanner.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.HashMap;
-import java.util.Map;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.opentripplanner.standalone.configure.OTPConfiguration;
+import org.junit.jupiter.api.Test;
+import org.opentripplanner.standalone.config.ConfigLoader;
 
 public class OTPFeatureTest {
 
   private final OTPFeature subject = OTPFeature.APIBikeRental;
-  private final Map<OTPFeature, Boolean> backupValues = new HashMap<>();
-
-  @Before
-  public void setUp() {
-    // OTPFeatures are global, make sure to copy values, and
-    // restore them after the test
-    for (OTPFeature it : OTPFeature.values()) {
-      backupValues.put(it, it.isOn());
-    }
-  }
-
-  @After
-  public void tearDown() {
-    // Restore OTPFeature values
-    for (OTPFeature it : OTPFeature.values()) {
-      it.set(backupValues.get(it));
-    }
-  }
 
   @Test
   public void on() {
-    // If set
-    subject.set(true);
-    // then expect
-    assertTrue(subject.isOn());
-    assertFalse(subject.isOff());
+    subject.testOn(() -> {
+      assertTrue(subject.isOn());
+      assertFalse(subject.isOff());
+    });
   }
 
   @Test
   public void off() {
-    // If set
-    subject.set(false);
-    // then expect
-    assertFalse(subject.isOn());
-    assertTrue(subject.isOff());
+    subject.testOff(() -> {
+      assertFalse(subject.isOn());
+      assertTrue(subject.isOff());
+    });
   }
 
   @Test
   public void isOnElseNull() {
-    subject.set(true);
-    // then expect value to be passed through
-    assertEquals("OK", subject.isOnElseNull(() -> "OK"));
-
-    subject.set(false);
-    // then expect supplier to be ignored
-    assertNull(subject.isOnElseNull(() -> Integer.parseInt("THROW EXCEPTION")));
+    subject.testOn(() -> {
+      // then expect value to be passed through
+      assertEquals("OK", subject.isOnElseNull(() -> "OK"));
+    });
+    subject.testOff(() -> {
+      // then expect supplier to be ignored
+      assertNull(subject.isOnElseNull(() -> Integer.parseInt("THROW EXCEPTION")));
+    });
   }
 
   @Test
@@ -74,27 +51,22 @@ public class OTPFeatureTest {
 
     // Given the following config
     String json =
-      "{\n" +
-      "  otpFeatures : {\n" +
-      "    APIServerInfo : true,\n" +
-      "    APIBikeRental : false\n" +
-      "  }\n" +
-      "}\n";
+      """
+        {
+          otpFeatures : {
+            APIBikeRental : false,
+            MinimumTransferTimeIsDefinitive : true
+          }
+        }
+        """;
 
-    OTPConfiguration config = OTPConfiguration.createForTest(json);
-
-    // And features set with opposite value
-    OTPFeature.APIServerInfo.set(false);
-    OTPFeature.APIBikeRental.set(true);
-
-    // And features missing in the config file
-    OTPFeature.APIGraphInspectorTile.set(false);
-
+    var configLoader = ConfigLoader.fromString(json);
+    var config = configLoader.loadOtpConfig();
     // When
-    OTPFeature.enableFeatures(config.otpConfig().otpFeatures);
+    OTPFeature.enableFeatures(config.otpFeatures);
 
     // Then
-    assertTrue(OTPFeature.APIServerInfo.isOn());
     assertTrue(OTPFeature.APIBikeRental.isOff());
+    assertTrue(OTPFeature.MinimumTransferTimeIsDefinitive.isOn());
   }
 }

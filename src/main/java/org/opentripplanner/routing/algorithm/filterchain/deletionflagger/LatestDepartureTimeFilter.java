@@ -21,7 +21,7 @@ public class LatestDepartureTimeFilter implements ItineraryDeletionFlagger {
   }
 
   @Override
-  public Predicate<Itinerary> predicate() {
+  public Predicate<Itinerary> shouldBeFlaggedForRemoval() {
     return it -> it.startTime().toInstant().isAfter(limit);
   }
 

@@ -6,17 +6,14 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Objects;
 import org.locationtech.jts.geom.LineString;
-import org.opentripplanner.model.Trip;
 import org.opentripplanner.routing.core.State;
-import org.opentripplanner.util.I18NString;
+import org.opentripplanner.transit.model.basic.I18NString;
 
 /**
  * This is the standard implementation of an edge with fixed from and to Vertex instances; all
  * standard OTP edges are subclasses of this.
  */
 public abstract class Edge implements Serializable {
-
-  private static final long serialVersionUID = 1L;
 
   protected Vertex fromv;
 
@@ -38,19 +35,12 @@ public abstract class Edge implements Serializable {
     tov.addIncoming(this);
   }
 
-  public Vertex getFromVertex() {
+  public final Vertex getFromVertex() {
     return fromv;
   }
 
-  public Vertex getToVertex() {
+  public final Vertex getToVertex() {
     return tov;
-  }
-
-  /**
-   * Returns true if this edge is partial - overriden by subclasses.
-   */
-  public boolean isPartial() {
-    return false;
   }
 
   /**
@@ -67,25 +57,6 @@ public abstract class Edge implements Serializable {
   public boolean isReverseOf(Edge e) {
     return (this.getFromVertex() == e.getToVertex() && this.getToVertex() == e.getFromVertex());
   }
-
-  /**
-   * Get a direction on paths where it matters, or null
-   */
-  public String getDirection() {
-    return null;
-  }
-
-  /**
-   * This should only be called inside State; other methods should call
-   * org.opentripplanner.routing.core.State.getBackTrip()
-   *
-   * @author mattwigway
-   */
-  public Trip getTrip() {
-    return null;
-  }
-
-  // Notes are now handled by State
 
   @Override
   public int hashCode() {

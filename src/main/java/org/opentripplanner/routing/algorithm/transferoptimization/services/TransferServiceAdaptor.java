@@ -2,12 +2,12 @@ package org.opentripplanner.routing.algorithm.transferoptimization.services;
 
 import java.util.function.IntFunction;
 import javax.annotation.Nullable;
-import org.opentripplanner.model.StopLocation;
-import org.opentripplanner.model.Trip;
 import org.opentripplanner.model.transfer.ConstrainedTransfer;
 import org.opentripplanner.model.transfer.TransferService;
 import org.opentripplanner.routing.algorithm.raptoradapter.transit.TripSchedule;
 import org.opentripplanner.routing.algorithm.transferoptimization.model.TripStopTime;
+import org.opentripplanner.transit.model.site.StopLocation;
+import org.opentripplanner.transit.model.timetable.Trip;
 import org.opentripplanner.transit.raptor.api.transit.RaptorTripSchedule;
 
 /**
@@ -43,23 +43,34 @@ public class TransferServiceAdaptor<T extends RaptorTripSchedule> {
   public static <T extends RaptorTripSchedule> TransferServiceAdaptor<T> noop() {
     return new TransferServiceAdaptor<>(null, null) {
       @Override
-      protected ConstrainedTransfer findTransfer(TripStopTime<T> from, T toTrip, int toStop) {
+      protected ConstrainedTransfer findTransfer(
+        TripStopTime<T> from,
+        T toTrip,
+        int toStop,
+        int toStopPosition
+      ) {
         return null;
       }
     };
   }
 
   /**
-   * Find transfer in the same stop for the given from location and to trip/stop.
+   * @param toStopPosition First possible stop position in target trip. This is needed because trip pattern
+   *                         may visit same stop more than once.
    */
   @Nullable
-  protected ConstrainedTransfer findTransfer(TripStopTime<T> from, T toTrip, int toStop) {
+  protected ConstrainedTransfer findTransfer(
+    TripStopTime<T> from,
+    T toTrip,
+    int toStop,
+    int toStopPosition
+  ) {
     return transferService.findTransfer(
       trip(from.trip()),
       from.stopPosition(),
       stop(from.stop()),
       trip(toTrip),
-      toTrip.findDepartureStopPosition(from.time(), toStop),
+      toStopPosition,
       stop(toStop)
     );
   }

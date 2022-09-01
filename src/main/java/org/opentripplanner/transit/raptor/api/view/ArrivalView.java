@@ -1,9 +1,9 @@
 package org.opentripplanner.transit.raptor.api.view;
 
 import javax.annotation.Nullable;
-import org.opentripplanner.model.base.OtpNumberFormat;
 import org.opentripplanner.transit.raptor.api.transit.RaptorTripSchedule;
 import org.opentripplanner.transit.raptor.api.transit.TransitArrival;
+import org.opentripplanner.util.lang.OtpNumberFormat;
 import org.opentripplanner.util.time.DurationUtils;
 import org.opentripplanner.util.time.TimeUtils;
 
@@ -48,6 +48,13 @@ public interface ArrivalView<T extends RaptorTripSchedule> {
    * as the associated egress stop arrival.
    */
   int round();
+
+  /**
+   * Return number of transfers used to reach the stop.
+   */
+  default int numberOfTransfers() {
+    return round() - 1;
+  }
 
   /**
    * {@code true} if this arrival represents a simple access arrival without any embedded rides.

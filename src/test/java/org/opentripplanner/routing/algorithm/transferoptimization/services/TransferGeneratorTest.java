@@ -1,5 +1,6 @@
 package org.opentripplanner.routing.algorithm.transferoptimization.services;
 
+import static java.time.Duration.ofMinutes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.opentripplanner.transit.raptor._data.stoparrival.BasicPathTestCase.COST_CALCULATOR;
 import static org.opentripplanner.transit.raptor._data.transit.TestRoute.route;
@@ -7,10 +8,18 @@ import static org.opentripplanner.transit.raptor._data.transit.TestTransfer.walk
 import static org.opentripplanner.transit.raptor._data.transit.TestTripSchedule.schedule;
 import static org.opentripplanner.transit.raptor.api.transit.RaptorSlackProvider.defaultSlackProvider;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.opentripplanner.model.transfer.TransferConstraint;
+import org.opentripplanner.test.support.VariableSource;
 import org.opentripplanner.transit.raptor._data.RaptorTestConstants;
 import org.opentripplanner.transit.raptor._data.api.TestPathBuilder;
 import org.opentripplanner.transit.raptor._data.transit.TestRoute;
@@ -21,7 +30,6 @@ import org.opentripplanner.transit.raptor._data.transit.TestTripSchedule;
 import org.opentripplanner.transit.raptor.api.path.Path;
 import org.opentripplanner.transit.raptor.api.path.TransitPathLeg;
 import org.opentripplanner.transit.raptor.api.transit.RaptorSlackProvider;
-import org.opentripplanner.transit.raptor.api.transit.RaptorTripPattern;
 import org.opentripplanner.util.time.TimeUtils;
 
 public class TransferGeneratorTest implements RaptorTestConstants {
@@ -166,6 +174,174 @@ public class TransferGeneratorTest implements RaptorTestConstants {
       "TripToTripTransfer{from: [3 10:20 BUS L1], to: [3 10:22 BUS L2]}, " +
       "TripToTripTransfer{from: [4 10:30 BUS L1], to: [6 10:32 BUS L2], transfer: On-Street 20s ~ 6}" +
       "]]",
+      result.toString()
+    );
+  }
+
+  @Test
+  @DisplayName("Two transfers on same station with circular line")
+  void findTransfersForCircularLine1() {
+    var l1 = route("L1", STOP_A, STOP_C, STOP_D).withTimetable(schedule("10:02 10:10 10:20"));
+    // Passing same stop two times
+    var l2 = route("L2", STOP_D, STOP_E, STOP_D, STOP_F)
+      .withTimetable(schedule("10:30 10:40 10:50 11:00"));
+
+    data.withRoutes(l1, l2);
+
+    var transitLegs = transitLegsTwoRoutes(STOP_A, STOP_D, STOP_F);
+
+    var subject = new TransferGenerator<>(TS_ADAPTOR, SLACK_PROVIDER, data);
+
+    var result = subject.findAllPossibleTransfers(transitLegs);
+
+    // Ensure that there are two possible transfers generated
+    assertEquals(
+      "[[TripToTripTransfer{from: [4 10:20 BUS L1], to: [4 10:30 BUS L2]}, TripToTripTransfer{from: [4 10:20 BUS L1], to: [4 10:50 BUS L2]}]]",
+      result.toString()
+    );
+  }
+
+  @Test
+  @DisplayName("Transfer with walk between stations with circular line")
+  void findTransfersForCircularLine2() {
+    var l1 = route("L1", STOP_A, STOP_C, STOP_D).withTimetable(schedule("10:02 10:10 10:20"));
+    // Passing same stop two times
+    var l2 = route("L2", STOP_E, STOP_F, STOP_E, STOP_G)
+      .withTimetable(schedule("10:30 10:40 10:50 11:00"));
+
+    data.withRoutes(l1, l2).withTransfer(STOP_D, walk(STOP_E, D1m));
+
+    var schedule1 = data.getRoute(0).getTripSchedule(0);
+    var schedule2 = data.getRoute(1).getTripSchedule(0);
+
+    var path = pathBuilder
+      .access(ACCESS_START, ACCESS_DURATION, STOP_A)
+      .bus(schedule1, STOP_D)
+      .walk(D1m, STOP_E)
+      .bus(schedule2, STOP_G)
+      .egress(D1m);
+
+    var transitLegs = path.transitLegs().collect(Collectors.toList());
+
+    var subject = new TransferGenerator<>(TS_ADAPTOR, SLACK_PROVIDER, data);
+
+    var result = subject.findAllPossibleTransfers(transitLegs);
+
+    assertEquals(
+      "[[" +
+      "TripToTripTransfer{from: [4 10:20 BUS L1], to: [5 10:30 BUS L2], transfer: On-Street 1m ~ 5}, " +
+      "TripToTripTransfer{from: [4 10:20 BUS L1], to: [5 10:50 BUS L2], transfer: On-Street 1m ~ 5}" +
+      "]]",
+      result.toString()
+    );
+  }
+
+  @Test
+  @DisplayName("Single transfer on same station with circular line")
+  void findTransfersForCircularLine3() {
+    var l1 = route("L1", STOP_A, STOP_C, STOP_D).withTimetable(schedule("10:02 10:10 10:20"));
+    // Passing same stop two times
+    var l2 = route("L2", STOP_D, STOP_E, STOP_D, STOP_F)
+      .withTimetable(schedule("10:10 10:20 10:30 10:40"));
+
+    data.withRoutes(l1, l2);
+
+    var transitLegs = transitLegsTwoRoutes(STOP_A, STOP_D, STOP_F);
+
+    var subject = new TransferGenerator<>(TS_ADAPTOR, SLACK_PROVIDER, data);
+
+    var result = subject.findAllPossibleTransfers(transitLegs);
+
+    // Ensure that there is only one transfer
+    assertEquals(
+      "[[TripToTripTransfer{from: [4 10:20 BUS L1], to: [4 10:30 BUS L2]}]]",
+      result.toString()
+    );
+  }
+
+  @Test
+  @DisplayName("Transfer on same station with circular line with boarding forbidden")
+  void findTransfersForCircularLine4() {
+    var l1 = route("L1", STOP_A, STOP_C, STOP_D).withTimetable(schedule("10:02 10:10 10:20"));
+
+    var p2 = TestTripPattern.pattern("L2", STOP_D, STOP_E, STOP_D, STOP_F);
+    // Only allow alighting on third stop
+    p2.restrictions("* * A *");
+    var l2 = route(p2).withTimetable(schedule("10:30 10:40 10:50 11:00"));
+
+    data.withRoutes(l1, l2);
+
+    var transitLegs = transitLegsTwoRoutes(STOP_A, STOP_D, STOP_F);
+
+    var subject = new TransferGenerator<>(TS_ADAPTOR, SLACK_PROVIDER, data);
+
+    var result = subject.findAllPossibleTransfers(transitLegs);
+
+    // Only one transfer in result
+    // Since the second one was restricted to only alighting
+    assertEquals(
+      "[[TripToTripTransfer{from: [4 10:20 BUS L1], to: [4 10:30 BUS L2]}]]",
+      result.toString()
+    );
+  }
+
+  @Test
+  @DisplayName("Transfer on same station with circular line with transfer constraint")
+  void findTransfersForCircularLine5() {
+    var l1 = route("L1", STOP_A, STOP_C, STOP_D).withTimetable(schedule("10:02 10:10 10:20"));
+    // Passing same stop two times
+    var l2 = route("L2", STOP_E, STOP_F, STOP_E, STOP_G)
+      .withTimetable(schedule("10:30 10:40 10:50 11:00"));
+
+    data.withRoutes(l1, l2).withTransfer(STOP_D, walk(STOP_E, D1m));
+
+    var schedule1 = data.getRoute(0).getTripSchedule(0);
+    var schedule2 = data.getRoute(1).getTripSchedule(0);
+
+    var tripA = l1.getTripSchedule(0);
+    var tripB = l2.getTripSchedule(0);
+
+    data.withConstrainedTransfer(tripA, STOP_D, tripB, STOP_E, TestTransitData.TX_NOT_ALLOWED);
+
+    var path = pathBuilder
+      .access(ACCESS_START, ACCESS_DURATION, STOP_A)
+      .bus(schedule1, STOP_D)
+      .walk(D1m, STOP_E)
+      .bus(schedule2, STOP_G)
+      .egress(D1m);
+
+    var transitLegs = path.transitLegs().collect(Collectors.toList());
+    var subject = new TransferGenerator<>(TS_ADAPTOR, SLACK_PROVIDER, data);
+
+    var result = subject.findAllPossibleTransfers(transitLegs);
+
+    // Only transfer on second visit
+    // since first one is constrained
+    assertEquals(
+      "[[TripToTripTransfer{from: [4 10:20 BUS L1], to: [5 10:50 BUS L2], transfer: On-Street 1m ~ 5}]]",
+      result.toString()
+    );
+  }
+
+  @Test
+  @DisplayName("Transfer on same station with circular line calculates correctly on stop order")
+  void findTransfersForCircularLine6() {
+    var l1 = route("L1", STOP_A, STOP_C, STOP_D).withTimetable(schedule("10:02 10:10 10:20"));
+    // Passing same stop two times
+    var l2 = route("L2", STOP_D, STOP_E, STOP_F, STOP_D)
+      .withTimetable(schedule("10:30 10:40 10:50 11:00"));
+
+    data.withRoutes(l1, l2);
+
+    var transitLegs = transitLegsTwoRoutes(STOP_A, STOP_D, STOP_F);
+
+    var subject = new TransferGenerator<>(TS_ADAPTOR, SLACK_PROVIDER, data);
+
+    var result = subject.findAllPossibleTransfers(transitLegs);
+
+    // Only one possible transfer generated since second visit happens after stop F
+    assertEquals(
+      "[[TripToTripTransfer{from: [4 10:20 BUS L1], to: [4 10:30 BUS L2]}]]",
       result.toString()
     );
   }
@@ -328,6 +504,70 @@ public class TransferGeneratorTest implements RaptorTestConstants {
   void findTransferWithLongMinTimeTransfer() {
     // a very long minimum time is effectively the same thing as a not-allowed transfer
     testThatThereIsNoTransferAtStopB(TestTransitData.TX_LONG_MIN_TIME);
+  }
+
+  // TODO: here we check that minimum transfer time and slack are NOT added up, but perhaps that is
+  // asserting the wrong behaviour
+  static Stream<Arguments> minTransferTimeSlackCases = Stream.of(
+    // transfer takes 1 min plus 0 slack, passenger will make it
+    Arguments.of(ofMinutes(1), ofMinutes(0), true),
+    // slack is 30 minutes, passenger won't make the connection
+    Arguments.of(ofMinutes(1), ofMinutes(30), false),
+    // tight since 8 minutes slack + 1 min transfer time but still less than the 10 minutes required
+    Arguments.of(ofMinutes(1), ofMinutes(8), true),
+    // transfer slack is ignored since minimumTransferTime is short
+    Arguments.of(ofMinutes(1), ofMinutes(9), true),
+    Arguments.of(ofMinutes(11), ofMinutes(0), false),
+    Arguments.of(ofMinutes(9), ofMinutes(1), true),
+    Arguments.of(ofMinutes(0), ofMinutes(11), false)
+  );
+
+  @ParameterizedTest(
+    name = "minimum transfer time of {0}, transfer slack of {1} should expectTransfer={2} on 10 min transfer window"
+  )
+  @VariableSource("minTransferTimeSlackCases")
+  void includeTransferSlackInMinimumTransferTime(
+    Duration minTransferTime,
+    Duration transferSlack,
+    boolean expectTransfer
+  ) {
+    TestRoute l1 = route("L1", STOP_A, STOP_B).withTimetable(schedule("10:00 10:10"));
+    TestRoute l2 = route("L2", STOP_B, STOP_C).withTimetable(schedule("10:20 10:30"));
+
+    // S
+    data.withRoutes(l1, l2);
+
+    var tripA = l1.getTripSchedule(0);
+    var tripB = l2.getTripSchedule(0);
+    var constraint = TransferConstraint
+      .create()
+      .minTransferTime((int) minTransferTime.getSeconds())
+      .build();
+    data.withConstrainedTransfer(tripA, STOP_B, tripB, STOP_B, constraint);
+
+    // The only possible place to transfer between A and C is stop B (no extra transfers):
+    var transitLegs = transitLegsTwoRoutes(STOP_A, STOP_B, STOP_C);
+
+    RaptorSlackProvider slackProvider = RaptorSlackProvider.defaultSlackProvider(
+      (int) transferSlack.toSeconds(),
+      0,
+      0
+    );
+
+    var subject = new TransferGenerator<>(TS_ADAPTOR, slackProvider, data);
+
+    if (expectTransfer) {
+      var result = subject.findAllPossibleTransfers(transitLegs);
+      assertEquals(
+        "[[TripToTripTransfer{from: [2 10:10 BUS L1], to: [2 10:20 BUS L2]}]]",
+        result.toString()
+      );
+    } else {
+      Assertions.assertThrows(
+        RuntimeException.class,
+        () -> subject.findAllPossibleTransfers(transitLegs)
+      );
+    }
   }
 
   @Test

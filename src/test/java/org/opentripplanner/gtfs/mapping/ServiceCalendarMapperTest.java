@@ -1,18 +1,18 @@
 package org.opentripplanner.gtfs.mapping;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.opentripplanner.model.calendar.ServiceDate.MAX_DATE;
-import static org.opentripplanner.model.calendar.ServiceDate.MIN_DATE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.ServiceCalendar;
 import org.onebusaway.gtfs.model.calendar.ServiceDate;
+import org.opentripplanner.util.time.ServiceDateUtils;
 
 public class ServiceCalendarMapperTest {
 
@@ -57,7 +57,7 @@ public class ServiceCalendarMapperTest {
 
   @Test
   public void testMapCollection() {
-    assertNull(null, subject.map((Collection<ServiceCalendar>) null));
+    assertNull(subject.map((Collection<ServiceCalendar>) null));
     assertTrue(subject.map(Collections.emptyList()).isEmpty());
     assertEquals(1, subject.map(Collections.singleton(CALENDAR)).size());
   }
@@ -74,8 +74,14 @@ public class ServiceCalendarMapperTest {
     assertEquals(FRIDAY, result.getFriday());
     assertEquals(SATURDAY, result.getSaturday());
     assertEquals(SUNDAY, result.getSunday());
-    assertEquals(START_DATE.getAsString(), result.getPeriod().getStart().asCompactString());
-    assertEquals(END_DATE.getAsString(), result.getPeriod().getEnd().asCompactString());
+    assertEquals(
+      START_DATE.getAsString(),
+      ServiceDateUtils.asCompactString(result.getPeriod().getStart())
+    );
+    assertEquals(
+      END_DATE.getAsString(),
+      ServiceDateUtils.asCompactString(result.getPeriod().getEnd())
+    );
   }
 
   @Test
@@ -90,8 +96,8 @@ public class ServiceCalendarMapperTest {
     assertEquals(0, result.getFriday());
     assertEquals(0, result.getSaturday());
     assertEquals(0, result.getSunday());
-    assertEquals(MIN_DATE, result.getPeriod().getStart());
-    assertEquals(MAX_DATE, result.getPeriod().getEnd());
+    assertEquals(LocalDate.MIN, result.getPeriod().getStart());
+    assertEquals(LocalDate.MAX, result.getPeriod().getEnd());
   }
 
   /** Mapping the same object twice, should return the the same instance. */
