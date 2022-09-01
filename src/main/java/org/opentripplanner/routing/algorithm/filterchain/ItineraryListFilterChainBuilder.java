@@ -63,8 +63,6 @@ public class ItineraryListFilterChainBuilder {
   private boolean removeBikeOnlyParkAndRideItineraries;
   private boolean reverseFilteringDirection;
 
-  private static Logger LOG = LoggerFactory.getLogger(ItineraryListFilterChainBuilder.class);
-
   public ItineraryListFilterChainBuilder(SortOrder sortOrder) {
     this.sortOrder = sortOrder;
   }
@@ -353,7 +351,6 @@ public class ItineraryListFilterChainBuilder {
       }
     }
 
-    LOG.error("maxNumberOfItineriers {}, debug {}", maxNumberOfItineraries, debug);
     // Remove itineraries if max limit is set
     if (maxNumberOfItineraries > 0) {
       filters.add(new SortingFilter(SortOrderComparator.comparator(sortOrder)));
