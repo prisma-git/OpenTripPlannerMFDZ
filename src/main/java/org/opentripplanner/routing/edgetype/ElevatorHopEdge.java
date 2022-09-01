@@ -113,7 +113,6 @@ public class ElevatorHopEdge extends Edge implements ElevatorEdge, WheelchairTra
       return null;
     }
 
-    StateEditor s1 = createElevatorStateEditor(s0, this);
     s1.incrementWeight(
       this.travelTime > 0 ? this.travelTime : (request.elevatorHopCost * this.levels)
     );
