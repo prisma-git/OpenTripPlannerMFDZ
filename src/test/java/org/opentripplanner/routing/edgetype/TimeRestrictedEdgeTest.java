@@ -47,7 +47,7 @@ public class TimeRestrictedEdgeTest extends GraphRoutingTest {
     0,
     0,
     0,
-    ZoneId.of("GMT")
+    State.BERLIN_TIMEZONE
   );
 
   private Graph graph;

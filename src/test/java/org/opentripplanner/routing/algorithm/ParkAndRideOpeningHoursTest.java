@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Stack;
 import org.junit.jupiter.api.Test;
 import org.opentripplanner.routing.algorithm.astar.AStarBuilder;
 import org.opentripplanner.routing.algorithm.raptoradapter.router.street.AccessEgressRouter;
@@ -17,6 +18,7 @@ import org.opentripplanner.routing.api.request.RoutingRequest;
 import org.opentripplanner.routing.api.request.StreetMode;
 import org.opentripplanner.routing.core.OsmOpeningHours;
 import org.opentripplanner.routing.core.RoutingContext;
+import org.opentripplanner.routing.core.State;
 import org.opentripplanner.routing.core.TimeRestriction;
 import org.opentripplanner.routing.graph.Graph;
 import org.opentripplanner.routing.vertextype.StreetVertex;
@@ -36,7 +38,7 @@ public class ParkAndRideOpeningHoursTest extends GraphRoutingTest {
     0,
     0,
     0,
-    ZoneId.of("GMT")
+    State.BERLIN_TIMEZONE
   );
   private static final int CAR_PARK_TIME = 180;
 

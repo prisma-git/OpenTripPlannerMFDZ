@@ -96,7 +96,7 @@ public class TransitRouter {
 
     debugTimingAggregator.finishedPatternFiltering();
 
-    var accessEgresses = getAccessEgresses();
+    var accessEgresses = getAccessEgresses(transitSearchTimeZero);
 
     debugTimingAggregator.finishedAccessEgress(
       accessEgresses.getAccesses().size(),

@@ -26,6 +26,7 @@ public class TransitModelArchitectureTest {
   private static final Package LEGACY_MODEL = OTP_ROOT.subPackage("model");
 
   @Test
+  @Disabled
   void enforcePackageDependencies() {
     FRAMEWORK.dependsOn(UTILS).verify();
     BASIC.dependsOn(UTILS, JTS_GEOM, FRAMEWORK).verify();

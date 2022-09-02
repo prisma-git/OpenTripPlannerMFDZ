@@ -680,8 +680,8 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
       routeBuilder.withMode(mode);
 
       // Create route name
-      var name = ext.routeLongName().orElse(null);
-      routeBuilder.withLongName(NonLocalizedString.ofNullable(name));
+      var name = ext.routeLongName().orElse("unnamed");
+      routeBuilder.withShortName(name);
       routeBuilder.withLongName(NonLocalizedString.ofNullable(name));
       routeBuilder.withUrl(ext.routeUrl().orElse(null));
     }

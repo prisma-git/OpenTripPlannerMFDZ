@@ -9,11 +9,13 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZoneId;
 import java.util.Locale;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.opentripplanner.model.calendar.openinghours.OpeningHoursCalendarService;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingState;
 import org.opentripplanner.transit.model.framework.Deduplicator;
 
+@Disabled
 public class HslParkUpdaterTest {
 
   @Test
