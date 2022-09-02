@@ -17,10 +17,9 @@ import org.opentripplanner.api.mapping.TripPlanMapper;
 import org.opentripplanner.api.mapping.TripSearchMetadataMapper;
 import org.opentripplanner.api.model.error.PlannerError;
 import org.opentripplanner.model.plan.Itinerary;
-import org.opentripplanner.routing.RoutingService;
 import org.opentripplanner.routing.api.request.RoutingRequest;
 import org.opentripplanner.routing.api.response.RoutingResponse;
-import org.opentripplanner.standalone.server.Router;
+import org.opentripplanner.standalone.api.OtpServerRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,16 +62,13 @@ public class PlannerResource extends RoutingResource {
     // Create response object, containing a copy of all request parameters. Maybe they should be in the debug section of the response.
     TripPlannerResponse response = new TripPlannerResponse(uriInfo);
     RoutingRequest request = null;
-    Router router = null;
     RoutingResponse res = null;
     try {
       /* Fill in request fields from query parameters via shared superclass method, catching any errors. */
       request = super.buildRequest(uriInfo.getQueryParameters());
-      router = otpServer.getRouter();
 
       // Route
-      RoutingService routingService = new RoutingService(router.graph);
-      res = routingService.route(request, router);
+      res = serverContext.routingService().route(request);
 
       // Map to API
       TripPlanMapper tripPlanMapper = new TripPlanMapper(
@@ -95,7 +91,7 @@ public class PlannerResource extends RoutingResource {
       /* Populate up the elevation metadata */
       response.elevationMetadata = new ElevationMetadata();
       response.elevationMetadata.ellipsoidToGeoidDifference =
-        router.graph.ellipsoidToGeoidDifference;
+        serverContext.graph().ellipsoidToGeoidDifference;
       response.elevationMetadata.geoidElevation = request.geoidElevation;
 
       response.debugOutput = res.getDebugTimingAggregator().finishedRendering();
@@ -106,7 +102,7 @@ public class PlannerResource extends RoutingResource {
     }
 
     /* Log this request if such logging is enabled. */
-    logRequest(grizzlyRequest, request, router, res);
+    logRequest(grizzlyRequest, request, serverContext, res);
 
     return response;
   }
@@ -114,10 +110,10 @@ public class PlannerResource extends RoutingResource {
   private void logRequest(
     Request grizzlyRequest,
     RoutingRequest request,
-    Router router,
+    OtpServerRequestContext serverContext,
     RoutingResponse res
   ) {
-    if (request != null && router != null && router.requestLogger != null) {
+    if (request != null && serverContext != null && serverContext.requestLogger() != null) {
       StringBuilder sb = new StringBuilder();
       String clientIpAddress = grizzlyRequest.getRemoteAddr();
       //sb.append(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
@@ -139,11 +135,11 @@ public class PlannerResource extends RoutingResource {
       sb.append(' ');
       if (res != null) {
         for (Itinerary it : res.getTripPlan().itineraries) {
-          sb.append(it.durationSeconds);
+          sb.append(it.getDuration());
           sb.append(' ');
         }
       }
-      router.requestLogger.info(sb.toString());
+      serverContext.requestLogger().info(sb.toString());
     }
   }
 }

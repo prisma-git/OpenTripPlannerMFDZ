@@ -11,7 +11,8 @@ import org.opentripplanner.graph_builder.DataImportIssueStore;
 import org.opentripplanner.model.StopTime;
 import org.opentripplanner.model.TripStopTimes;
 import org.opentripplanner.model.impl.OtpTransitServiceBuilder;
-import org.opentripplanner.util.ProgressTracker;
+import org.opentripplanner.transit.model.timetable.Trip;
+import org.opentripplanner.util.logging.ProgressTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,25 +20,29 @@ public class FlexTripsMapper {
 
   private static final Logger LOG = LoggerFactory.getLogger(FlexTripsMapper.class);
 
-  public static List<FlexTrip> createFlexTrips(
+  public static List<FlexTrip<?, ?>> createFlexTrips(
     OtpTransitServiceBuilder builder,
     DataImportIssueStore store
   ) {
-    List<FlexTrip> result = new ArrayList<>();
+    List<FlexTrip<?, ?>> result = new ArrayList<>();
     TripStopTimes stopTimesByTrip = builder.getStopTimesSortedByTrip();
 
     final int tripSize = stopTimesByTrip.size();
 
     ProgressTracker progress = ProgressTracker.track("Create flex trips", 500, tripSize);
 
-    for (org.opentripplanner.model.Trip trip : stopTimesByTrip.keys()) {
+    for (Trip trip : stopTimesByTrip.keys()) {
       /* Fetch the stop times for this trip. Copy the list since it's immutable. */
       List<StopTime> stopTimes = new ArrayList<>(stopTimesByTrip.get(trip));
 
       if (UnscheduledTrip.isUnscheduledTrip(stopTimes)) {
-        result.add(new UnscheduledTrip(trip, stopTimes));
+        result.add(
+          UnscheduledTrip.of(trip.getId()).withTrip(trip).withStopTimes(stopTimes).build()
+        );
       } else if (ScheduledDeviatedTrip.isScheduledFlexTrip(stopTimes)) {
-        result.add(new ScheduledDeviatedTrip(trip, stopTimes));
+        result.add(
+          ScheduledDeviatedTrip.of(trip.getId()).withTrip(trip).withStopTimes(stopTimes).build()
+        );
       } else if (hasContinuousStops(stopTimes) && FlexTrip.containsFlexStops(stopTimes)) {
         store.add(
           "ContinuousFlexTrip",
@@ -59,9 +64,7 @@ public class FlexTripsMapper {
   private static boolean hasContinuousStops(List<StopTime> stopTimes) {
     return stopTimes
       .stream()
-      .anyMatch(st ->
-        st.getFlexContinuousPickup() != NONE.getGtfsCode() ||
-        st.getFlexContinuousDropOff() != NONE.getGtfsCode()
+      .anyMatch(st -> st.getFlexContinuousPickup() != NONE || st.getFlexContinuousDropOff() != NONE
       );
   }
 }

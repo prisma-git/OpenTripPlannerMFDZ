@@ -2,29 +2,28 @@ package org.opentripplanner.routing.algorithm.raptoradapter.transit.request;
 
 import static org.opentripplanner.routing.algorithm.raptoradapter.transit.request.TestTransitCaseData.DATE;
 import static org.opentripplanner.routing.algorithm.raptoradapter.transit.request.TestTransitCaseData.OFFSET;
-import static org.opentripplanner.routing.algorithm.raptoradapter.transit.request.TestTransitCaseData.id;
-import static org.opentripplanner.routing.algorithm.raptoradapter.transit.request.TestTransitCaseData.stopIndex;
 
+import gnu.trove.list.array.TIntArrayList;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.opentripplanner.model.Route;
-import org.opentripplanner.model.Stop;
-import org.opentripplanner.model.StopLocation;
-import org.opentripplanner.model.StopPattern;
 import org.opentripplanner.model.StopTime;
-import org.opentripplanner.model.TransitMode;
-import org.opentripplanner.model.Trip;
-import org.opentripplanner.model.TripPattern;
 import org.opentripplanner.routing.algorithm.raptoradapter.transit.TripPatternForDate;
-import org.opentripplanner.routing.algorithm.raptoradapter.transit.TripPatternWithRaptorStopIndexes;
 import org.opentripplanner.routing.algorithm.raptoradapter.transit.TripSchedule;
-import org.opentripplanner.routing.trippattern.Deduplicator;
-import org.opentripplanner.routing.trippattern.TripTimes;
+import org.opentripplanner.transit.model._data.TransitModelForTest;
+import org.opentripplanner.transit.model.basic.TransitMode;
+import org.opentripplanner.transit.model.framework.Deduplicator;
+import org.opentripplanner.transit.model.network.Route;
+import org.opentripplanner.transit.model.network.RoutingTripPattern;
+import org.opentripplanner.transit.model.network.StopPattern;
+import org.opentripplanner.transit.model.network.TripPattern;
+import org.opentripplanner.transit.model.site.RegularStop;
+import org.opentripplanner.transit.model.site.StopLocation;
+import org.opentripplanner.transit.model.timetable.Trip;
+import org.opentripplanner.transit.model.timetable.TripTimes;
 import org.opentripplanner.transit.raptor.api.transit.RaptorTimeTable;
 import org.opentripplanner.util.time.TimeUtils;
 
@@ -36,13 +35,12 @@ public class TestRouteData {
   private final Map<Trip, TripTimes> tripTimesByTrip = new HashMap<>();
   private final Map<Trip, TripSchedule> tripSchedulesByTrip = new HashMap<>();
   private final RaptorTimeTable<TripSchedule> timetable;
-  private final TripPatternWithRaptorStopIndexes raptorTripPattern;
+  private final TripPattern tripPattern;
   private Trip currentTrip;
 
-  public TestRouteData(String route, TransitMode mode, List<Stop> stops, String... times) {
+  public TestRouteData(String route, TransitMode mode, List<RegularStop> stops, String... times) {
     final Deduplicator deduplicator = new Deduplicator();
-    this.route = new Route(id(route));
-    this.route.setMode(mode);
+    this.route = TransitModelForTest.route(route).withMode(mode).withShortName(route).build();
     this.trips =
       Arrays
         .stream(times)
@@ -56,21 +54,23 @@ public class TestRouteData {
       .map(tripTimesByTrip::get)
       .collect(Collectors.toList());
 
-    raptorTripPattern =
-      new TripPatternWithRaptorStopIndexes(
-        new TripPattern(id("TP:" + route), this.route, new StopPattern(stopTimesFistTrip)),
-        stopIndexes(stopTimesFistTrip)
-      );
-    tripTimes.forEach(t -> raptorTripPattern.getPattern().add(t));
+    tripPattern =
+      TripPattern
+        .of(TransitModelForTest.id("TP:" + route))
+        .withRoute(this.route)
+        .withStopPattern(new StopPattern(stopTimesFistTrip))
+        .build();
+    tripTimes.forEach(tripPattern::add);
 
+    RoutingTripPattern routingTripPattern = tripPattern.getRoutingTripPattern();
     var listOfTripPatternForDates = List.of(
-      new TripPatternForDate(raptorTripPattern, tripTimes, List.of(), DATE)
+      new TripPatternForDate(routingTripPattern, tripTimes, List.of(), DATE)
     );
 
     var patternForDates = new TripPatternForDates(
-      raptorTripPattern,
+      routingTripPattern,
       listOfTripPatternForDates,
-      List.of(OFFSET),
+      new TIntArrayList(new int[] { OFFSET }),
       null,
       null
     );
@@ -102,7 +102,7 @@ public class TestRouteData {
     return this;
   }
 
-  public StopTime getStopTime(Stop stop) {
+  public StopTime getStopTime(RegularStop stop) {
     return stopTimesByTrip.get(currentTrip).get(stopPosition(stop));
   }
 
@@ -114,8 +114,8 @@ public class TestRouteData {
     return tripSchedulesByTrip.get(currentTrip);
   }
 
-  public TripPatternWithRaptorStopIndexes getRaptorTripPattern() {
-    return raptorTripPattern;
+  public TripPattern getTripPattern() {
+    return tripPattern;
   }
 
   public int stopPosition(StopLocation stop) {
@@ -128,18 +128,16 @@ public class TestRouteData {
     throw new IllegalArgumentException();
   }
 
-  int[] stopIndexes(Collection<StopTime> times) {
-    return times.stream().mapToInt(it -> stopIndex(it.getStop())).toArray();
-  }
-
   private Trip parseTripInfo(
     String route,
     String tripTimes,
-    List<Stop> stops,
+    List<RegularStop> stops,
     Deduplicator deduplicator
   ) {
-    var trip = new Trip(id(route + "-" + stopTimesByTrip.size() + 1));
-    trip.setRoute(this.route);
+    var trip = Trip
+      .of(TransitModelForTest.id(route + "-" + stopTimesByTrip.size() + 1))
+      .withRoute(this.route)
+      .build();
     var stopTimes = stopTimes(trip, stops, tripTimes);
     this.stopTimesByTrip.put(trip, stopTimes);
     this.tripTimesByTrip.put(trip, new TripTimes(trip, stopTimes, deduplicator));
@@ -150,7 +148,7 @@ public class TestRouteData {
     return stopTimesByTrip.get(currentTrip);
   }
 
-  private List<StopTime> stopTimes(Trip trip, List<Stop> stops, String timesAsString) {
+  private List<StopTime> stopTimes(Trip trip, List<RegularStop> stops, String timesAsString) {
     var times = TimeUtils.times(timesAsString);
     var stopTimes = new ArrayList<StopTime>();
     for (int i = 0; i < stops.size(); i++) {
@@ -159,7 +157,7 @@ public class TestRouteData {
     return stopTimes;
   }
 
-  private StopTime stopTime(Trip trip, Stop stop, int time, int seq) {
+  private StopTime stopTime(Trip trip, RegularStop stop, int time, int seq) {
     var s = new StopTime();
     s.setTrip(trip);
     s.setStop(stop);

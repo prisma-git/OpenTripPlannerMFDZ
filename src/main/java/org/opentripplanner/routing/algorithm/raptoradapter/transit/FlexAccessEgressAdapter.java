@@ -12,12 +12,11 @@ public class FlexAccessEgressAdapter extends AccessEgress {
 
   public FlexAccessEgressAdapter(
     FlexAccessEgress flexAccessEgress,
-    StopIndexForRaptor stopIndex,
     ZonedDateTime startOfTime,
     boolean isEgress
   ) {
     super(
-      stopIndex.indexOf(flexAccessEgress.stop),
+      flexAccessEgress.stop.getIndex(),
       isEgress ? flexAccessEgress.lastState.reverse() : flexAccessEgress.lastState,
       startOfTime
     );

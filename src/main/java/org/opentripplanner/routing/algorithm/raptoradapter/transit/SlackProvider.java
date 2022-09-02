@@ -1,9 +1,7 @@
 package org.opentripplanner.routing.algorithm.raptoradapter.transit;
 
 import java.util.Map;
-import org.opentripplanner.model.TransitMode;
-import org.opentripplanner.model.TripPattern;
-import org.opentripplanner.routing.algorithm.raptoradapter.transit.request.TripPatternForDates;
+import org.opentripplanner.transit.model.basic.TransitMode;
 import org.opentripplanner.transit.raptor.api.transit.RaptorSlackProvider;
 
 /**
@@ -67,11 +65,7 @@ public final class SlackProvider implements RaptorSlackProvider {
     return result;
   }
 
-  public static int slackIndex(TripPattern pattern) {
-    return slackIndex(pattern.getMode());
-  }
-
-  private static int slackIndex(final TransitMode mode) {
+  public static int slackIndex(final TransitMode mode) {
     return mode.ordinal();
   }
 }

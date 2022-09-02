@@ -12,33 +12,38 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.Before;
-import org.junit.Test;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.opentripplanner.common.model.T2;
 import org.opentripplanner.ext.vectortiles.layers.vehicleparkings.DigitransitVehicleParkingPropertyMapper;
 import org.opentripplanner.ext.vectortiles.layers.vehicleparkings.VehicleParkingsLayerBuilder;
-import org.opentripplanner.model.FeedScopedId;
 import org.opentripplanner.routing.core.OsmOpeningHours;
 import org.opentripplanner.routing.graph.Graph;
 import org.opentripplanner.routing.vehicle_parking.VehicleParking;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingService;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingSpaces;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingState;
-import org.opentripplanner.util.NonLocalizedString;
-import org.opentripplanner.util.TranslatedString;
+import org.opentripplanner.transit.model._data.TransitModelForTest;
+import org.opentripplanner.transit.model.basic.NonLocalizedString;
+import org.opentripplanner.transit.model.basic.TranslatedString;
+import org.opentripplanner.transit.model.framework.FeedScopedId;
+import org.opentripplanner.transit.service.TransitService;
 
 public class VehicleParkingsLayerTest {
 
+  private static final FeedScopedId ID = TransitModelForTest.id("id");
+
   private VehicleParking vehicleParking;
 
-  @Before
+  @BeforeEach
   public void setUp() throws OpeningHoursParseException {
     vehicleParking =
       VehicleParking
         .builder()
-        .id(new FeedScopedId("id", "id"))
+        .id(ID)
         .name(TranslatedString.getI18NString(Map.of("", "name", "de", "DE"), false, false))
         .x(1)
         .y(2)
@@ -62,13 +67,15 @@ public class VehicleParkingsLayerTest {
   @Test
   public void vehicleParkingGeometryTest() {
     VehicleParkingService service = mock(VehicleParkingService.class);
-    when(service.getVehicleParkings()).thenReturn(List.of(vehicleParking).stream());
+    when(service.getVehicleParkings()).thenReturn(Stream.of(vehicleParking));
 
     Graph graph = mock(Graph.class);
+    TransitService transitService = mock(TransitService.class);
     when(graph.getVehicleParkingService()).thenReturn(service);
 
     VehicleParkingsLayerBuilderWithPublicGeometry builder = new VehicleParkingsLayerBuilderWithPublicGeometry(
       graph,
+      transitService,
       new VectorTilesResource.LayerParameters() {
         @Override
         public String name() {
@@ -122,7 +129,7 @@ public class VehicleParkingsLayerTest {
     Map<String, Object> map = new HashMap<>();
     mapper.map(vehicleParking).forEach(o -> map.put(o.first, o.second));
 
-    assertEquals("id:id", map.get("id").toString());
+    assertEquals(ID.toString(), map.get("id").toString());
     assertEquals("name", map.get("name").toString());
     assertEquals("DE", map.get("name.de").toString());
     assertEquals("details", map.get("detailsUrl").toString());
@@ -162,9 +169,10 @@ public class VehicleParkingsLayerTest {
 
     public VehicleParkingsLayerBuilderWithPublicGeometry(
       Graph graph,
+      TransitService transitService,
       VectorTilesResource.LayerParameters layerParameters
     ) {
-      super(graph, layerParameters);
+      super(graph, transitService, layerParameters);
     }
 
     @Override

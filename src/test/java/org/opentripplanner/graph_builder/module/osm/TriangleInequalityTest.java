@@ -1,21 +1,23 @@
 package org.opentripplanner.graph_builder.module.osm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.opentripplanner.graph_builder.DataImportIssueStore.noopIssueStore;
 
 import java.io.File;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.opentripplanner.datastore.DataSource;
-import org.opentripplanner.datastore.FileType;
+import java.util.List;
+import java.util.Set;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.opentripplanner.datastore.api.DataSource;
+import org.opentripplanner.datastore.api.FileType;
 import org.opentripplanner.datastore.file.FileDataSource;
-import org.opentripplanner.openstreetmap.BinaryOpenStreetMapProvider;
+import org.opentripplanner.openstreetmap.OpenStreetMapProvider;
 import org.opentripplanner.routing.algorithm.astar.AStarBuilder;
 import org.opentripplanner.routing.api.request.RoutingRequest;
 import org.opentripplanner.routing.core.RoutingContext;
@@ -28,21 +30,24 @@ import org.opentripplanner.routing.graph.Vertex;
 import org.opentripplanner.routing.spt.DominanceFunction;
 import org.opentripplanner.routing.spt.GraphPath;
 import org.opentripplanner.routing.spt.ShortestPathTree;
+import org.opentripplanner.transit.model.framework.Deduplicator;
+import org.opentripplanner.transit.service.StopModel;
+import org.opentripplanner.transit.service.TransitModel;
 
 public class TriangleInequalityTest {
 
   private static Graph graph;
+  private static TransitModel transitModel;
 
   private Vertex start;
   private Vertex end;
 
-  @BeforeClass
+  @BeforeAll
   public static void onlyOnce() {
-    HashMap<Class<?>, Object> extra = new HashMap<>();
-    graph = new Graph();
-
-    OpenStreetMapModule loader = new OpenStreetMapModule();
-    loader.setDefaultWayPropertySetSource(new DefaultWayPropertySetSource());
+    var deduplicator = new Deduplicator();
+    var stopModel = new StopModel();
+    graph = new Graph(deduplicator);
+    transitModel = new TransitModel(stopModel, deduplicator);
 
     File file = new File(
       URLDecoder.decode(
@@ -51,13 +56,20 @@ public class TriangleInequalityTest {
       )
     );
     DataSource source = new FileDataSource(file, FileType.OSM);
-    BinaryOpenStreetMapProvider provider = new BinaryOpenStreetMapProvider(source, true);
+    OpenStreetMapProvider provider = new OpenStreetMapProvider(source, true);
 
-    loader.setProvider(provider);
-    loader.buildGraph(graph, extra);
+    OpenStreetMapModule osmModule = new OpenStreetMapModule(
+      List.of(provider),
+      Set.of(),
+      graph,
+      transitModel.getTimeZone(),
+      noopIssueStore()
+    );
+    osmModule.setDefaultWayPropertySetSource(new DefaultWayPropertySetSource());
+    osmModule.buildGraph();
   }
 
-  @Before
+  @BeforeEach
   public void before() {
     start = graph.getVertex("osm:node:1919595913");
     end = graph.getVertex("osm:node:42448554");
@@ -150,16 +162,13 @@ public class TriangleInequalityTest {
     checkTriangleInequality(modes);
   }
 
-  private GraphPath getPath(RoutingRequest proto, Edge startBackEdge, Vertex u, Vertex v) {
-    RoutingRequest options = proto.clone();
-
-    ShortestPathTree tree = AStarBuilder
+  private GraphPath getPath(RoutingRequest options, Edge startBackEdge, Vertex u, Vertex v) {
+    return AStarBuilder
       .oneToOne()
       .setOriginBackEdge(startBackEdge)
       .setContext(new RoutingContext(options, graph, u, v))
-      .getShortestPathTree();
-
-    return tree.getPath(v);
+      .getShortestPathTree()
+      .getPath(v);
   }
 
   private void checkTriangleInequality() {
@@ -179,7 +188,6 @@ public class TriangleInequalityTest {
     prototypeOptions.carSpeed = 1.0;
     prototypeOptions.walkSpeed = 1.0;
     prototypeOptions.bikeSpeed = 1.0;
-    prototypeOptions.dominanceFunction = new DominanceFunction.EarliestArrival();
 
     graph.setIntersectionTraversalCostModel(new ConstantIntersectionTraversalCostModel(10.0));
 
@@ -187,11 +195,10 @@ public class TriangleInequalityTest {
       prototypeOptions.setStreetSubRequestModes(traverseModes);
     }
 
-    RoutingRequest options = prototypeOptions.clone();
-
     ShortestPathTree tree = AStarBuilder
       .oneToOne()
-      .setContext(new RoutingContext(options, graph, start, end))
+      .setDominanceFunction(new DominanceFunction.EarliestArrival())
+      .setContext(new RoutingContext(prototypeOptions, graph, start, end))
       .getShortestPathTree();
 
     GraphPath path = tree.getPath(end);

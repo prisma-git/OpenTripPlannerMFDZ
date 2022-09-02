@@ -2,10 +2,10 @@ package org.opentripplanner.model;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Objects;
-import org.opentripplanner.model.base.ToStringBuilder;
 import org.opentripplanner.model.transfer.ConstrainedTransfer;
 import org.opentripplanner.routing.graph.Edge;
+import org.opentripplanner.transit.model.site.StopLocation;
+import org.opentripplanner.util.lang.ToStringBuilder;
 
 /**
  * Represents a transfer between stops with the street network path attatched to it.
@@ -46,11 +46,6 @@ public class PathTransfer implements Serializable {
 
   public List<Edge> getEdges() {
     return this.edges;
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(from, to, distanceMeters, edges);
   }
 
   @Override

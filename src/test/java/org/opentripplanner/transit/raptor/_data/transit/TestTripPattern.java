@@ -1,10 +1,10 @@
 package org.opentripplanner.transit.raptor._data.transit;
 
-import org.opentripplanner.model.WheelChairBoarding;
-import org.opentripplanner.model.base.ToStringBuilder;
-import org.opentripplanner.transit.raptor.api.transit.RaptorTripPattern;
+import org.opentripplanner.routing.algorithm.raptoradapter.api.DefaultTripPattern;
+import org.opentripplanner.transit.model.network.Route;
+import org.opentripplanner.util.lang.ToStringBuilder;
 
-public class TestTripPattern implements RaptorTripPattern {
+public class TestTripPattern implements DefaultTripPattern {
 
   public static final byte BOARDING_MASK = 0b0001;
   public static final byte ALIGHTING_MASK = 0b0010;
@@ -18,6 +18,8 @@ public class TestTripPattern implements RaptorTripPattern {
    */
   private int slackIndex = 0;
 
+  private int patternIndex = 0;
+
   /**
    * <pre>
    * 0 - 000 : No restriction
@@ -27,6 +29,8 @@ public class TestTripPattern implements RaptorTripPattern {
    * </pre>
    */
   private final int[] restrictions;
+
+  private Route route;
 
   private TestTripPattern(String name, int[] stopIndexes, int[] restrictions) {
     this.name = name;
@@ -45,6 +49,16 @@ public class TestTripPattern implements RaptorTripPattern {
 
   public TestTripPattern withSlackIndex(int index) {
     this.slackIndex = index;
+    return this;
+  }
+
+  TestTripPattern withPatternIndex(int index) {
+    this.patternIndex = index;
+    return this;
+  }
+
+  public TestTripPattern withRoute(Route route) {
+    this.route = route;
     return this;
   }
 
@@ -104,8 +118,18 @@ public class TestTripPattern implements RaptorTripPattern {
   }
 
   @Override
+  public int patternIndex() {
+    return patternIndex;
+  }
+
+  @Override
   public int numberOfStopsInPattern() {
     return stopIndexes.length;
+  }
+
+  @Override
+  public Route route() {
+    return route;
   }
 
   @Override

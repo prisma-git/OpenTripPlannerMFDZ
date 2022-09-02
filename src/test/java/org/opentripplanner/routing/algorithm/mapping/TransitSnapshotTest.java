@@ -1,17 +1,15 @@
 package org.opentripplanner.routing.algorithm.mapping;
 
-import static java.util.Collections.emptySet;
-
 import au.com.origin.snapshots.junit5.SnapshotExtension;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.opentripplanner.model.GenericLocation;
-import org.opentripplanner.model.modes.AllowedTransitMode;
 import org.opentripplanner.routing.api.request.RequestModes;
 import org.opentripplanner.routing.api.request.RoutingRequest;
 import org.opentripplanner.routing.api.request.StreetMode;
+import org.opentripplanner.transit.model.basic.MainAndSubMode;
 
 @ExtendWith(SnapshotExtension.class)
 public class TransitSnapshotTest extends SnapshotTestBase {
@@ -68,14 +66,7 @@ public class TransitSnapshotTest extends SnapshotTestBase {
   public void test_trip_planning_with_walk_only() {
     RoutingRequest request = createTestRequest(2009, 11, 17, 10, 0, 0);
 
-    request.modes =
-      new RequestModes(
-        StreetMode.WALK,
-        StreetMode.WALK,
-        StreetMode.WALK,
-        StreetMode.WALK,
-        emptySet()
-      );
+    request.modes = RequestModes.of().withDirectMode(StreetMode.WALK).clearTransitModes().build();
     request.from = p0;
     request.to = p2;
 
@@ -87,13 +78,14 @@ public class TransitSnapshotTest extends SnapshotTestBase {
     RoutingRequest request = createTestRequest(2009, 11, 17, 10, 0, 0);
 
     request.modes =
-      new RequestModes(
-        StreetMode.WALK,
-        StreetMode.WALK,
-        StreetMode.WALK,
-        StreetMode.WALK,
-        emptySet()
-      );
+      RequestModes
+        .of()
+        .withAccessMode(StreetMode.WALK)
+        .withEgressMode(StreetMode.WALK)
+        .withDirectMode(StreetMode.WALK)
+        .withTransferMode(StreetMode.WALK)
+        .clearTransitModes()
+        .build();
     request.from = ps;
     request.to = p2;
 
@@ -107,13 +99,14 @@ public class TransitSnapshotTest extends SnapshotTestBase {
     RoutingRequest request = createTestRequest(2009, 11, 17, 10, 0, 0);
 
     request.modes =
-      new RequestModes(
-        StreetMode.WALK,
-        StreetMode.WALK,
-        StreetMode.WALK,
-        StreetMode.WALK,
-        emptySet()
-      );
+      RequestModes
+        .of()
+        .withAccessMode(StreetMode.WALK)
+        .withEgressMode(StreetMode.WALK)
+        .withDirectMode(StreetMode.WALK)
+        .withTransferMode(StreetMode.WALK)
+        .clearTransitModes()
+        .build();
     request.from = ptc;
     request.to = p3;
 
@@ -122,18 +115,18 @@ public class TransitSnapshotTest extends SnapshotTestBase {
   }
 
   @Test
-  //@Disabled("This test fails on some machines, but not others, snapshot @line 2704")
   public void test_trip_planning_with_transit() {
     RoutingRequest request = createTestRequest(2009, 11, 17, 10, 0, 0);
 
     request.modes =
-      new RequestModes(
-        StreetMode.WALK,
-        StreetMode.WALK,
-        StreetMode.WALK,
-        StreetMode.WALK,
-        AllowedTransitMode.getAllTransitModes()
-      );
+      RequestModes
+        .of()
+        .withAccessMode(StreetMode.WALK)
+        .withEgressMode(StreetMode.WALK)
+        .withDirectMode(StreetMode.WALK)
+        .withTransferMode(StreetMode.WALK)
+        .withTransitModes(MainAndSubMode.all())
+        .build();
     request.from = p1;
     request.to = p2;
 
@@ -145,13 +138,14 @@ public class TransitSnapshotTest extends SnapshotTestBase {
     RoutingRequest request = createTestRequest(2009, 11, 17, 10, 0, 0);
 
     request.modes =
-      new RequestModes(
-        StreetMode.WALK,
-        StreetMode.WALK,
-        StreetMode.WALK,
-        StreetMode.WALK,
-        AllowedTransitMode.getAllTransitModes()
-      );
+      RequestModes
+        .of()
+        .withAccessMode(StreetMode.WALK)
+        .withEgressMode(StreetMode.WALK)
+        .withDirectMode(StreetMode.WALK)
+        .withTransferMode(StreetMode.WALK)
+        .withTransitModes(MainAndSubMode.all())
+        .build();
     request.from = ps;
     request.to = p3;
 
@@ -164,13 +158,14 @@ public class TransitSnapshotTest extends SnapshotTestBase {
     RoutingRequest request = createTestRequest(2009, 11, 17, 10, 0, 0);
 
     request.modes =
-      new RequestModes(
-        StreetMode.WALK,
-        StreetMode.WALK,
-        StreetMode.WALK,
-        StreetMode.WALK,
-        AllowedTransitMode.getAllTransitModes()
-      );
+      RequestModes
+        .of()
+        .withAccessMode(StreetMode.WALK)
+        .withEgressMode(StreetMode.WALK)
+        .withDirectMode(StreetMode.WALK)
+        .withTransferMode(StreetMode.WALK)
+        .withTransitModes(MainAndSubMode.all())
+        .build();
     request.from = ptc;
     request.to = p3;
 

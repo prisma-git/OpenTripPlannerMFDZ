@@ -18,7 +18,8 @@ public class ParkAndRideDirectBikeItineraryFilter implements ItineraryListFilter
   }
 
   private boolean filterBikeOnlyParkAndRideItineraries(Itinerary itinerary) {
-    return !itinerary.legs
+    return !itinerary
+      .getLegs()
       .stream()
       .allMatch(leg -> leg.getMode() == BICYCLE || leg.getWalkingBike());
   }

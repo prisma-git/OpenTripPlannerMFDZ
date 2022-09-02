@@ -227,6 +227,7 @@ public class LegacyGraphQLTypes {
     CAR_PARK,
     DEPARTURE_ROW,
     STOP,
+    VEHICLE_RENT,
   }
 
   public enum LegacyGraphQLFormFactor {
@@ -343,6 +344,12 @@ public class LegacyGraphQLTypes {
     public void setLegacyGraphQLLon(Double lon) {
       this.lon = lon;
     }
+  }
+
+  public enum LegacyGraphQLInputField {
+    DATE_TIME,
+    FROM,
+    TO,
   }
 
   public static class LegacyGraphQLInputFiltersInput {
@@ -588,12 +595,14 @@ public class LegacyGraphQLTypes {
 
     private String agencies;
     private String routes;
+    private String unpreferredRouteCost;
     private Integer useUnpreferredRoutesPenalty;
 
     public LegacyGraphQLInputUnpreferredInput(Map<String, Object> args) {
       if (args != null) {
         this.agencies = (String) args.get("agencies");
         this.routes = (String) args.get("routes");
+        this.unpreferredRouteCost = (String) args.get("unpreferredRouteCost");
         this.useUnpreferredRoutesPenalty = (Integer) args.get("useUnpreferredRoutesPenalty");
       }
     }
@@ -606,6 +615,10 @@ public class LegacyGraphQLTypes {
       return this.routes;
     }
 
+    public String getLegacyGraphQLUnpreferredRouteCost() {
+      return this.unpreferredRouteCost;
+    }
+
     public Integer getLegacyGraphQLUseUnpreferredRoutesPenalty() {
       return this.useUnpreferredRoutesPenalty;
     }
@@ -616,6 +629,10 @@ public class LegacyGraphQLTypes {
 
     public void setLegacyGraphQLRoutes(String routes) {
       this.routes = routes;
+    }
+
+    public void setLegacyGraphQLUnpreferredRouteCost(String unpreferredRouteCost) {
+      this.unpreferredRouteCost = unpreferredRouteCost;
     }
 
     public void setLegacyGraphQLUseUnpreferredRoutesPenalty(Integer useUnpreferredRoutesPenalty) {
@@ -735,8 +752,8 @@ public class LegacyGraphQLTypes {
   }
 
   /**
-   * Additional qualifier for a transport mode. Note that qualifiers can only be used with certain
-   * transport modes.
+   * Additional qualifier for a transport mode.
+   * Note that qualifiers can only be used with certain transport modes.
    */
   public enum LegacyGraphQLQualifier {
     ACCESS,
@@ -1344,6 +1361,7 @@ public class LegacyGraphQLTypes {
     private Integer alightSlack;
     private Boolean allowBikeRental;
     private Boolean allowKeepingRentedBicycleAtDestination;
+    private Iterable<String> allowedBikeRentalNetworks;
     private Iterable<String> allowedTicketTypes;
     private Iterable<String> allowedVehicleRentalNetworks;
     private Boolean arriveBy;
@@ -1405,6 +1423,7 @@ public class LegacyGraphQLTypes {
     private Integer walkBoardCost;
     private Double walkOnStreetReluctance;
     private Double walkReluctance;
+    private Double walkSafetyFactor;
     private Double walkSpeed;
     private Boolean wheelchair;
 
@@ -1414,6 +1433,7 @@ public class LegacyGraphQLTypes {
         this.allowBikeRental = (Boolean) args.get("allowBikeRental");
         this.allowKeepingRentedBicycleAtDestination =
           (Boolean) args.get("allowKeepingRentedBicycleAtDestination");
+        this.allowedBikeRentalNetworks = (Iterable<String>) args.get("allowedBikeRentalNetworks");
         this.allowedTicketTypes = (Iterable<String>) args.get("allowedTicketTypes");
         this.allowedVehicleRentalNetworks =
           (Iterable<String>) args.get("allowedVehicleRentalNetworks");
@@ -1497,6 +1517,7 @@ public class LegacyGraphQLTypes {
         this.walkBoardCost = (Integer) args.get("walkBoardCost");
         this.walkOnStreetReluctance = (Double) args.get("walkOnStreetReluctance");
         this.walkReluctance = (Double) args.get("walkReluctance");
+        this.walkSafetyFactor = (Double) args.get("walkSafetyFactor");
         this.walkSpeed = (Double) args.get("walkSpeed");
         this.wheelchair = (Boolean) args.get("wheelchair");
       }
@@ -1512,6 +1533,10 @@ public class LegacyGraphQLTypes {
 
     public Boolean getLegacyGraphQLAllowKeepingRentedBicycleAtDestination() {
       return this.allowKeepingRentedBicycleAtDestination;
+    }
+
+    public Iterable<String> getLegacyGraphQLAllowedBikeRentalNetworks() {
+      return this.allowedBikeRentalNetworks;
     }
 
     public Iterable<String> getLegacyGraphQLAllowedTicketTypes() {
@@ -1758,6 +1783,10 @@ public class LegacyGraphQLTypes {
       return this.walkReluctance;
     }
 
+    public Double getLegacyGraphQLWalkSafetyFactor() {
+      return this.walkSafetyFactor;
+    }
+
     public Double getLegacyGraphQLWalkSpeed() {
       return this.walkSpeed;
     }
@@ -1778,6 +1807,12 @@ public class LegacyGraphQLTypes {
       Boolean allowKeepingRentedBicycleAtDestination
     ) {
       this.allowKeepingRentedBicycleAtDestination = allowKeepingRentedBicycleAtDestination;
+    }
+
+    public void setLegacyGraphQLAllowedBikeRentalNetworks(
+      Iterable<String> allowedBikeRentalNetworks
+    ) {
+      this.allowedBikeRentalNetworks = allowedBikeRentalNetworks;
     }
 
     public void setLegacyGraphQLAllowedTicketTypes(Iterable<String> allowedTicketTypes) {
@@ -2046,6 +2081,10 @@ public class LegacyGraphQLTypes {
 
     public void setLegacyGraphQLWalkReluctance(Double walkReluctance) {
       this.walkReluctance = walkReluctance;
+    }
+
+    public void setLegacyGraphQLWalkSafetyFactor(Double walkSafetyFactor) {
+      this.walkSafetyFactor = walkSafetyFactor;
     }
 
     public void setLegacyGraphQLWalkSpeed(Double walkSpeed) {
@@ -2586,6 +2625,25 @@ public class LegacyGraphQLTypes {
     }
   }
 
+  public static class LegacyGraphQLRouteLongNameArgs {
+
+    private String language;
+
+    public LegacyGraphQLRouteLongNameArgs(Map<String, Object> args) {
+      if (args != null) {
+        this.language = (String) args.get("language");
+      }
+    }
+
+    public String getLegacyGraphQLLanguage() {
+      return this.language;
+    }
+
+    public void setLegacyGraphQLLanguage(String language) {
+      this.language = language;
+    }
+  }
+
   /** Entities that are relevant for routes that can contain alerts */
   public enum LegacyGraphQLRouteAlertType {
     AGENCY,
@@ -2595,6 +2653,17 @@ public class LegacyGraphQLTypes {
     STOPS_ON_ROUTE,
     STOPS_ON_TRIPS,
     TRIPS,
+  }
+
+  public enum LegacyGraphQLRoutingErrorCode {
+    LOCATION_NOT_FOUND,
+    NO_STOPS_IN_RANGE,
+    NO_TRANSIT_CONNECTION,
+    NO_TRANSIT_CONNECTION_IN_SEARCH_WINDOW,
+    OUTSIDE_BOUNDS,
+    OUTSIDE_SERVICE_PERIOD,
+    SYSTEM_ERROR,
+    WALKING_BETTER_THAN_TRANSIT,
   }
 
   public static class LegacyGraphQLStopAlertsArgs {
@@ -2623,6 +2692,25 @@ public class LegacyGraphQLTypes {
 
     public void setLegacyGraphQLTypes(Iterable<LegacyGraphQLStopAlertType> types) {
       this.types = types;
+    }
+  }
+
+  public static class LegacyGraphQLStopDescArgs {
+
+    private String language;
+
+    public LegacyGraphQLStopDescArgs(Map<String, Object> args) {
+      if (args != null) {
+        this.language = (String) args.get("language");
+      }
+    }
+
+    public String getLegacyGraphQLLanguage() {
+      return this.language;
+    }
+
+    public void setLegacyGraphQLLanguage(String language) {
+      this.language = language;
     }
   }
 
@@ -3054,8 +3142,8 @@ public class LegacyGraphQLTypes {
   }
 
   /**
-   * The state of the vehicle parking. TEMPORARILY_CLOSED and CLOSED are distinct states so that
-   * they may be represented differently to the user.
+   * The state of the vehicle parking. TEMPORARILY_CLOSED and CLOSED are distinct states so that they
+   * may be represented differently to the user.
    */
   public enum LegacyGraphQLVehicleParkingState {
     CLOSED,
@@ -3063,6 +3151,7 @@ public class LegacyGraphQLTypes {
     TEMPORARILY_CLOSED,
   }
 
+  /** How close the vehicle is to the stop. */
   public enum LegacyGraphQLVehicleStopStatus {
     INCOMING_AT,
     IN_TRANSIT_TO,

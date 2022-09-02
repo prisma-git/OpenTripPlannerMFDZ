@@ -1,15 +1,17 @@
 package org.opentripplanner.routing.api.request;
 
+import static org.opentripplanner.routing.algorithm.raptoradapter.transit.cost.PatternCostCalculator.DEFAULT_ROUTE_RELUCTANCE;
 import static org.opentripplanner.util.time.DurationUtils.durationInSeconds;
 
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,18 +19,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
+import java.util.function.DoubleFunction;
 import javax.annotation.Nonnull;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.opentripplanner.api.common.LocationStringParser;
 import org.opentripplanner.common.geometry.SphericalDistanceLibrary;
 import org.opentripplanner.ext.dataoverlay.api.DataOverlayParameters;
-import org.opentripplanner.model.FeedScopedId;
 import org.opentripplanner.model.GenericLocation;
-import org.opentripplanner.model.Route;
-import org.opentripplanner.model.TransitMode;
-import org.opentripplanner.model.modes.AllowedTransitMode;
 import org.opentripplanner.model.plan.SortOrder;
 import org.opentripplanner.model.plan.pagecursor.PageCursor;
 import org.opentripplanner.model.plan.pagecursor.PageType;
@@ -45,17 +43,18 @@ import org.opentripplanner.routing.impl.DurationComparator;
 import org.opentripplanner.routing.impl.PathComparator;
 import org.opentripplanner.routing.spt.DominanceFunction;
 import org.opentripplanner.routing.spt.GraphPath;
-import org.opentripplanner.routing.spt.ShortestPathTree;
 import org.opentripplanner.routing.vehicle_rental.RentalVehicleType.FormFactor;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalStation;
+import org.opentripplanner.transit.model.basic.TransitMode;
+import org.opentripplanner.transit.model.framework.FeedScopedId;
+import org.opentripplanner.transit.model.network.Route;
 import org.opentripplanner.util.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A trip planning request. Some parameters may not be honored by the trip planner for some or all
- * itineraries. For example, maxWalkDistance may be relaxed if the alternative is to not provide a
- * route.
+ * itineraries.
  * <p>
  * All defaults should be specified here in the RoutingRequest, NOT as annotations on query
  * parameters in web services that create RoutingRequests. This establishes a priority chain for
@@ -71,8 +70,6 @@ import org.slf4j.LoggerFactory;
  *           REST API.
  */
 public class RoutingRequest implements Cloneable, Serializable {
-
-  private static final long serialVersionUID = 1L;
 
   private static final Logger LOG = LoggerFactory.getLogger(RoutingRequest.class);
 
@@ -149,13 +146,7 @@ public class RoutingRequest implements Cloneable, Serializable {
    * <p>
    * // TODO OTP2 Street routing requests should eventually be split into its own request class.
    */
-  public RequestModes modes = new RequestModes(
-    StreetMode.WALK,
-    StreetMode.WALK,
-    StreetMode.WALK,
-    StreetMode.WALK,
-    AllowedTransitMode.getAllTransitModes()
-  );
+  public RequestModes modes = RequestModes.defaultRequestModes();
   /**
    * The set of TraverseModes allowed when doing creating sub requests and doing street routing. //
    * TODO OTP2 Street routing requests should eventually be split into its own request class.
@@ -248,11 +239,14 @@ public class RoutingRequest implements Cloneable, Serializable {
    * Whether the trip should depart at dateTime (false, the default), or arrive at dateTime.
    */
   public boolean arriveBy = false;
+
   /**
    * Whether the trip must be wheelchair-accessible and how strictly this should be interpreted.
    */
+  @Nonnull
   public WheelchairAccessibilityRequest wheelchairAccessibility =
     WheelchairAccessibilityRequest.DEFAULT;
+
   /**
    * The maximum number of itineraries to return. In OTP1 this parameter terminates the search, but
    * in OTP2 it crops the list of itineraries AFTER the search is complete. This parameter is a post
@@ -264,14 +258,6 @@ public class RoutingRequest implements Cloneable, Serializable {
    * be returned. Consider tuning the search-window instead of setting this to a small value.
    */
   public int numItineraries = 50;
-  /** The maximum slope of streets for wheelchair trips. */
-  public double maxWheelchairSlope = 0.0833333333333; // ADA max wheelchair ramp slope is a good default.
-
-  /**
-   * What penalty factor should be given to street edges, which are over the max slope.
-   * Set to negative for disable routing on too steep edges.
-   */
-  public double wheelchairSlopeTooSteepCostFactor = 10.0;
 
   /** Whether the planner should return intermediate stops lists for transit legs. */
   public boolean showIntermediateStops = false;
@@ -324,10 +310,13 @@ public class RoutingRequest implements Cloneable, Serializable {
   public int nonpreferredTransferCost = 180;
 
   /**
-   * A multiplier for how bad walking is, compared to being in transit for equal lengths of time.
-   * Defaults to 2. Empirically, values between 10 and 20 seem to correspond well to the concept of
-   * not wanting to walk too much without asking for totally ridiculous itineraries, but this
-   * observation should in no way be taken as scientific or definitive. Your mileage may vary.
+   * A multiplier for how bad walking is, compared to being in transit for equal
+   * lengths of time. Empirically, values between 2 and 4 seem to correspond
+   * well to the concept of not wanting to walk too much without asking for
+   * totally ridiculous itineraries, but this observation should in no way be
+   * taken as scientific or definitive. Your mileage may vary. See
+   * https://github.com/opentripplanner/OpenTripPlanner/issues/4090 for impact on
+   * performance with high values. Default value: 2.0
    */
   public double walkReluctance = 2.0;
   public double bikeWalkingReluctance = 5.0;
@@ -452,6 +441,11 @@ public class RoutingRequest implements Cloneable, Serializable {
    */
   public int bikeBoardCost = 60 * 10;
   /**
+   * Factor for how much the walk safety is considered in routing. Value should be between 0 and 1.
+   * If the value is set to be 0, safety is ignored.
+   */
+  public double walkSafetyFactor = 1.0;
+  /**
    * Do not use certain named agencies
    */
   private Set<FeedScopedId> bannedAgencies = Set.of();
@@ -469,7 +463,6 @@ public class RoutingRequest implements Cloneable, Serializable {
   /**
    * Set of unpreferred agencies for given user.
    */
-  @Deprecated
   private Set<FeedScopedId> unpreferredAgencies = Set.of();
 
   /**
@@ -484,12 +477,12 @@ public class RoutingRequest implements Cloneable, Serializable {
   private RouteMatcher whiteListedRoutes = RouteMatcher.emptyMatcher();
 
   /**
-   * Set of preferred routes by user.
+   * Set of preferred routes by user and configuration.
    *
    * @deprecated TODO OTP2 Needs to be implemented
    */
   @Deprecated
-  private RouteMatcher preferredRoutes = RouteMatcher.emptyMatcher();
+  public List<FeedScopedId> preferredRoutes = List.of();
 
   /**
    * Penalty added for using every route that is not preferred if user set any route as preferred.
@@ -501,21 +494,18 @@ public class RoutingRequest implements Cloneable, Serializable {
   public int otherThanPreferredRoutesPenalty = 300;
 
   /**
-   * Set of unpreferred routes for given user.
-   *
-   * @deprecated TODO OTP2: Needs to be implemented
+   * Set of unpreferred routes for given user and configuration.
    */
-  @Deprecated
-  private RouteMatcher unpreferredRoutes = RouteMatcher.emptyMatcher();
+  private Set<FeedScopedId> unpreferredRoutes = Set.of();
 
   /**
-   * Penalty added for using every unpreferred route. We return number of seconds that we are
-   * willing to wait for preferred route.
-   *
-   * @deprecated TODO OTP2: Needs to be implemented
+   * A cost function used to calculate penalty for an unpreferred route or agency. Function should
+   * return number of seconds that we are willing to wait for preferred route.
    */
-  @Deprecated
-  public int useUnpreferredRoutesPenalty = 300;
+  public DoubleFunction<Double> unpreferredCost = RequestFunctions.createLinearFunction(
+    0.0,
+    DEFAULT_ROUTE_RELUCTANCE
+  );
 
   /**
    * Do not use certain trips
@@ -669,11 +659,6 @@ public class RoutingRequest implements Cloneable, Serializable {
    * it exists.
    */
   public boolean useVehicleParkingAvailabilityInformation = false;
-  /**
-   * The function that compares paths converging on the same vertex to decide which ones continue to
-   * be explored.
-   */
-  public DominanceFunction dominanceFunction = new DominanceFunction.Pareto();
 
   /**
    * Accept only paths that use transit (no street-only paths).
@@ -710,19 +695,23 @@ public class RoutingRequest implements Cloneable, Serializable {
    * Raptor can print all events when arriving at stops to system error. For developers only.
    */
   public DebugRaptor raptorDebugging = new DebugRaptor();
+
   /**
    * Set of options to use with Raptor. These are available here for testing purposes.
    */
   public RaptorOptions raptorOptions = new RaptorOptions();
 
-  /* CONSTRUCTORS */
   /**
    * List of OTP request tags, these are used to cross-cutting concerns like logging and micrometer
    * tags. Currently, all tags are added to all the timer instances for this request.
    */
-  public Tags tags = Tags.of();
+  public Set<RoutingTag> tags = Set.of();
+
   private Envelope fromEnvelope;
+
   private Envelope toEnvelope;
+
+  /* CONSTRUCTORS */
 
   /** Constructor for options; modes defaults to walk and transit */
   public RoutingRequest() {
@@ -803,6 +792,16 @@ public class RoutingRequest implements Cloneable, Serializable {
     }
   }
 
+  public void setWalkSafetyFactor(double walkSafetyFactor) {
+    if (walkSafetyFactor < 0) {
+      this.walkSafetyFactor = 0;
+    } else if (walkSafetyFactor > 1) {
+      this.walkSafetyFactor = 1;
+    } else {
+      this.walkSafetyFactor = walkSafetyFactor;
+    }
+  }
+
   public void setPreferredAgencies(Collection<FeedScopedId> ids) {
     if (ids != null) {
       preferredAgencies = Set.copyOf(ids);
@@ -825,6 +824,10 @@ public class RoutingRequest implements Cloneable, Serializable {
     if (!s.isEmpty()) {
       unpreferredAgencies = FeedScopedId.parseSetOfIds(s);
     }
+  }
+
+  public void setUnpreferredCost(String constFunction) {
+    unpreferredCost = RequestFunctions.parse(constFunction);
   }
 
   public void setBannedAgencies(Collection<FeedScopedId> ids) {
@@ -856,27 +859,27 @@ public class RoutingRequest implements Cloneable, Serializable {
     this.otherThanPreferredRoutesPenalty = penalty;
   }
 
-  public void setPreferredRoutes(List<FeedScopedId> routeIds) {
-    preferredRoutes = RouteMatcher.idMatcher(routeIds);
+  public void setPreferredRoutes(Collection<FeedScopedId> routeIds) {
+    preferredRoutes = routeIds.stream().toList();
   }
 
   public void setPreferredRoutesFromString(String s) {
     if (!s.isEmpty()) {
-      preferredRoutes = RouteMatcher.parse(s);
+      preferredRoutes = FeedScopedId.parseListOfIds(s);
     } else {
-      preferredRoutes = RouteMatcher.emptyMatcher();
+      preferredRoutes = List.of();
     }
   }
 
-  public void setUnpreferredRoutes(List<FeedScopedId> routeIds) {
-    unpreferredRoutes = RouteMatcher.idMatcher(routeIds);
+  public void setUnpreferredRoutes(Collection<FeedScopedId> routeIds) {
+    unpreferredRoutes = Set.copyOf(routeIds);
   }
 
   public void setUnpreferredRoutesFromString(String s) {
     if (!s.isEmpty()) {
-      unpreferredRoutes = RouteMatcher.parse(s);
+      unpreferredRoutes = Set.copyOf(FeedScopedId.parseListOfIds(s));
     } else {
-      unpreferredRoutes = RouteMatcher.emptyMatcher();
+      unpreferredRoutes = Set.of();
     }
   }
 
@@ -944,8 +947,8 @@ public class RoutingRequest implements Cloneable, Serializable {
     this.dateTime = dateTime;
   }
 
-  public void setDateTime(String date, String time, TimeZone tz) {
-    Date dateObject = DateUtils.toDate(date, time, tz);
+  public void setDateTime(String date, String time, ZoneId tz) {
+    ZonedDateTime dateObject = DateUtils.toZonedDateTime(date, time, tz);
     setDateTime(dateObject == null ? Instant.now() : dateObject.toInstant());
   }
 
@@ -980,7 +983,7 @@ public class RoutingRequest implements Cloneable, Serializable {
         arriveBy = false;
       }
       setDateTime(arriveBy ? pageCursor.latestArrivalTime : pageCursor.earliestDepartureTime);
-      modes.directMode = StreetMode.NOT_SET;
+      modes = modes.copy().withDirectMode(StreetMode.NOT_SET).build();
       LOG.debug("Request dateTime={} set from pageCursor.", dateTime);
     }
   }
@@ -1139,6 +1142,17 @@ public class RoutingRequest implements Cloneable, Serializable {
     return streetRequest;
   }
 
+  /**
+   * This method is used to clone the default message, and insert a current time. A typical use-case
+   * is to copy the default request(from router-config), and then set all user specified parameters
+   * before performing a routing search.
+   */
+  public RoutingRequest copyWithDateTimeNow() {
+    RoutingRequest copy = clone();
+    copy.setDateTime(Instant.now());
+    return copy;
+  }
+
   @Override
   public RoutingRequest clone() {
     try {
@@ -1160,8 +1174,8 @@ public class RoutingRequest implements Cloneable, Serializable {
 
       clone.bannedRoutes = bannedRoutes.clone();
       clone.whiteListedRoutes = whiteListedRoutes.clone();
-      clone.preferredRoutes = preferredRoutes.clone();
-      clone.unpreferredRoutes = unpreferredRoutes.clone();
+      clone.preferredRoutes = List.copyOf(preferredRoutes);
+      clone.unpreferredRoutes = Set.copyOf(unpreferredRoutes);
 
       clone.bannedTrips = Set.copyOf(bannedTrips);
 
@@ -1187,22 +1201,6 @@ public class RoutingRequest implements Cloneable, Serializable {
     ret.setArriveBy(!ret.arriveBy);
     ret.useVehicleRentalAvailabilityInformation = false;
     return ret;
-  }
-
-  /**
-   * The road speed for a specific traverse mode.
-   */
-  public double getReluctance(TraverseMode mode, boolean walkingBike) {
-    switch (mode) {
-      case WALK:
-        return walkingBike ? bikeWalkingReluctance : walkReluctance;
-      case BICYCLE:
-        return bikeReluctance;
-      case CAR:
-        return carReluctance;
-      default:
-        throw new IllegalArgumentException("getReluctance(): Invalid mode " + mode);
-    }
   }
 
   /**
@@ -1301,24 +1299,12 @@ public class RoutingRequest implements Cloneable, Serializable {
     return maxDirectStreetDurationForMode.getOrDefault(mode, maxDirectStreetDuration);
   }
 
-  /** Check if route is preferred according to this request. */
-  public long preferencesPenaltyForRoute(Route route) {
-    long preferences_penalty = 0;
-    FeedScopedId agencyID = route.getAgency().getId();
-    if (!preferredRoutes.equals(RouteMatcher.emptyMatcher()) || !preferredAgencies.isEmpty()) {
-      boolean isPreferedRoute = preferredRoutes.matches(route);
-      boolean isPreferedAgency = preferredAgencies.contains(agencyID);
+  public Set<FeedScopedId> getUnpreferredAgencies() {
+    return unpreferredAgencies;
+  }
 
-      if (!isPreferedRoute && !isPreferedAgency) {
-        preferences_penalty += otherThanPreferredRoutesPenalty;
-      }
-    }
-    boolean isUnpreferedRoute = unpreferredRoutes.matches(route);
-    boolean isUnpreferedAgency = unpreferredAgencies.contains(agencyID);
-    if (isUnpreferedRoute || isUnpreferedAgency) {
-      preferences_penalty += useUnpreferredRoutesPenalty;
-    }
-    return preferences_penalty;
+  public Set<FeedScopedId> getUnpreferredRoutes() {
+    return unpreferredRoutes;
   }
 
   /**
@@ -1351,14 +1337,6 @@ public class RoutingRequest implements Cloneable, Serializable {
     this.bikeTriangleSafetyFactor = safe;
     this.bikeTriangleSlopeFactor = slope;
     this.bikeTriangleTimeFactor = time;
-  }
-
-  /**
-   * Create a new ShortestPathTree instance using the DominanceFunction specified in this
-   * RoutingRequest.
-   */
-  public ShortestPathTree getNewShortestPathTree() {
-    return this.dominanceFunction.getNewShortestPathTree(this);
   }
 
   public Comparator<GraphPath> getPathComparator(boolean compareStartTimes) {

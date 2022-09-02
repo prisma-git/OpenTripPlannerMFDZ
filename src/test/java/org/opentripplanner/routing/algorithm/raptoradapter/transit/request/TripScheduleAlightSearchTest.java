@@ -6,14 +6,13 @@ import static org.opentripplanner.transit.raptor._data.transit.TestTripSchedule.
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opentripplanner.transit.raptor._data.RaptorTestConstants;
 import org.opentripplanner.transit.raptor._data.transit.TestRoute;
 import org.opentripplanner.transit.raptor._data.transit.TestTripPattern;
 import org.opentripplanner.transit.raptor._data.transit.TestTripSchedule;
-import org.opentripplanner.transit.raptor.api.request.SearchDirection;
-import org.opentripplanner.transit.raptor.api.transit.RaptorRoute;
 import org.opentripplanner.transit.raptor.api.transit.RaptorTripScheduleSearch;
+import org.opentripplanner.transit.raptor.api.transit.SearchDirection;
 
 public class TripScheduleAlightSearchTest implements RaptorTestConstants {
 

@@ -25,7 +25,7 @@ import org.opentripplanner.routing.vehicle_rental.VehicleRentalVehicle;
 import org.opentripplanner.routing.vertextype.StreetVertex;
 import org.opentripplanner.routing.vertextype.TransitEntranceVertex;
 import org.opentripplanner.routing.vertextype.TransitStopVertex;
-import org.opentripplanner.routing.vertextype.VehicleRentalStationVertex;
+import org.opentripplanner.routing.vertextype.VehicleRentalPlaceVertex;
 
 /**
  * This is adapted from {@link CarPickupTest}. All tests use the same graph structure, but a part of
@@ -40,7 +40,7 @@ public class BikeRentalTest extends GraphRoutingTest {
   private TemporaryStreetLocation T1, T2;
   private TransitEntranceVertex E1;
   private StreetVertex A, B, C, D;
-  private VehicleRentalStationVertex B1, B2;
+  private VehicleRentalPlaceVertex B1, B2;
   private StreetEdge SE1, SE2, SE3;
 
   @BeforeEach
@@ -54,39 +54,39 @@ public class BikeRentalTest extends GraphRoutingTest {
     //   D <-> E1
     //   D <-> T2
 
-    graph =
-      graphOf(
-        new Builder() {
-          @Override
-          public void build() {
-            S1 = stop("S1", 47.500, 19.001);
-            A = intersection("A", 47.500, 19.000);
-            B = intersection("B", 47.510, 19.000);
-            C = intersection("C", 47.520, 19.000);
-            D = intersection("D", 47.530, 19.000);
-            E1 = entrance("E1", 47.530, 19.001);
+    var otpModel = modelOf(
+      new Builder() {
+        @Override
+        public void build() {
+          S1 = stop("S1", 47.500, 19.001);
+          A = intersection("A", 47.500, 19.000);
+          B = intersection("B", 47.510, 19.000);
+          C = intersection("C", 47.520, 19.000);
+          D = intersection("D", 47.530, 19.000);
+          E1 = entrance("E1", 47.530, 19.001);
 
-            T1 = streetLocation("T1", 47.500, 18.999, false);
-            T2 = streetLocation("T1", 47.530, 18.999, true);
+          T1 = streetLocation("T1", 47.500, 18.999, false);
+          T2 = streetLocation("T1", 47.530, 18.999, true);
 
-            B1 = vehicleRentalStation("B1", 47.510, 19.001);
-            B2 = vehicleRentalStation("B2", 47.520, 19.001);
+          B1 = vehicleRentalStation("B1", 47.510, 19.001);
+          B2 = vehicleRentalStation("B2", 47.520, 19.001);
 
-            biLink(A, S1);
-            biLink(D, E1);
+          biLink(A, S1);
+          biLink(D, E1);
 
-            biLink(B, B1);
-            biLink(C, B2);
+          biLink(B, B1);
+          biLink(C, B2);
 
-            link(T1, A);
-            link(D, T2);
+          link(T1, A);
+          link(D, T2);
 
-            SE1 = street(A, B, 50, StreetTraversalPermission.PEDESTRIAN_AND_BICYCLE);
-            SE2 = street(B, C, 1000, StreetTraversalPermission.PEDESTRIAN_AND_BICYCLE);
-            SE3 = street(C, D, 50, StreetTraversalPermission.PEDESTRIAN_AND_BICYCLE);
-          }
+          SE1 = street(A, B, 50, StreetTraversalPermission.PEDESTRIAN_AND_BICYCLE);
+          SE2 = street(B, C, 1000, StreetTraversalPermission.PEDESTRIAN_AND_BICYCLE);
+          SE3 = street(C, D, 50, StreetTraversalPermission.PEDESTRIAN_AND_BICYCLE);
         }
-      );
+      }
+    );
+    graph = otpModel.graph();
   }
 
   // This tests exists to test if the cost of walking with a bike changes

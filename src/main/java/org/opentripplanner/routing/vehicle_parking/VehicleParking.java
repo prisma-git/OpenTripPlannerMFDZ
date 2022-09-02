@@ -9,11 +9,12 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.opentripplanner.model.FeedScopedId;
+import org.opentripplanner.model.calendar.openinghours.OHCalendar;
 import org.opentripplanner.routing.core.TimeRestriction;
 import org.opentripplanner.routing.core.TraverseMode;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingEntrance.VehicleParkingEntranceBuilder;
-import org.opentripplanner.util.I18NString;
+import org.opentripplanner.transit.model.basic.I18NString;
+import org.opentripplanner.transit.model.framework.FeedScopedId;
 
 /**
  * Vehicle parking locations, which may allow bicycle and/or car parking.
@@ -175,6 +176,7 @@ public class VehicleParking implements Serializable {
 
     private List<String> tags = new ArrayList<>();
     private final List<VehicleParkingEntranceCreator> entranceCreators = new ArrayList<>();
+    private OHCalendar ohCalendar;
 
     public VehicleParkingBuilder tags(Collection<String> tags) {
       this.tags = new ArrayList<>(tags);

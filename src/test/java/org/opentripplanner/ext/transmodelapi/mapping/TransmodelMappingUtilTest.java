@@ -1,12 +1,13 @@
 package org.opentripplanner.ext.transmodelapi.mapping;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
-import org.junit.Test;
-import org.opentripplanner.model.Agency;
-import org.opentripplanner.model.FeedScopedId;
+import org.junit.jupiter.api.Test;
+import org.opentripplanner.transit.model._data.TransitModelForTest;
+import org.opentripplanner.transit.model.framework.FeedScopedId;
+import org.opentripplanner.transit.model.organization.Agency;
 
 public class TransmodelMappingUtilTest {
 
@@ -20,20 +21,21 @@ public class TransmodelMappingUtilTest {
       TransitIdMapper.setupFixedFeedId(List.of(agency("A", 1), agency("A", 2), agency("B", 1)))
     );
     assertTrue(
-      "In case of a tie, A or B should be used",
       "AB".contains(
           TransitIdMapper.setupFixedFeedId(
             List.of(agency("A", 1), agency("A", 2), agency("B", 1), agency("B", 2))
           )
-        )
+        ),
+      "In case of a tie, A or B should be used"
     );
   }
 
   Agency agency(String feedScope, int id) {
-    return new Agency(
-      new FeedScopedId(feedScope, Integer.toString(id)),
-      "Agency " + id,
-      "Europe/Paris"
-    );
+    // We use the test builder to make sure we get back an agency with all required fields
+    return TransitModelForTest
+      .agency("Agency " + id)
+      .copy()
+      .withId(new FeedScopedId(feedScope, Integer.toString(id)))
+      .build();
   }
 }

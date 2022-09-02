@@ -3,11 +3,7 @@ package org.opentripplanner.ext.transmodelapi.model;
 import graphql.schema.GraphQLEnumType;
 import java.util.Arrays;
 import java.util.function.Function;
-import org.opentripplanner.model.BikeAccess;
 import org.opentripplanner.model.BookingMethod;
-import org.opentripplanner.model.Direction;
-import org.opentripplanner.model.TransitMode;
-import org.opentripplanner.model.TripAlteration;
 import org.opentripplanner.model.plan.AbsoluteDirection;
 import org.opentripplanner.model.plan.RelativeDirection;
 import org.opentripplanner.model.plan.VertexType;
@@ -20,20 +16,34 @@ import org.opentripplanner.routing.api.response.RoutingErrorCode;
 import org.opentripplanner.routing.core.BicycleOptimizeType;
 import org.opentripplanner.routing.core.TraverseMode;
 import org.opentripplanner.routing.stoptimes.ArrivalDeparture;
-import org.opentripplanner.routing.trippattern.RealTimeState;
+import org.opentripplanner.transit.model.basic.TransitMode;
+import org.opentripplanner.transit.model.basic.WheelchairAccessibility;
+import org.opentripplanner.transit.model.network.BikeAccess;
+import org.opentripplanner.transit.model.timetable.Direction;
+import org.opentripplanner.transit.model.timetable.OccupancyStatus;
+import org.opentripplanner.transit.model.timetable.RealTimeState;
+import org.opentripplanner.transit.model.timetable.TripAlteration;
 
 public class EnumTypes {
 
   public static GraphQLEnumType WHEELCHAIR_BOARDING = GraphQLEnumType
     .newEnum()
     .name("WheelchairBoarding")
-    .value("noInformation", 0, "There is no accessibility information for the stopPlace/quay.")
+    .value(
+      "noInformation",
+      WheelchairAccessibility.NO_INFORMATION,
+      "There is no accessibility information for the stopPlace/quay."
+    )
     .value(
       "possible",
-      1,
+      WheelchairAccessibility.POSSIBLE,
       "Boarding wheelchair-accessible serviceJourneys is possible at this stopPlace/quay."
     )
-    .value("notPossible", 2, "Wheelchair boarding/alighting is not possible at this stop.")
+    .value(
+      "notPossible",
+      WheelchairAccessibility.NOT_POSSIBLE,
+      "Wheelchair boarding/alighting is not possible at this stop."
+    )
     .build();
 
   public static GraphQLEnumType INTERCHANGE_WEIGHTING = GraphQLEnumType
@@ -134,6 +144,41 @@ public class EnumTypes {
       "modified",
       RealTimeState.MODIFIED,
       "The service journey information has been updated and resulted in a different journey pattern compared to the journey pattern of the scheduled service journey."
+    )
+    .build();
+
+  public static GraphQLEnumType OCCUPANCY_STATUS = GraphQLEnumType
+    .newEnum()
+    .name("OccupancyStatus")
+    .value(
+      "noData",
+      OccupancyStatus.NO_DATA,
+      "The vehicle or carriage doesn't have any occupancy data available."
+    )
+    .value(
+      "manySeatsAvailable",
+      OccupancyStatus.MANY_SEATS_AVAILABLE,
+      "The vehicle or carriage has a large number of seats available."
+    )
+    .value(
+      "fewSeatsAvailable",
+      OccupancyStatus.SEATS_AVAILABLE,
+      "The vehicle or carriage has a few seats available."
+    )
+    .value(
+      "standingRoomOnly",
+      OccupancyStatus.STANDING_ROOM_ONLY,
+      "The vehicle or carriage only has standing room available."
+    )
+    .value(
+      "full",
+      OccupancyStatus.FULL,
+      "The vehicle or carriage is considered full by most measures, but may still be allowing passengers to board."
+    )
+    .value(
+      "notAcceptingPassengers",
+      OccupancyStatus.NOT_ACCEPTING_PASSENGERS,
+      "The vehicle or carriage has no seats or standing room available."
     )
     .build();
 
@@ -312,7 +357,7 @@ public class EnumTypes {
   public static GraphQLEnumType TRANSPORT_SUBMODE = createEnum(
     "TransportSubmode",
     TransmodelTransportSubmode.values(),
-    (t -> t.getValue())
+    TransmodelTransportSubmode::getValue
   );
   /*
 
@@ -458,7 +503,7 @@ public class EnumTypes {
     .value("sameLine", AlternativeLegsFilter.SAME_ROUTE)
     .build();
 
-  private static <T extends Enum> GraphQLEnumType createEnum(
+  private static <T extends Enum<?>> GraphQLEnumType createEnum(
     String name,
     T[] values,
     Function<T, String> mapping

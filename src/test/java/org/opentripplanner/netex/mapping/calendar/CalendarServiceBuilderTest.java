@@ -1,26 +1,26 @@
 package org.opentripplanner.netex.mapping.calendar;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.opentripplanner.transit.model._data.TransitModelForTest.FEED_ID;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Set;
-import org.junit.Test;
-import org.opentripplanner.model.FeedScopedId;
+import org.junit.jupiter.api.Test;
 import org.opentripplanner.model.calendar.ServiceCalendarDate;
-import org.opentripplanner.model.calendar.ServiceDate;
 import org.opentripplanner.netex.mapping.support.FeedScopedIdFactory;
+import org.opentripplanner.transit.model._data.TransitModelForTest;
+import org.opentripplanner.transit.model.framework.FeedScopedId;
 
 public class CalendarServiceBuilderTest {
 
-  private static final String FEED_ID = "F";
+  private static final LocalDate D1 = LocalDate.of(2020, 11, 1);
+  private static final LocalDate D2 = LocalDate.of(2020, 11, 2);
 
-  private static final ServiceDate D1 = new ServiceDate(2020, 11, 1);
-  private static final ServiceDate D2 = new ServiceDate(2020, 11, 2);
-
-  private static final FeedScopedId EXP_SID_1 = new FeedScopedId(FEED_ID, "S000001");
-  private static final FeedScopedId EXP_SID_2 = new FeedScopedId(FEED_ID, "S000002");
-  private static final FeedScopedId EXP_SID_3 = new FeedScopedId(FEED_ID, "S000003");
+  private static final FeedScopedId EXP_SID_1 = TransitModelForTest.id("S000001");
+  private static final FeedScopedId EXP_SID_2 = TransitModelForTest.id("S000002");
+  private static final FeedScopedId EXP_SID_3 = TransitModelForTest.id("S000003");
 
   @Test
   public void addDatesForAGivenService() {
@@ -64,14 +64,14 @@ public class CalendarServiceBuilderTest {
   @Test
   public void createServiceId() {
     CalendarServiceBuilder subject = new CalendarServiceBuilder(new FeedScopedIdFactory(FEED_ID));
-    assertEquals(new FeedScopedId(FEED_ID, "S000001"), subject.createServiceId());
-    assertEquals(new FeedScopedId(FEED_ID, "S000002"), subject.createServiceId());
+    assertEquals(TransitModelForTest.id("S000001"), subject.createServiceId());
+    assertEquals(TransitModelForTest.id("S000002"), subject.createServiceId());
   }
 
   private void assertServiceDateExistInList(
     Collection<ServiceCalendarDate> list,
     FeedScopedId serviceId,
-    ServiceDate serviceDate
+    LocalDate serviceDate
   ) {
     for (ServiceCalendarDate it : list) {
       if (serviceId.equals(it.getServiceId()) && serviceDate.equals(it.getDate())) {

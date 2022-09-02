@@ -41,8 +41,18 @@
   ServiceJourney [#3846](https://github.com/opentripplanner/OpenTripPlanner/pull/3846)
 - Make language nullable in MultilingualString, as it is not set in NonLocalizedString
   [#4074](https://github.com/opentripplanner/OpenTripPlanner/pull/4074)
+- Transmodel API transport mode not present or null is all transport modes
+  [#4123](https://github.com/opentripplanner/OpenTripPlanner/pull/4123)
 - Expose datedServiceJourney from EstimatedCall 
   [#4128](https://github.com/opentripplanner/OpenTripPlanner/pull/4128)
+- Expose stop-to-stop journey pattern geometries
+  [#4161](https://github.com/opentripplanner/OpenTripPlanner/pull/4161)
+- Add possibility to filter dated service journeys by replacementFor
+  [#4198](https://github.com/opentripplanner/OpenTripPlanner/pull/4198)
+- Add support for groupOfLines in top level query
+  [#4232](https://github.com/opentripplanner/OpenTripPlanner/pull/4232)
+- Fix issue when ServiceJourney is created by an updater and expose necessary information via DSJ
+  [#4365](https://github.com/opentripplanner/OpenTripPlanner/pull/4365)
 
 ## Documentation
 

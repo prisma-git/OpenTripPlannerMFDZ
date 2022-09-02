@@ -1,13 +1,18 @@
 package org.opentripplanner.openstreetmap.model;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.OptionalInt;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import org.opentripplanner.graph_builder.module.osm.TemplateLibrary;
-import org.opentripplanner.util.I18NString;
-import org.opentripplanner.util.NonLocalizedString;
-import org.opentripplanner.util.TranslatedString;
+import org.opentripplanner.transit.model.basic.I18NString;
+import org.opentripplanner.transit.model.basic.NonLocalizedString;
+import org.opentripplanner.transit.model.basic.TranslatedString;
+import org.opentripplanner.transit.model.basic.WheelchairAccessibility;
 
 /**
  * A base class for OSM entities containing common methods.
@@ -89,6 +94,19 @@ public class OSMWithTags {
     }
 
     return isFalse(getTag(tag));
+  }
+
+  /**
+   * Returns the level of wheelchair access of the element.
+   */
+  public WheelchairAccessibility getWheelchairAccessibility() {
+    if (isTagTrue("wheelchair")) {
+      return WheelchairAccessibility.POSSIBLE;
+    } else if (isTagFalse("wheelchair")) {
+      return WheelchairAccessibility.NOT_POSSIBLE;
+    } else {
+      return WheelchairAccessibility.NO_INFORMATION;
+    }
   }
 
   /**
@@ -306,6 +324,30 @@ public class OSMWithTags {
   }
 
   /**
+   * Is this a public transport boarding location where passengers wait for transti and that can be
+   * linked to a transit stop vertex later on.
+   * <p>
+   * This intentionally excludes railway=stop and public_transport=stop because these are supposed
+   * to be placed on the tracks not on the platform.
+   *
+   * @return whether the node is a transit stop
+   */
+  public boolean isBoardingLocation() {
+    return (
+      "bus_stop".equals(getTag("highway")) ||
+      "tram_stop".equals(getTag("railway")) ||
+      "station".equals(getTag("railway")) ||
+      "halt".equals(getTag("railway")) ||
+      "bus_station".equals(getTag("amenity")) ||
+      isPlatform()
+    );
+  }
+
+  public boolean isPlatform() {
+    return "platform".equals(getTag("public_transport")) || "platform".equals(getTag("railway"));
+  }
+
+  /**
    * @return True if this node / area is a bike parking.
    */
   public boolean isBikeParking() {
@@ -320,6 +362,22 @@ public class OSMWithTags {
 
   public String getOpenStreetMapLink() {
     return null;
+  }
+
+  /**
+   * Returns all non-empty values of the tags passed in as input values.
+   * <p>
+   * Values are split by semicolons.
+   */
+  public Set<String> getMultiTagValues(Set<String> refTags) {
+    return refTags
+      .stream()
+      .map(this::getTag)
+      .filter(Objects::nonNull)
+      .flatMap(v -> Arrays.stream(v.split(";")))
+      .map(String::strip)
+      .filter(v -> !v.isBlank())
+      .collect(Collectors.toSet());
   }
 
   /**

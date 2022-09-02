@@ -7,10 +7,10 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Set;
-import org.opentripplanner.model.base.ToStringBuilder;
 import org.opentripplanner.transit.raptor.api.request.Optimization;
 import org.opentripplanner.transit.raptor.api.request.RaptorProfile;
-import org.opentripplanner.transit.raptor.api.request.SearchDirection;
+import org.opentripplanner.transit.raptor.api.transit.SearchDirection;
+import org.opentripplanner.util.lang.ToStringBuilder;
 
 /**
  * Set of optimizations to use with Raptor. These are available here for testing purposes.
@@ -90,7 +90,7 @@ public class RaptorOptions implements Serializable {
       .addCol("optimizations", optimizations)
       .addEnum("profile", profile)
       .addEnum("searchDirection", searchDirection)
-      .addTime("timeLimit", timeLimit)
+      .addDateTime("timeLimit", timeLimit)
       .toString();
   }
 }

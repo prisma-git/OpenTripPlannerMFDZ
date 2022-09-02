@@ -15,11 +15,11 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.opentripplanner.ext.transmodelapi.model.TransmodelPlaceType;
-import org.opentripplanner.model.MultiModalStation;
-import org.opentripplanner.model.Station;
-import org.opentripplanner.model.Stop;
-import org.opentripplanner.routing.RoutingService;
 import org.opentripplanner.routing.graphfinder.PlaceAtDistance;
+import org.opentripplanner.transit.model.site.MultiModalStation;
+import org.opentripplanner.transit.model.site.RegularStop;
+import org.opentripplanner.transit.model.site.Station;
+import org.opentripplanner.transit.service.TransitService;
 
 public class PlaceAtDistanceType {
 
@@ -43,7 +43,7 @@ public class PlaceAtDistanceType {
           .newFieldDefinition()
           .name("place")
           .type(placeInterface)
-          .dataFetcher(environment -> ((PlaceAtDistance) environment.getSource()).place)
+          .dataFetcher(environment -> ((PlaceAtDistance) environment.getSource()).place())
           .build()
       )
       .field(
@@ -51,7 +51,7 @@ public class PlaceAtDistanceType {
           .newFieldDefinition()
           .name("distance")
           .type(Scalars.GraphQLFloat)
-          .dataFetcher(environment -> ((PlaceAtDistance) environment.getSource()).distance)
+          .dataFetcher(environment -> ((PlaceAtDistance) environment.getSource()).distance())
           .build()
       )
       .build();
@@ -70,42 +70,48 @@ public class PlaceAtDistanceType {
     List<TransmodelPlaceType> placeTypes,
     List<PlaceAtDistance> places,
     String multiModalMode,
-    RoutingService routingService
+    TransitService transitService
   ) {
+    // Make sure places is mutable
+    places = new ArrayList<>(places);
+
     if (placeTypes == null || placeTypes.contains(TransmodelPlaceType.STOP_PLACE)) {
       // Convert quays to stop places
       List<PlaceAtDistance> stations = places
         .stream()
         // Find all stops
-        .filter(p -> p.place instanceof Stop)
+        .filter(p -> p.place() instanceof RegularStop)
         // Get their parent stations (possibly including multimodal parents)
-        .flatMap(p -> getStopPlaces(p, multiModalMode, routingService))
+        .flatMap(p -> getStopPlaces(p, multiModalMode, transitService))
         // Sort by distance
-        .sorted(Comparator.comparing(p -> p.distance))
+        .sorted(Comparator.comparing(PlaceAtDistance::distance))
         // Make sure each parent appears exactly once
         .filter(new SeenPlacePredicate())
-        .collect(Collectors.toList());
+        .toList();
 
       places.addAll(stations);
 
       if (placeTypes != null && !placeTypes.contains(TransmodelPlaceType.QUAY)) {
         // Remove quays if only stop places are requested
         places =
-          places.stream().filter(p -> !(p.place instanceof Stop)).collect(Collectors.toList());
+          places
+            .stream()
+            .filter(p -> !(p.place() instanceof RegularStop))
+            .collect(Collectors.toList());
       }
     }
-    places.sort(Comparator.comparing(p -> p.distance));
+    places.sort(Comparator.comparing(PlaceAtDistance::distance));
 
     Set<Object> uniquePlaces = new HashSet<>();
-    return places.stream().filter(s -> uniquePlaces.add(s.place)).collect(Collectors.toList());
+    return places.stream().filter(s -> uniquePlaces.add(s.place())).collect(Collectors.toList());
   }
 
   private static Stream<PlaceAtDistance> getStopPlaces(
     PlaceAtDistance p,
     String multiModalMode,
-    RoutingService routingService
+    TransitService transitService
   ) {
-    Station stopPlace = ((Stop) p.place).getParentStation();
+    Station stopPlace = ((RegularStop) p.place()).getParentStation();
 
     if (stopPlace == null) {
       return Stream.of();
@@ -113,15 +119,13 @@ public class PlaceAtDistanceType {
 
     List<PlaceAtDistance> res = new ArrayList<>();
 
-    MultiModalStation multiModalStation = routingService
-      .getMultiModalStationForStations()
-      .get(stopPlace);
+    MultiModalStation multiModalStation = transitService.getMultiModalStationForStation(stopPlace);
 
     if (
       "child".equals(multiModalMode) || "all".equals(multiModalMode) || multiModalStation == null
     ) {
       res.add(
-        new PlaceAtDistance(new MonoOrMultiModalStation(stopPlace, multiModalStation), p.distance)
+        new PlaceAtDistance(new MonoOrMultiModalStation(stopPlace, multiModalStation), p.distance())
       );
     }
 
@@ -130,7 +134,7 @@ public class PlaceAtDistanceType {
     }
 
     if ("parent".equals(multiModalMode) || "all".equals(multiModalMode)) {
-      res.add(new PlaceAtDistance(new MonoOrMultiModalStation(multiModalStation), p.distance));
+      res.add(new PlaceAtDistance(new MonoOrMultiModalStation(multiModalStation), p.distance()));
     }
     return res.stream();
   }
@@ -141,7 +145,7 @@ public class PlaceAtDistanceType {
 
     @Override
     public boolean test(PlaceAtDistance p) {
-      return seen.add(p.place);
+      return seen.add(p.place());
     }
   }
 }

@@ -7,7 +7,6 @@ import org.opentripplanner.ext.legacygraphqlapi.LegacyGraphQLRequestContext;
 import org.opentripplanner.ext.legacygraphqlapi.LegacyGraphQLUtils;
 import org.opentripplanner.ext.legacygraphqlapi.generated.LegacyGraphQLDataFetchers;
 import org.opentripplanner.ext.legacygraphqlapi.generated.LegacyGraphQLTypes.LegacyGraphQLVertexType;
-import org.opentripplanner.model.Stop;
 import org.opentripplanner.model.plan.Place;
 import org.opentripplanner.model.plan.StopArrival;
 import org.opentripplanner.model.plan.VehicleParkingWithEntrance;
@@ -27,7 +26,7 @@ public class LegacyGraphQLPlaceImpl implements LegacyGraphQLDataFetchers.LegacyG
 
   @Override
   public DataFetcher<VehicleParking> bikePark() {
-    return this::getVehicleParking;
+    return this::getBikePark;
   }
 
   @Override
@@ -45,7 +44,7 @@ public class LegacyGraphQLPlaceImpl implements LegacyGraphQLDataFetchers.LegacyG
 
   @Override
   public DataFetcher<VehicleParking> carPark() {
-    return this::getVehicleParking;
+    return this::getCarPark;
   }
 
   @Override
@@ -129,6 +128,30 @@ public class LegacyGraphQLPlaceImpl implements LegacyGraphQLDataFetchers.LegacyG
 
   public DataFetcher<VehicleParkingWithEntrance> vehicleParkingWithEntrance() {
     return environment -> getSource(environment).place.getVehicleParkingWithEntrance();
+  }
+
+  private VehicleParking getBikePark(DataFetchingEnvironment environment) {
+    var vehicleParkingWithEntrance = getSource(environment).place.vehicleParkingWithEntrance;
+    if (
+      vehicleParkingWithEntrance == null ||
+      !vehicleParkingWithEntrance.getVehicleParking().hasBicyclePlaces()
+    ) {
+      return null;
+    }
+
+    return vehicleParkingWithEntrance.getVehicleParking();
+  }
+
+  private VehicleParking getCarPark(DataFetchingEnvironment environment) {
+    var vehicleParkingWithEntrance = getSource(environment).place.vehicleParkingWithEntrance;
+    if (
+      vehicleParkingWithEntrance == null ||
+      !vehicleParkingWithEntrance.getVehicleParking().hasAnyCarPlaces()
+    ) {
+      return null;
+    }
+
+    return vehicleParkingWithEntrance.getVehicleParking();
   }
 
   private VehicleParking getVehicleParking(DataFetchingEnvironment environment) {

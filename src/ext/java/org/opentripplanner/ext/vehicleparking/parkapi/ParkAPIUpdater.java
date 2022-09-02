@@ -1,6 +1,8 @@
 package org.opentripplanner.ext.vehicleparking.parkapi;
 
+import ch.poole.openinghoursparser.OpeningHoursParseException;
 import com.fasterxml.jackson.databind.JsonNode;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,31 +10,45 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.SneakyThrows;
-import org.opentripplanner.model.FeedScopedId;
+import org.opentripplanner.model.calendar.openinghours.OHCalendar;
+import org.opentripplanner.model.calendar.openinghours.OpeningHoursCalendarService;
+import org.opentripplanner.openstreetmap.OSMOpeningHoursParser;
 import org.opentripplanner.routing.core.OsmOpeningHours;
 import org.opentripplanner.routing.core.TimeRestriction;
 import org.opentripplanner.routing.vehicle_parking.VehicleParking;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingSpaces;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingState;
+import org.opentripplanner.transit.model.basic.I18NString;
+import org.opentripplanner.transit.model.basic.NonLocalizedString;
+import org.opentripplanner.transit.model.basic.TranslatedString;
+import org.opentripplanner.transit.model.framework.FeedScopedId;
 import org.opentripplanner.updater.GenericJsonDataSource;
-import org.opentripplanner.util.I18NString;
-import org.opentripplanner.util.NonLocalizedString;
-import org.opentripplanner.util.TranslatedString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Vehicle parking updater class for https://github.com/offenesdresden/ParkAPI format APIs.
  */
 abstract class ParkAPIUpdater extends GenericJsonDataSource<VehicleParking> {
 
+  private static final Logger LOG = LoggerFactory.getLogger(ParkAPIUpdater.class);
+
   private static final String JSON_PARSE_PATH = "lots";
 
   private final String feedId;
   private final Collection<String> staticTags;
 
-  public ParkAPIUpdater(ParkAPIUpdaterParameters parameters) {
+  private final OSMOpeningHoursParser osmOpeningHoursParser;
+
+  public ParkAPIUpdater(
+    ParkAPIUpdaterParameters parameters,
+    OpeningHoursCalendarService openingHoursCalendarService,
+    ZoneId zoneId
+  ) {
     super(parameters.getUrl(), JSON_PARSE_PATH, parameters.getHttpHeaders());
     this.feedId = parameters.getFeedId();
     this.staticTags = parameters.getTags();
+    this.osmOpeningHoursParser = new OSMOpeningHoursParser(openingHoursCalendarService, zoneId);
   }
 
   @Override
@@ -150,14 +166,18 @@ abstract class ParkAPIUpdater extends GenericJsonDataSource<VehicleParking> {
     return spaces != null && spaces > 0;
   }
 
-  // TODO
-  // private TimeRestriction parseOpeningHours(JsonNode jsonNode) {
-  //     if (jsonNode == null || jsonNode.asText().isBlank()) {
-  //         return null;
-  //     }
+  private OHCalendar parseOpeningHours(JsonNode jsonNode, FeedScopedId id) {
+    if (jsonNode == null || jsonNode.asText().isBlank()) {
+      return null;
+    }
 
-  //     return OsmOpeningHours.parseFromOsm(jsonNode.asText());
-  // }
+    try {
+      return osmOpeningHoursParser.parseOpeningHours(jsonNode.asText(), id.toString(), null);
+    } catch (OpeningHoursParseException e) {
+      LOG.info("Parsing of opening hours failed for park {}, it is now always open:\n{}", id, e);
+      return null;
+    }
+  }
 
   private Integer parseSpacesValue(JsonNode jsonNode, String fieldName) {
     if (!jsonNode.has(fieldName)) {

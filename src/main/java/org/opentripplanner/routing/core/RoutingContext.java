@@ -8,8 +8,6 @@ import org.opentripplanner.routing.error.GraphNotFoundException;
 import org.opentripplanner.routing.graph.Graph;
 import org.opentripplanner.routing.graph.Vertex;
 import org.opentripplanner.util.OTPFeature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A RoutingContext holds information needed to carry out a search for a particular TraverseOptions,
@@ -21,8 +19,6 @@ import org.slf4j.LoggerFactory;
  */
 public class RoutingContext {
 
-  private static final Logger LOG = LoggerFactory.getLogger(RoutingContext.class);
-
   /* FINAL FIELDS */
 
   public final RoutingRequest opt;
@@ -32,9 +28,6 @@ public class RoutingContext {
   public final Set<Vertex> fromVertices;
 
   public final Set<Vertex> toVertices;
-
-  /** Indicates that the search timed out or was otherwise aborted. */
-  public boolean aborted;
 
   /**
    * DataOverlay Sandbox module context.

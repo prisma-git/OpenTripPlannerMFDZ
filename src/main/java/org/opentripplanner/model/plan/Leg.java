@@ -1,25 +1,29 @@
 package org.opentripplanner.model.plan;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.Nullable;
 import org.locationtech.jts.geom.LineString;
 import org.opentripplanner.common.model.P2;
-import org.opentripplanner.model.Agency;
 import org.opentripplanner.model.BookingInfo;
-import org.opentripplanner.model.FeedScopedId;
-import org.opentripplanner.model.Operator;
 import org.opentripplanner.model.PickDrop;
-import org.opentripplanner.model.Route;
 import org.opentripplanner.model.StreetNote;
-import org.opentripplanner.model.Trip;
-import org.opentripplanner.model.calendar.ServiceDate;
 import org.opentripplanner.model.plan.legreference.LegReference;
 import org.opentripplanner.model.transfer.ConstrainedTransfer;
 import org.opentripplanner.routing.alertpatch.TransitAlert;
 import org.opentripplanner.routing.core.TraverseMode;
+import org.opentripplanner.transit.model.basic.WheelchairAccessibility;
+import org.opentripplanner.transit.model.framework.FeedScopedId;
+import org.opentripplanner.transit.model.network.Route;
+import org.opentripplanner.transit.model.organization.Agency;
+import org.opentripplanner.transit.model.organization.Operator;
+import org.opentripplanner.transit.model.site.FareZone;
+import org.opentripplanner.transit.model.timetable.Trip;
 
 /**
  * One leg of a trip -- that is, a temporally continuous piece of the journey that takes place on a
@@ -49,19 +53,23 @@ public interface Leg {
     return false;
   }
 
+  /** The mode is walking. */
   default boolean isWalkingLeg() {
     return false;
   }
 
-  default boolean isOnStreetNonTransit() {
+  /**
+   * The mode is a street mode; Hence not a transit mode.
+   */
+  default boolean isStreetLeg() {
     return false;
   }
 
   /**
    * The leg's duration in seconds
    */
-  default long getDuration() {
-    return Duration.between(getStartTime(), getEndTime()).toSeconds();
+  default Duration getDuration() {
+    return Duration.between(getStartTime(), getEndTime());
   }
 
   /**
@@ -93,6 +101,58 @@ public interface Leg {
   }
 
   /**
+   * Return {@code true} if to legs are the same. The mode must match and the time must overlap.
+   * For transit the trip ID must match and board/alight position must overlap. (Two trips with
+   * different service-date can overlap in time, so we use boarding-/alight-position to verify).
+   */
+  default boolean isPartiallySameLeg(Leg other) {
+    // Assert both legs have the same mode
+    if (getMode() != other.getMode()) {
+      return false;
+    }
+
+    // Overlap in time
+    if (!overlapInTime(other)) {
+      return false;
+    }
+
+    // The mode is the same, so this and the other are both *street* or *transit* legs
+    if (isStreetLeg()) {
+      return true;
+    }
+    // Transit leg
+    else {
+      // If NOT the same trip, return false
+      if (!getTrip().getId().equals(other.getTrip().getId())) {
+        return false;
+      }
+
+      // Return true if legs overlap in space(have one common stop visit), this is necessary
+      // since the same trip id on two following service dates may overlap in time. For example,
+      // a trip may run in a loop for 48 hours, overlapping with the same trip id of the trip
+      // scheduled for the next service day. They both visit the same stops, with overlapping
+      // times, but the stop positions will be different.
+      return (
+        getBoardStopPosInPattern() < other.getAlightStopPosInPattern() &&
+        getAlightStopPosInPattern() > other.getBoardStopPosInPattern()
+      );
+    }
+  }
+
+  /**
+   * Return true if this leg and the given {@code other} leg overlap in time. If the
+   * start-time equals the end-time this method returns false.
+   */
+  default boolean overlapInTime(Leg other) {
+    return (
+      // We convert to epoch seconds to ignore nanos (save CPU),
+      // in favor of using the methods isAfter(...) and isBefore(...)
+      getStartTime().toEpochSecond() < other.getEndTime().toEpochSecond() &&
+      other.getStartTime().toEpochSecond() < getEndTime().toEpochSecond()
+    );
+  }
+
+  /**
    * For transit legs, the route agency. For non-transit legs {@code null}.
    */
   default Agency getAgency() {
@@ -120,6 +180,10 @@ public interface Leg {
    * For transit legs, the trip. For non-transit legs, null.
    */
   default Trip getTrip() {
+    return null;
+  }
+
+  default WheelchairAccessibility getTripWheelchairAccessibility() {
     return null;
   }
 
@@ -231,7 +295,7 @@ public interface Leg {
    * for a given trip may happen at service date March 25th and service time 25:00, which in local
    * time would be Mach 26th 01:00.
    */
-  default ServiceDate getServiceDate() {
+  default LocalDate getServiceDate() {
     return null;
   }
 
@@ -268,7 +332,7 @@ public interface Leg {
   /**
    * The leg's elevation profile.
    */
-  default List<P2<Double>> getLegElevation() {
+  default List<P2<Double>> getRoundedLegElevation() {
     return null;
   }
 
@@ -352,7 +416,7 @@ public interface Leg {
   }
 
   /**
-   * An experimental feature for calculating a numeric score between 0 and 1 which indicates
+   * A sandbox feature for calculating a numeric score between 0 and 1 which indicates
    * how accessible the itinerary is as a whole. This is not a very scientific method but just
    * a rough guidance that expresses certainty or uncertainty about the accessibility.
    *
@@ -396,5 +460,24 @@ public interface Leg {
 
   default Leg withTimeShift(Duration duration) {
     throw new UnsupportedOperationException();
+  }
+
+  default Set<FareZone> getFareZones() {
+    var intermediate = getIntermediateStops()
+      .stream()
+      .flatMap(stopArrival -> stopArrival.place.stop.getFareZones().stream());
+
+    var start = getFareZones(this.getFrom());
+    var end = getFareZones(this.getTo());
+
+    return Stream.of(intermediate, start, end).flatMap(s -> s).collect(Collectors.toSet());
+  }
+
+  private static Stream<FareZone> getFareZones(Place place) {
+    if (place.stop == null) {
+      return Stream.empty();
+    } else {
+      return place.stop.getFareZones().stream();
+    }
   }
 }

@@ -2,13 +2,12 @@ package org.opentripplanner.standalone.config;
 
 import static org.opentripplanner.standalone.config.WheelchairAccessibilityRequestMapper.mapAccessibilityRequest;
 
-import java.time.Duration;
-import org.opentripplanner.model.TransitMode;
 import org.opentripplanner.routing.api.request.RequestModes;
 import org.opentripplanner.routing.api.request.RoutingRequest;
 import org.opentripplanner.routing.api.request.StreetMode;
 import org.opentripplanner.routing.api.request.TransferOptimizationRequest;
 import org.opentripplanner.standalone.config.sandbox.DataOverlayParametersMapper;
+import org.opentripplanner.transit.model.basic.TransitMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,6 +79,8 @@ public class RoutingRequestMapper {
     request.boardSlack = c.asInt("boardSlack", dft.boardSlack);
     request.boardSlackForMode =
       c.asEnumMap("boardSlackForMode", TransitMode.class, NodeAdapter::asInt);
+    request.maxAccessEgressDuration =
+      c.asDuration("maxAccessEgressDuration", dft.maxAccessEgressDuration);
     request.maxAccessEgressDurationForMode =
       c.asEnumMap("maxAccessEgressDurationForMode", StreetMode.class, NodeAdapter::asDuration);
     request.carAccelerationSpeed = c.asDouble("carAccelerationSpeed", dft.carAccelerationSpeed);
@@ -109,10 +110,7 @@ public class RoutingRequestMapper {
     request.maxDirectStreetDurationForMode =
       c.asEnumMap("maxDirectStreetDurationForMode", StreetMode.class, NodeAdapter::asDuration);
     request.maxJourneyDuration = c.asDuration("maxJourneyDuration", dft.maxJourneyDuration);
-    request.maxWheelchairSlope = c.asDouble("maxWheelchairSlope", dft.maxWheelchairSlope); // ADA max wheelchair ramp slope is a good default.
-    request.wheelchairSlopeTooSteepCostFactor =
-      c.asDouble("wheelchairSlopeTooSteepCostFactor", dft.wheelchairSlopeTooSteepCostFactor);
-    request.modes = c.asRequestModes("modes", RequestModes.defaultRequestModes);
+    request.modes = c.asRequestModes("modes", RequestModes.defaultRequestModes());
     request.nonpreferredTransferCost =
       c.asInt("nonpreferredTransferPenalty", dft.nonpreferredTransferCost);
     request.numItineraries = c.asInt("numItineraries", dft.numItineraries);
@@ -122,6 +120,7 @@ public class RoutingRequestMapper {
       c.asInt("otherThanPreferredRoutesPenalty", dft.otherThanPreferredRoutesPenalty);
     request.parkAndRide = c.asBoolean("parkAndRide", dft.parkAndRide);
     request.pathComparator = c.asText("pathComparator", dft.pathComparator);
+    request.searchWindow = c.asDuration("searchWindow", dft.searchWindow);
     request.requiredVehicleParkingTags =
       c.asTextSet("requiredVehicleParkingTags", dft.requiredVehicleParkingTags);
     request.showIntermediateStops = c.asBoolean("showIntermediateStops", dft.showIntermediateStops);
@@ -129,6 +128,7 @@ public class RoutingRequestMapper {
     request.stairsTimeFactor = c.asDouble("stairsTimeFactor", dft.stairsTimeFactor);
     request.startingTransitTripId =
       c.asFeedScopedId("startingTransitTripId", dft.startingTransitTripId);
+    request.timetableView = c.asBoolean("timetableView", dft.timetableView);
     request.transferCost = c.asInt("transferPenalty", dft.transferCost);
     request.transferSlack = c.asInt("transferSlack", dft.transferSlack);
     request.setTransitReluctanceForMode(
@@ -145,8 +145,7 @@ public class RoutingRequestMapper {
         "useVehicleParkingAvailabilityInformation",
         dft.useVehicleParkingAvailabilityInformation
       );
-    request.useUnpreferredRoutesPenalty =
-      c.asInt("useUnpreferredRoutesPenalty", dft.useUnpreferredRoutesPenalty);
+    request.unpreferredCost = c.asLinearFunction("unpreferredCost", dft.unpreferredCost);
     request.vehicleRental = c.asBoolean("allowBikeRental", dft.vehicleRental);
     request.vehicleParkingClosesSoonSeconds =
       c.asInt("vehicleParkingClosesSoonSeconds", dft.vehicleParkingClosesSoonSeconds);
@@ -155,6 +154,7 @@ public class RoutingRequestMapper {
     request.walkBoardCost = c.asInt("walkBoardCost", dft.walkBoardCost);
     request.walkReluctance = c.asDouble("walkReluctance", dft.walkReluctance);
     request.walkSpeed = c.asDouble("walkSpeed", dft.walkSpeed);
+    request.walkSafetyFactor = c.asDouble("walkSafetyFactor", dft.walkSafetyFactor);
 
     request.wheelchairAccessibility = mapAccessibilityRequest(c.path("wheelchairAccessibility"));
 
@@ -164,6 +164,15 @@ public class RoutingRequestMapper {
     );
 
     request.dataOverlay = DataOverlayParametersMapper.map(c.path("dataOverlay"));
+
+    var unpreferred = c.path("unpreferred");
+    request.setUnpreferredRoutes(
+      unpreferred.asFeedScopedIdSet("routes", dft.getUnpreferredRoutes())
+    );
+
+    request.setUnpreferredAgencies(
+      unpreferred.asFeedScopedIdSet("agencies", dft.getUnpreferredAgencies())
+    );
 
     return request;
   }

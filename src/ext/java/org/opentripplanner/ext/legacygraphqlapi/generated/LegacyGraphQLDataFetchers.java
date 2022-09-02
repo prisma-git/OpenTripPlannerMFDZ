@@ -13,16 +13,14 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.opentripplanner.api.resource.DebugOutput;
 import org.opentripplanner.common.model.P2;
+import org.opentripplanner.ext.legacygraphqlapi.generated.LegacyGraphQLTypes.LegacyGraphQLInputField;
+import org.opentripplanner.ext.legacygraphqlapi.generated.LegacyGraphQLTypes.LegacyGraphQLRoutingErrorCode;
 import org.opentripplanner.ext.legacygraphqlapi.model.LegacyGraphQLRouteTypeModel;
 import org.opentripplanner.ext.legacygraphqlapi.model.LegacyGraphQLStopOnRouteModel;
 import org.opentripplanner.ext.legacygraphqlapi.model.LegacyGraphQLStopOnTripModel;
 import org.opentripplanner.ext.legacygraphqlapi.model.LegacyGraphQLUnknownModel;
-import org.opentripplanner.model.Agency;
-import org.opentripplanner.model.Route;
 import org.opentripplanner.model.StopTimesInPattern;
 import org.opentripplanner.model.SystemNotice;
-import org.opentripplanner.model.Trip;
-import org.opentripplanner.model.TripPattern;
 import org.opentripplanner.model.TripTimeOnDate;
 import org.opentripplanner.model.plan.Itinerary;
 import org.opentripplanner.model.plan.Leg;
@@ -31,6 +29,7 @@ import org.opentripplanner.model.plan.WalkStep;
 import org.opentripplanner.model.vehicle_position.RealtimeVehiclePosition;
 import org.opentripplanner.model.vehicle_position.RealtimeVehiclePosition.StopRelationship;
 import org.opentripplanner.routing.alertpatch.TransitAlert;
+import org.opentripplanner.routing.api.response.RoutingError;
 import org.opentripplanner.routing.core.FareComponent;
 import org.opentripplanner.routing.core.FareRuleSet;
 import org.opentripplanner.routing.graphfinder.NearbyStop;
@@ -47,6 +46,10 @@ import org.opentripplanner.routing.vehicle_rental.VehicleRentalStation;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalStationUris;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalStationUris;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalVehicle;
+import org.opentripplanner.transit.model.network.Route;
+import org.opentripplanner.transit.model.network.TripPattern;
+import org.opentripplanner.transit.model.organization.Agency;
+import org.opentripplanner.transit.model.timetable.Trip;
 
 public class LegacyGraphQLDataFetchers {
 
@@ -190,7 +193,7 @@ public class LegacyGraphQLDataFetchers {
   }
 
   public interface LegacyGraphQLBookingInfo {
-    public DataFetcher<org.opentripplanner.model.ContactInfo> contactInfo();
+    public DataFetcher<org.opentripplanner.transit.model.organization.ContactInfo> contactInfo();
 
     public DataFetcher<String> dropOffMessage();
 
@@ -274,9 +277,9 @@ public class LegacyGraphQLDataFetchers {
   }
 
   /**
-   * Departure row is a location, which lists departures of a certain pattern from a stop. Departure
-   * rows are identified with the pattern, so querying departure rows will return only departures
-   * from one stop per pattern
+   * Departure row is a location, which lists departures of a certain pattern from a
+   * stop. Departure rows are identified with the pattern, so querying departure rows
+   * will return only departures from one stop per pattern
    */
   public interface LegacyGraphQLDepartureRow {
     public DataFetcher<graphql.relay.Relay.ResolvedGlobalId> id();
@@ -292,10 +295,7 @@ public class LegacyGraphQLDataFetchers {
     public DataFetcher<Iterable<TripTimeOnDate>> stoptimes();
   }
 
-  /**
-   * A feed provides routing data (stops, routes, timetables, etc.) from one or more public
-   * transport agencies.
-   */
+  /** A feed provides routing data (stops, routes, timetables, etc.) from one or more public transport agencies. */
   public interface LegacyGraphQLFeed {
     public DataFetcher<Iterable<Agency>> agencies();
 
@@ -433,8 +433,9 @@ public class LegacyGraphQLDataFetchers {
   }
 
   /**
-   * Pattern is sequence of stops used by trips on a specific direction and variant of a route. Most
-   * routes have only two patterns: one for outbound trips and one for inbound trips
+   * Pattern is sequence of stops used by trips on a specific direction and variant
+   * of a route. Most routes have only two patterns: one for outbound trips and one
+   * for inbound trips
    */
   public interface LegacyGraphQLPattern {
     public DataFetcher<Iterable<TransitAlert>> alerts();
@@ -529,6 +530,8 @@ public class LegacyGraphQLDataFetchers {
     public DataFetcher<Long> prevDateTime();
 
     public DataFetcher<String> previousPageCursor();
+
+    public DataFetcher<Iterable<RoutingError>> routingErrors();
 
     public DataFetcher<Long> searchWindowUsed();
 
@@ -645,10 +648,11 @@ public class LegacyGraphQLDataFetchers {
   }
 
   /**
-   * Route represents a public transportation service, usually from point A to point B and *back*,
-   * shown to customers under a single name, e.g. bus 550. Routes contain patterns (see field
-   * `patterns`), which describe different variants of the route, e.g. outbound pattern from point A
-   * to point B and inbound pattern from point B to point A.
+   * Route represents a public transportation service, usually from point A to point
+   * B and *back*, shown to customers under a single name, e.g. bus 550. Routes
+   * contain patterns (see field `patterns`), which describe different variants of
+   * the route, e.g. outbound pattern from point A to point B and inbound pattern
+   * from point B to point A.
    */
   public interface LegacyGraphQLRoute {
     public DataFetcher<Agency> agency();
@@ -685,8 +689,8 @@ public class LegacyGraphQLDataFetchers {
   }
 
   /**
-   * Route type entity which covers all agencies if agency is null, otherwise only relevant for one
-   * agency.
+   * Route type entity which covers all agencies if agency is null,
+   * otherwise only relevant for one agency.
    */
   public interface LegacyGraphQLRouteType {
     public DataFetcher<Agency> agency();
@@ -696,9 +700,19 @@ public class LegacyGraphQLDataFetchers {
     public DataFetcher<Iterable<Route>> routes();
   }
 
+  /** Description of the reason, why the planner did not return any results */
+  public interface LegacyGraphQLRoutingError {
+    public DataFetcher<LegacyGraphQLRoutingErrorCode> code();
+
+    public DataFetcher<String> description();
+
+    public DataFetcher<LegacyGraphQLInputField> inputField();
+  }
+
   /**
-   * Stop can represent either a single public transport stop, where passengers can board and/or
-   * disembark vehicles, or a station, which contains multiple stops. See field `locationType`.
+   * Stop can represent either a single public transport stop, where passengers can
+   * board and/or disembark vehicles, or a station, which contains multiple stops.
+   * See field `locationType`.
    */
   public interface LegacyGraphQLStop {
     public DataFetcher<Iterable<TransitAlert>> alerts();
@@ -778,6 +792,7 @@ public class LegacyGraphQLDataFetchers {
     public DataFetcher<Trip> trip();
   }
 
+  /** Upcoming or current stop and how close the vehicle is to it. */
   public interface LegacyGraphQLStopRelationship {
     public DataFetcher<Object> status();
 
@@ -825,11 +840,12 @@ public class LegacyGraphQLDataFetchers {
   }
 
   /**
-   * A system notice is used to tag elements with system information for debugging or other system
-   * related purpose. One use-case is to run a routing search with 'debugItineraryFilter: true'.
-   * This will then tag itineraries instead of removing them from the result. This make it possible
-   * to inspect the itinerary-filter-chain. A SystemNotice only has english text, because the
-   * primary user are technical staff, like testers and developers.
+   * A system notice is used to tag elements with system information for debugging
+   * or other system related purpose. One use-case is to run a routing search with
+   * 'debugItineraryFilter: true'. This will then tag itineraries instead of removing
+   * them from the result. This make it possible to inspect the itinerary-filter-chain.
+   * A SystemNotice only has english text,
+   * because the primary user are technical staff, like testers and developers.
    */
   public interface LegacyGraphQLSystemNotice {
     public DataFetcher<String> tag();
@@ -857,10 +873,7 @@ public class LegacyGraphQLDataFetchers {
     public DataFetcher<String> text();
   }
 
-  /**
-   * Trip is a specific occurance of a pattern, usually identified by route, direction on the route
-   * and exact departure time.
-   */
+  /** Trip is a specific occurance of a pattern, usually identified by route, direction on the route and exact departure time. */
   public interface LegacyGraphQLTrip {
     public DataFetcher<Iterable<String>> activeDates();
 
@@ -972,6 +985,7 @@ public class LegacyGraphQLDataFetchers {
     public DataFetcher<VehicleParking> vehicleParking();
   }
 
+  /** Realtime vehicle position */
   public interface LegacyGraphQLVehiclePosition {
     public DataFetcher<Double> heading();
 

@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.opentripplanner.api.model.ApiRoute;
 import org.opentripplanner.api.model.ApiRouteShort;
-import org.opentripplanner.model.Branding;
-import org.opentripplanner.model.Route;
+import org.opentripplanner.transit.model.network.Route;
+import org.opentripplanner.transit.model.organization.Branding;
 
 public class RouteMapper {
 
@@ -21,23 +21,23 @@ public class RouteMapper {
     if (domain == null) {
       return null;
     }
-
+    I18NStringMapper stringMapper = new I18NStringMapper(null);
     ApiRoute api = new ApiRoute();
     api.id = FeedScopedIdMapper.mapToApi(domain.getId());
     api.agency = AgencyMapper.mapToApi(domain.getAgency());
     api.shortName = domain.getShortName();
-    api.longName = domain.getLongName();
+    api.longName = stringMapper.mapToApi(domain.getLongName());
     api.mode = TraverseModeMapper.mapToApi(domain.getMode());
     api.type =
       domain.getGtfsType() != null
         ? domain.getGtfsType()
         : RouteTypeMapper.mapToApi(domain.getMode());
-    api.desc = domain.getDesc();
+    api.desc = domain.getDescription();
     api.url = domain.getUrl();
     api.color = domain.getColor();
     api.textColor = domain.getTextColor();
     api.bikesAllowed = BikeAccessMapper.mapToApi(domain.getBikesAllowed());
-    api.sortOrder = domain.isSortOrderSet() ? domain.getSortOrder() : null;
+    api.sortOrder = domain.getGtfsSortOrder();
 
     Branding branding = domain.getBranding();
     if (branding != null) {
@@ -58,11 +58,11 @@ public class RouteMapper {
     if (domain == null) {
       return null;
     }
-
+    I18NStringMapper stringMapper = new I18NStringMapper(null);
     ApiRouteShort api = new ApiRouteShort();
     api.id = FeedScopedIdMapper.mapToApi(domain.getId());
     api.shortName = domain.getShortName();
-    api.longName = domain.getLongName();
+    api.longName = stringMapper.mapToApi(domain.getLongName());
     api.mode = TraverseModeMapper.mapToApi(domain.getMode());
     api.color = domain.getColor();
     api.agencyName = domain.getAgency().getName();

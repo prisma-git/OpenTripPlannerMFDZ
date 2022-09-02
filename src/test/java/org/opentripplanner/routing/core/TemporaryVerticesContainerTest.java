@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
-import org.opentripplanner.common.geometry.GeometryUtils;
 import org.opentripplanner.common.geometry.SphericalDistanceLibrary;
 import org.opentripplanner.model.GenericLocation;
 import org.opentripplanner.routing.api.request.RoutingRequest;
@@ -26,13 +25,16 @@ import org.opentripplanner.routing.graph.Vertex;
 import org.opentripplanner.routing.vertextype.IntersectionVertex;
 import org.opentripplanner.routing.vertextype.StreetVertex;
 import org.opentripplanner.routing.vertextype.TemporaryVertex;
+import org.opentripplanner.transit.model.framework.Deduplicator;
+import org.opentripplanner.transit.service.StopModel;
+import org.opentripplanner.util.geometry.GeometryUtils;
 
 public class TemporaryVerticesContainerTest {
 
   private final GeometryFactory gf = GeometryUtils.getGeometryFactory();
   // Given:
   // - a graph with 3 intersections/vertexes
-  private final Graph g = new Graph();
+  private Graph g = new Graph(new Deduplicator());
   private final StreetVertex a = new IntersectionVertex(g, "A", 1.0, 1.0);
   private final StreetVertex b = new IntersectionVertex(g, "B", 0.0, 1.0);
   private final StreetVertex c = new IntersectionVertex(g, "C", 1.0, 0.0);
@@ -49,7 +51,7 @@ public class TemporaryVerticesContainerTest {
     createStreetEdge(a, b, "a -> b");
     createStreetEdge(b, a, "b -> a");
     createStreetEdge(a, c, "a -> c");
-    g.index();
+    g.index(new StopModel());
   }
 
   @Test

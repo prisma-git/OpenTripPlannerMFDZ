@@ -1,29 +1,34 @@
 package org.opentripplanner.routing.trippattern;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedList;
 import java.util.List;
-import org.junit.Test;
-import org.opentripplanner.model.FeedScopedId;
-import org.opentripplanner.model.Stop;
+import java.util.OptionalInt;
+import org.junit.jupiter.api.Test;
 import org.opentripplanner.model.StopTime;
-import org.opentripplanner.model.Trip;
+import org.opentripplanner.transit.model._data.TransitModelForTest;
+import org.opentripplanner.transit.model.framework.Deduplicator;
+import org.opentripplanner.transit.model.framework.FeedScopedId;
+import org.opentripplanner.transit.model.site.RegularStop;
+import org.opentripplanner.transit.model.timetable.RealTimeState;
+import org.opentripplanner.transit.model.timetable.Trip;
+import org.opentripplanner.transit.model.timetable.TripTimes;
 
 public class TripTimesTest {
 
-  private static final FeedScopedId TRIP_ID = new FeedScopedId("agency", "testTripId");
-  private static final FeedScopedId ROUTE_ID = new FeedScopedId("agency", "testRrouteId");
+  private static final String TRIP_ID = "testTripId";
 
-  private static final FeedScopedId STOP_A = new FeedScopedId("agency", "A"); // 0
-  private static final FeedScopedId STOP_B = new FeedScopedId("agency", "B"); // 1
-  private static final FeedScopedId STOP_C = new FeedScopedId("agency", "C"); // 2
-  private static final FeedScopedId STOP_D = new FeedScopedId("agency", "D"); // 3
-  private static final FeedScopedId STOP_E = new FeedScopedId("agency", "E"); // 4
-  private static final FeedScopedId STOP_F = new FeedScopedId("agency", "F"); // 5
-  private static final FeedScopedId STOP_G = new FeedScopedId("agency", "G"); // 6
-  private static final FeedScopedId STOP_H = new FeedScopedId("agency", "H"); // 7
+  private static final FeedScopedId STOP_A = TransitModelForTest.id("A"); // 0
+  private static final FeedScopedId STOP_B = TransitModelForTest.id("B"); // 1
+  private static final FeedScopedId STOP_C = TransitModelForTest.id("C"); // 2
+  private static final FeedScopedId STOP_D = TransitModelForTest.id("D"); // 3
+  private static final FeedScopedId STOP_E = TransitModelForTest.id("E"); // 4
+  private static final FeedScopedId STOP_F = TransitModelForTest.id("F"); // 5
+  private static final FeedScopedId STOP_G = TransitModelForTest.id("G"); // 6
+  private static final FeedScopedId STOP_H = TransitModelForTest.id("H"); // 7
 
   private static final FeedScopedId[] stops = {
     STOP_A,
@@ -39,14 +44,14 @@ public class TripTimesTest {
   private static final TripTimes originalTripTimes;
 
   static {
-    Trip trip = new Trip(TRIP_ID);
+    Trip trip = TransitModelForTest.trip(TRIP_ID).build();
 
     List<StopTime> stopTimes = new LinkedList<>();
 
     for (int i = 0; i < stops.length; ++i) {
       StopTime stopTime = new StopTime();
 
-      Stop stop = Stop.stopForTest(stops[i].getId(), 0.0, 0.0);
+      RegularStop stop = TransitModelForTest.stopForTest(stops[i].getId(), 0.0, 0.0);
       stopTime.setStop(stop);
       stopTime.setArrivalTime(i * 60);
       stopTime.setDepartureTime(i * 60);
@@ -89,14 +94,28 @@ public class TripTimesTest {
     updatedTripTimesA.updateArrivalTime(1, 60);
     updatedTripTimesA.updateDepartureTime(1, 59);
 
-    assertFalse(updatedTripTimesA.timesIncreasing());
+    OptionalInt invalidStopOIndex = updatedTripTimesA.findFirstNoneIncreasingStopTime();
+    assertTrue(invalidStopOIndex.isPresent());
+    assertEquals(1, invalidStopOIndex.getAsInt());
 
     TripTimes updatedTripTimesB = new TripTimes(originalTripTimes);
 
     updatedTripTimesB.updateDepartureTime(6, 421);
     updatedTripTimesB.updateArrivalTime(7, 420);
 
-    assertFalse(updatedTripTimesB.timesIncreasing());
+    invalidStopOIndex = updatedTripTimesB.findFirstNoneIncreasingStopTime();
+    assertTrue(invalidStopOIndex.isPresent());
+    assertEquals(7, invalidStopOIndex.getAsInt());
+  }
+
+  @Test
+  public void testNonIncreasingUpdateCrossingMidnight() {
+    TripTimes updatedTripTimesA = new TripTimes(originalTripTimes);
+
+    updatedTripTimesA.updateArrivalTime(0, -300); //"Yesterday"
+    updatedTripTimesA.updateDepartureTime(0, 50);
+
+    assertTrue(updatedTripTimesA.findFirstNoneIncreasingStopTime().isEmpty());
   }
 
   @Test
@@ -117,8 +136,17 @@ public class TripTimesTest {
   }
 
   @Test
+  public void testNoData() {
+    TripTimes updatedTripTimesA = new TripTimes(originalTripTimes);
+    updatedTripTimesA.setNoData(1);
+    assertFalse(updatedTripTimesA.isNoDataStop(0));
+    assertTrue(updatedTripTimesA.isNoDataStop(1));
+    assertFalse(updatedTripTimesA.isNoDataStop(2));
+  }
+
+  @Test
   public void testApply() {
-    Trip trip = new Trip(TRIP_ID);
+    Trip trip = TransitModelForTest.trip(TRIP_ID).build();
 
     List<StopTime> stopTimes = new LinkedList<>();
 
@@ -126,9 +154,9 @@ public class TripTimesTest {
     StopTime stopTime1 = new StopTime();
     StopTime stopTime2 = new StopTime();
 
-    Stop stop0 = Stop.stopForTest(stops[0].getId(), 0.0, 0.0);
-    Stop stop1 = Stop.stopForTest(stops[1].getId(), 0.0, 0.0);
-    Stop stop2 = Stop.stopForTest(stops[2].getId(), 0.0, 0.0);
+    RegularStop stop0 = TransitModelForTest.stopForTest(stops[0].getId(), 0.0, 0.0);
+    RegularStop stop1 = TransitModelForTest.stopForTest(stops[1].getId(), 0.0, 0.0);
+    RegularStop stop2 = TransitModelForTest.stopForTest(stops[2].getId(), 0.0, 0.0);
 
     stopTime0.setStop(stop0);
     stopTime0.setDepartureTime(0);
@@ -154,6 +182,8 @@ public class TripTimesTest {
     updatedTripTimesA.updateArrivalTime(1, 89);
     updatedTripTimesA.updateDepartureTime(1, 98);
 
-    assertFalse(updatedTripTimesA.timesIncreasing());
+    OptionalInt invalidStopOIndex = updatedTripTimesA.findFirstNoneIncreasingStopTime();
+    assertTrue(invalidStopOIndex.isPresent());
+    assertEquals(2, invalidStopOIndex.getAsInt());
   }
 }

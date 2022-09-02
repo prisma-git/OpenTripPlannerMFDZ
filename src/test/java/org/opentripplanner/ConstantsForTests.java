@@ -1,19 +1,19 @@
 package org.opentripplanner;
 
+import static org.opentripplanner.graph_builder.DataImportIssueStore.noopIssueStore;
+
 import com.csvreader.CsvReader;
-import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.Nullable;
-import org.opentripplanner.datastore.CompositeDataSource;
-import org.opentripplanner.datastore.DataSource;
-import org.opentripplanner.datastore.FileType;
+import org.opentripplanner.datastore.api.CompositeDataSource;
+import org.opentripplanner.datastore.api.FileType;
 import org.opentripplanner.datastore.file.ZipFileDataSource;
+import org.opentripplanner.ext.fares.impl.DefaultFareServiceFactory;
 import org.opentripplanner.graph_builder.linking.LinkingDirection;
 import org.opentripplanner.graph_builder.linking.VertexLinker;
 import org.opentripplanner.graph_builder.model.GtfsBundle;
@@ -24,26 +24,26 @@ import org.opentripplanner.graph_builder.module.ned.ElevationModule;
 import org.opentripplanner.graph_builder.module.ned.GeotiffGridCoverageFactoryImpl;
 import org.opentripplanner.graph_builder.module.osm.DefaultWayPropertySetSource;
 import org.opentripplanner.graph_builder.module.osm.OpenStreetMapModule;
-import org.opentripplanner.graph_builder.services.GraphBuilderModule;
-import org.opentripplanner.model.FeedScopedId;
 import org.opentripplanner.model.calendar.ServiceDateInterval;
 import org.opentripplanner.netex.NetexBundle;
-import org.opentripplanner.netex.NetexModule;
 import org.opentripplanner.netex.configure.NetexConfig;
-import org.opentripplanner.openstreetmap.BinaryOpenStreetMapProvider;
+import org.opentripplanner.openstreetmap.OpenStreetMapProvider;
 import org.opentripplanner.routing.core.TraverseMode;
 import org.opentripplanner.routing.core.TraverseModeSet;
 import org.opentripplanner.routing.edgetype.StreetVehicleRentalLink;
 import org.opentripplanner.routing.edgetype.VehicleRentalEdge;
 import org.opentripplanner.routing.fares.FareServiceFactory;
-import org.opentripplanner.routing.fares.impl.DefaultFareServiceFactory;
 import org.opentripplanner.routing.graph.Graph;
 import org.opentripplanner.routing.vehicle_rental.RentalVehicleType;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalStation;
-import org.opentripplanner.routing.vertextype.VehicleRentalStationVertex;
+import org.opentripplanner.routing.vertextype.VehicleRentalPlaceVertex;
 import org.opentripplanner.standalone.config.BuildConfig;
 import org.opentripplanner.standalone.config.ConfigLoader;
-import org.opentripplanner.util.NonLocalizedString;
+import org.opentripplanner.transit.model.basic.NonLocalizedString;
+import org.opentripplanner.transit.model.framework.Deduplicator;
+import org.opentripplanner.transit.model.framework.FeedScopedId;
+import org.opentripplanner.transit.service.StopModel;
+import org.opentripplanner.transit.service.TransitModel;
 
 public class ConstantsForTests {
 
@@ -92,6 +92,8 @@ public class ConstantsForTests {
     "src/test/resources/germany/herrenberg-barrier-gates.osm.pbf";
   public static final String HERRENBERG_OSM =
     "src/test/resources/germany/herrenberg-minimal.osm.pbf";
+  public static final String STUTTGART_SCHWABSTR_OSM =
+    "src/test/resources/germany/stuttgart-schwabstrasse.osm.pbf";
   public static final String ISLAND_PRUNE_OSM =
     "src/test/resources/germany/herrenberg-island-prune-nothru.osm.pbf";
 
@@ -101,8 +103,8 @@ public class ConstantsForTests {
   );
 
   private static ConstantsForTests instance = null;
-  private Graph portlandGraph = null;
-  private Graph portlandGraphWithElevation = null;
+  private TestOtpModel portlandGraph = null;
+  private TestOtpModel portlandGraphWithElevation = null;
 
   private ConstantsForTests() {}
 
@@ -123,110 +125,152 @@ public class ConstantsForTests {
   /**
    * Builds a new graph using the Portland test data.
    */
-  public static Graph buildNewPortlandGraph(boolean withElevation) {
+  public static TestOtpModel buildNewPortlandGraph(boolean withElevation) {
     try {
-      Graph graph = new Graph();
+      var deduplicator = new Deduplicator();
+      var graph = new Graph(deduplicator);
+      var transitModel = new TransitModel(new StopModel(), deduplicator);
       // Add street data from OSM
       {
         File osmFile = new File(PORTLAND_CENTRAL_OSM);
-        BinaryOpenStreetMapProvider osmProvider = new BinaryOpenStreetMapProvider(osmFile, false);
-        OpenStreetMapModule osmModule = new OpenStreetMapModule(List.of(osmProvider));
+        OpenStreetMapProvider osmProvider = new OpenStreetMapProvider(osmFile, false);
+        OpenStreetMapModule osmModule = new OpenStreetMapModule(
+          List.of(osmProvider),
+          Set.of(),
+          // Need to use a mutable set here, since it is used
+          graph,
+          transitModel.getTimeZone(),
+          noopIssueStore()
+        );
         osmModule.staticBikeParkAndRide = true;
         osmModule.staticParkAndRide = true;
         osmModule.skipVisibility = true;
-        osmModule.buildGraph(graph, new HashMap<>());
+        new DefaultWayPropertySetSource().populateProperties(osmModule.wayPropertySet);
+        osmModule.buildGraph();
       }
       // Add transit data from GTFS
       {
-        addGtfsToGraph(graph, PORTLAND_GTFS, new DefaultFareServiceFactory(), "prt");
+        addGtfsToGraph(graph, transitModel, PORTLAND_GTFS, new DefaultFareServiceFactory(), "prt");
       }
       // Link transit stops to streets
-      {
-        GraphBuilderModule streetTransitLinker = new StreetLinkerModule();
-        streetTransitLinker.buildGraph(graph, new HashMap<>());
-      }
+      StreetLinkerModule.linkStreetsForTestOnly(graph, transitModel);
+
       // Add elevation data
       if (withElevation) {
         var elevationModule = new ElevationModule(
-          new GeotiffGridCoverageFactoryImpl(new File(PORTLAND_NED_WITH_NODATA))
+          new GeotiffGridCoverageFactoryImpl(new File(PORTLAND_NED_WITH_NODATA)),
+          graph
         );
-        elevationModule.buildGraph(graph, new HashMap<>());
+        elevationModule.buildGraph();
       }
 
       graph.hasStreets = true;
 
       addPortlandVehicleRentals(graph);
 
-      graph.index();
+      transitModel.index();
+      graph.index(transitModel.getStopModel());
 
-      return graph;
+      return new TestOtpModel(graph, transitModel);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
   }
 
-  public static Graph buildOsmGraph(String osmPath) {
+  public static TestOtpModel buildOsmGraph(String osmPath) {
     try {
-      var graph = new Graph();
+      var deduplicator = new Deduplicator();
+      var stopModel = new StopModel();
+      var graph = new Graph(deduplicator);
+      var transitModel = new TransitModel(stopModel, deduplicator);
       // Add street data from OSM
       File osmFile = new File(osmPath);
-      BinaryOpenStreetMapProvider osmProvider = new BinaryOpenStreetMapProvider(osmFile, true);
-      OpenStreetMapModule osmModule = new OpenStreetMapModule(Lists.newArrayList(osmProvider));
+      OpenStreetMapProvider osmProvider = new OpenStreetMapProvider(osmFile, true);
+      OpenStreetMapModule osmModule = new OpenStreetMapModule(
+        List.of(osmProvider),
+        Set.of(),
+        graph,
+        transitModel.getTimeZone(),
+        noopIssueStore()
+      );
       osmModule.setDefaultWayPropertySetSource(new DefaultWayPropertySetSource());
       osmModule.skipVisibility = true;
-      osmModule.buildGraph(graph, new HashMap<>());
-      return graph;
+      osmModule.buildGraph();
+      return new TestOtpModel(graph, transitModel);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
   }
 
-  public static Graph buildOsmAndGtfsGraph(String osmPath, String gtfsPath) {
-    var graph = buildOsmGraph(osmPath);
+  public static TestOtpModel buildOsmAndGtfsGraph(String osmPath, String gtfsPath) {
+    var otpModel = buildOsmGraph(osmPath);
 
-    addGtfsToGraph(graph, gtfsPath, new DefaultFareServiceFactory(), null);
+    addGtfsToGraph(
+      otpModel.graph(),
+      otpModel.transitModel(),
+      gtfsPath,
+      new DefaultFareServiceFactory(),
+      null
+    );
 
     // Link transit stops to streets
-    GraphBuilderModule streetTransitLinker = new StreetLinkerModule();
-    streetTransitLinker.buildGraph(graph, new HashMap<>());
-    return graph;
+    StreetLinkerModule.linkStreetsForTestOnly(otpModel.graph(), otpModel.transitModel());
+
+    return otpModel;
   }
 
-  public static Graph buildGtfsGraph(String gtfsPath) {
+  public static TestOtpModel buildGtfsGraph(String gtfsPath) {
     return buildGtfsGraph(gtfsPath, new DefaultFareServiceFactory());
   }
 
-  public static Graph buildGtfsGraph(String gtfsPath, FareServiceFactory fareServiceFactory) {
-    var graph = new Graph();
-    addGtfsToGraph(graph, gtfsPath, fareServiceFactory, null);
-    return graph;
+  public static TestOtpModel buildGtfsGraph(
+    String gtfsPath,
+    FareServiceFactory fareServiceFactory
+  ) {
+    var deduplicator = new Deduplicator();
+    var stopModel = new StopModel();
+    var graph = new Graph(deduplicator);
+    var transitModel = new TransitModel(stopModel, deduplicator);
+    addGtfsToGraph(graph, transitModel, gtfsPath, fareServiceFactory, null);
+    return new TestOtpModel(graph, transitModel);
   }
 
-  public static Graph buildNewMinimalNetexGraph() {
+  public static TestOtpModel buildNewMinimalNetexGraph() {
     try {
-      Graph graph = new Graph();
+      var deduplicator = new Deduplicator();
+      var stopModel = new StopModel();
+      var graph = new Graph(deduplicator);
+      var transitModel = new TransitModel(stopModel, deduplicator);
       // Add street data from OSM
       {
         File osmFile = new File(OSLO_EAST_OSM);
 
-        BinaryOpenStreetMapProvider osmProvider = new BinaryOpenStreetMapProvider(osmFile, false);
-        OpenStreetMapModule osmModule = new OpenStreetMapModule(Lists.newArrayList(osmProvider));
+        OpenStreetMapProvider osmProvider = new OpenStreetMapProvider(osmFile, false);
+        OpenStreetMapModule osmModule = new OpenStreetMapModule(
+          List.of(osmProvider),
+          Set.of(),
+          graph,
+          transitModel.getTimeZone(),
+          noopIssueStore()
+        );
         osmModule.skipVisibility = true;
-        osmModule.buildGraph(graph, new HashMap<>());
+        osmModule.buildGraph();
       }
       // Add transit data from Netex
       {
-        BuildConfig buildParameters = createNetexBuilderParameters();
-        List<DataSource> dataSources = Collections.singletonList(NETEX_MINIMAL_DATA_SOURCE);
-        NetexModule module = NetexConfig.netexModule(buildParameters, dataSources);
-        module.buildGraph(graph, null);
+        new NetexConfig(createNetexBuilderParameters())
+          .createNetexModule(
+            List.of(NETEX_MINIMAL_DATA_SOURCE),
+            transitModel,
+            graph,
+            noopIssueStore()
+          )
+          .buildGraph();
       }
       // Link transit stops to streets
-      {
-        GraphBuilderModule streetTransitLinker = new StreetLinkerModule();
-        streetTransitLinker.buildGraph(graph, new HashMap<>());
-      }
-      return graph;
+      StreetLinkerModule.linkStreetsForTestOnly(graph, transitModel);
+
+      return new TestOtpModel(graph, transitModel);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -235,7 +279,7 @@ public class ConstantsForTests {
   /**
    * Returns a cached copy of the Portland graph, which may have been initialized.
    */
-  public synchronized Graph getCachedPortlandGraph() {
+  public synchronized TestOtpModel getCachedPortlandGraph() {
     if (portlandGraph == null) {
       portlandGraph = buildNewPortlandGraph(false);
     }
@@ -245,15 +289,16 @@ public class ConstantsForTests {
   /**
    * Returns a cached copy of the Portland graph, which may have been initialized.
    */
-  public synchronized Graph getCachedPortlandGraphWithElevation() {
+  public synchronized TestOtpModel getCachedPortlandGraphWithElevation() {
     if (portlandGraphWithElevation == null) {
       portlandGraphWithElevation = buildNewPortlandGraph(true);
     }
     return portlandGraphWithElevation;
   }
 
-  private static void addGtfsToGraph(
+  public static void addGtfsToGraph(
     Graph graph,
+    TransitModel transitModel,
     String file,
     FareServiceFactory fareServiceFactory,
     @Nullable String feedId
@@ -261,13 +306,22 @@ public class ConstantsForTests {
     var bundle = new GtfsBundle(new File(file));
     bundle.setFeedId(new GtfsFeedId.Builder().id(feedId).build());
 
-    var module = new GtfsModule(List.of(bundle), ServiceDateInterval.unbounded());
-    module.setFareServiceFactory(fareServiceFactory);
+    var module = new GtfsModule(
+      List.of(bundle),
+      transitModel,
+      graph,
+      noopIssueStore(),
+      ServiceDateInterval.unbounded(),
+      fareServiceFactory,
+      false,
+      true,
+      300
+    );
 
-    module.buildGraph(graph, new HashMap<>());
+    module.buildGraph();
 
-    graph.index();
-    graph.hasTransit = true;
+    transitModel.index();
+    graph.index(transitModel.getStopModel());
   }
 
   private static void addPortlandVehicleRentals(Graph graph) {
@@ -288,7 +342,7 @@ public class ConstantsForTests {
         station.realTimeData = false;
         station.isKeepingVehicleRentalAtDestinationAllowed = true;
 
-        VehicleRentalStationVertex stationVertex = new VehicleRentalStationVertex(graph, station);
+        VehicleRentalPlaceVertex stationVertex = new VehicleRentalPlaceVertex(graph, station);
         new VehicleRentalEdge(stationVertex, vehicleType.formFactor);
 
         linker.linkVertexPermanently(
@@ -297,8 +351,8 @@ public class ConstantsForTests {
           LinkingDirection.BOTH_WAYS,
           (vertex, streetVertex) ->
             List.of(
-              new StreetVehicleRentalLink((VehicleRentalStationVertex) vertex, streetVertex),
-              new StreetVehicleRentalLink(streetVertex, (VehicleRentalStationVertex) vertex)
+              new StreetVehicleRentalLink((VehicleRentalPlaceVertex) vertex, streetVertex),
+              new StreetVehicleRentalLink(streetVertex, (VehicleRentalPlaceVertex) vertex)
             )
         );
       }

@@ -3,21 +3,21 @@ package org.opentripplanner.transit.raptor.rangeraptor.path;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.annotation.Nullable;
-import org.opentripplanner.model.base.OtpNumberFormat;
 import org.opentripplanner.transit.raptor.api.path.Path;
 import org.opentripplanner.transit.raptor.api.transit.CostCalculator;
 import org.opentripplanner.transit.raptor.api.transit.RaptorStopNameResolver;
 import org.opentripplanner.transit.raptor.api.transit.RaptorTransfer;
 import org.opentripplanner.transit.raptor.api.transit.RaptorTripSchedule;
 import org.opentripplanner.transit.raptor.api.view.ArrivalView;
-import org.opentripplanner.transit.raptor.rangeraptor.SlackProvider;
-import org.opentripplanner.transit.raptor.rangeraptor.WorkerLifeCycle;
 import org.opentripplanner.transit.raptor.rangeraptor.debug.DebugHandlerFactory;
+import org.opentripplanner.transit.raptor.rangeraptor.internalapi.DebugHandler;
+import org.opentripplanner.transit.raptor.rangeraptor.internalapi.SlackProvider;
+import org.opentripplanner.transit.raptor.rangeraptor.internalapi.WorkerLifeCycle;
 import org.opentripplanner.transit.raptor.rangeraptor.transit.AccessEgressFunctions;
 import org.opentripplanner.transit.raptor.rangeraptor.transit.TransitCalculator;
-import org.opentripplanner.transit.raptor.rangeraptor.view.DebugHandler;
 import org.opentripplanner.transit.raptor.util.paretoset.ParetoComparator;
 import org.opentripplanner.transit.raptor.util.paretoset.ParetoSet;
+import org.opentripplanner.util.lang.OtpNumberFormat;
 import org.opentripplanner.util.logging.ThrottleLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +45,7 @@ public class DestinationArrivalPaths<T extends RaptorTripSchedule> {
   private final TransitCalculator<T> transitCalculator;
 
   @Nullable
-  private final CostCalculator costCalculator;
+  private final CostCalculator<T> costCalculator;
 
   private final SlackProvider slackProvider;
   private final PathMapper<T> pathMapper;
@@ -57,7 +57,7 @@ public class DestinationArrivalPaths<T extends RaptorTripSchedule> {
   public DestinationArrivalPaths(
     ParetoComparator<Path<T>> paretoComparator,
     TransitCalculator<T> transitCalculator,
-    @Nullable CostCalculator costCalculator,
+    @Nullable CostCalculator<T> costCalculator,
     SlackProvider slackProvider,
     PathMapper<T> pathMapper,
     DebugHandlerFactory<T> debugHandlerFactory,

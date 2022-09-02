@@ -10,32 +10,37 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.google.transit.realtime.GtfsRealtime.TripDescriptor;
 import com.google.transit.realtime.GtfsRealtime.TripDescriptor.ScheduleRelationship;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opentripplanner.ConstantsForTests;
-import org.opentripplanner.model.calendar.ServiceDate;
-import org.opentripplanner.routing.graph.Graph;
-import org.opentripplanner.routing.trippattern.TripTimes;
+import org.opentripplanner.TestOtpModel;
+import org.opentripplanner.transit.model.framework.FeedScopedId;
+import org.opentripplanner.transit.model.network.TripPattern;
+import org.opentripplanner.transit.model.timetable.TripTimes;
+import org.opentripplanner.transit.service.TransitModel;
+import org.opentripplanner.updater.stoptime.BackwardsDelayPropagationType;
 
 public class TimetableSnapshotTest {
 
-  private static final TimeZone timeZone = TimeZone.getTimeZone("GMT");
+  private static final ZoneId timeZone = ZoneId.of("GMT");
   private static Map<FeedScopedId, TripPattern> patternIndex;
   static String feedId;
 
   @BeforeAll
   public static void setUp() throws Exception {
-    Graph graph = ConstantsForTests.buildGtfsGraph(ConstantsForTests.FAKE_GTFS);
+    TestOtpModel model = ConstantsForTests.buildGtfsGraph(ConstantsForTests.FAKE_GTFS);
+    TransitModel transitModel = model.transitModel();
 
-    feedId = graph.getFeedIds().iterator().next();
+    feedId = transitModel.getFeedIds().iterator().next();
 
     patternIndex = new HashMap<>();
-    for (TripPattern tripPattern : graph.tripPatternForId.values()) {
+    for (TripPattern tripPattern : transitModel.getAllTripPatterns()) {
       tripPattern
         .scheduledTripsAsStream()
         .forEach(trip -> patternIndex.put(trip.getId(), tripPattern));
@@ -45,16 +50,16 @@ public class TimetableSnapshotTest {
   @Test
   public void testCompare() {
     Timetable orig = new Timetable(null);
-    Timetable a = new Timetable(orig, new ServiceDate().previous());
-    Timetable b = new Timetable(orig, new ServiceDate());
+    Timetable a = new Timetable(orig, LocalDate.now(timeZone).minusDays(1));
+    Timetable b = new Timetable(orig, LocalDate.now(timeZone));
     assertTrue(new TimetableSnapshot.SortedTimetableComparator().compare(a, b) < 0);
   }
 
   @Test
   public void testResolve() {
-    ServiceDate today = new ServiceDate();
-    ServiceDate yesterday = today.previous();
-    ServiceDate tomorrow = today.next();
+    LocalDate today = LocalDate.now(timeZone);
+    LocalDate yesterday = today.minusDays(1);
+    LocalDate tomorrow = today.plusDays(1);
     TripPattern pattern = patternIndex.get(new FeedScopedId(feedId, "1.1"));
     TimetableSnapshot resolver = new TimetableSnapshot();
 
@@ -64,11 +69,18 @@ public class TimetableSnapshotTest {
     TripDescriptor.Builder tripDescriptorBuilder = TripDescriptor.newBuilder();
 
     tripDescriptorBuilder.setTripId("1.1");
-    tripDescriptorBuilder.setScheduleRelationship(ScheduleRelationship.CANCELED);
+    tripDescriptorBuilder.setScheduleRelationship(ScheduleRelationship.SCHEDULED);
 
     TripUpdate.Builder tripUpdateBuilder = TripUpdate.newBuilder();
 
     tripUpdateBuilder.setTrip(tripDescriptorBuilder);
+
+    var stopTimeUpdateBuilder = tripUpdateBuilder.addStopTimeUpdateBuilder(0);
+    stopTimeUpdateBuilder.setStopSequence(2);
+    stopTimeUpdateBuilder.setScheduleRelationship(
+      TripUpdate.StopTimeUpdate.ScheduleRelationship.SCHEDULED
+    );
+    stopTimeUpdateBuilder.setDeparture(TripUpdate.StopTimeEvent.newBuilder().setDelay(2).build());
 
     TripUpdate tripUpdate = tripUpdateBuilder.build();
 
@@ -94,8 +106,8 @@ public class TimetableSnapshotTest {
     Assertions.assertThrows(
       ConcurrentModificationException.class,
       () -> {
-        ServiceDate today = new ServiceDate();
-        ServiceDate yesterday = today.previous();
+        LocalDate today = LocalDate.now(timeZone);
+        LocalDate yesterday = today.minusDays(1);
         TripPattern pattern = patternIndex.get(new FeedScopedId(feedId, "1.1"));
 
         TimetableSnapshot resolver = new TimetableSnapshot();
@@ -104,11 +116,20 @@ public class TimetableSnapshotTest {
         TripDescriptor.Builder tripDescriptorBuilder = TripDescriptor.newBuilder();
 
         tripDescriptorBuilder.setTripId("1.1");
-        tripDescriptorBuilder.setScheduleRelationship(ScheduleRelationship.CANCELED);
+        tripDescriptorBuilder.setScheduleRelationship(ScheduleRelationship.SCHEDULED);
 
         TripUpdate.Builder tripUpdateBuilder = TripUpdate.newBuilder();
 
         tripUpdateBuilder.setTrip(tripDescriptorBuilder);
+
+        var stopTimeUpdateBuilder = tripUpdateBuilder.addStopTimeUpdateBuilder(0);
+        stopTimeUpdateBuilder.setStopSequence(2);
+        stopTimeUpdateBuilder.setScheduleRelationship(
+          TripUpdate.StopTimeUpdate.ScheduleRelationship.SCHEDULED
+        );
+        stopTimeUpdateBuilder.setDeparture(
+          TripUpdate.StopTimeEvent.newBuilder().setDelay(5).build()
+        );
 
         TripUpdate tripUpdate = tripUpdateBuilder.build();
 
@@ -138,8 +159,8 @@ public class TimetableSnapshotTest {
     Assertions.assertThrows(
       ConcurrentModificationException.class,
       () -> {
-        ServiceDate today = new ServiceDate();
-        ServiceDate yesterday = today.previous();
+        LocalDate today = LocalDate.now(timeZone);
+        LocalDate yesterday = today.minusDays(1);
         TripPattern pattern = patternIndex.get(new FeedScopedId(feedId, "1.1"));
 
         TimetableSnapshot resolver = new TimetableSnapshot();
@@ -151,11 +172,20 @@ public class TimetableSnapshotTest {
         TripDescriptor.Builder tripDescriptorBuilder = TripDescriptor.newBuilder();
 
         tripDescriptorBuilder.setTripId("1.1");
-        tripDescriptorBuilder.setScheduleRelationship(ScheduleRelationship.CANCELED);
+        tripDescriptorBuilder.setScheduleRelationship(ScheduleRelationship.SCHEDULED);
 
         TripUpdate.Builder tripUpdateBuilder = TripUpdate.newBuilder();
 
         tripUpdateBuilder.setTrip(tripDescriptorBuilder);
+
+        var stopTimeUpdateBuilder = tripUpdateBuilder.addStopTimeUpdateBuilder(0);
+        stopTimeUpdateBuilder.setStopSequence(2);
+        stopTimeUpdateBuilder.setScheduleRelationship(
+          TripUpdate.StopTimeUpdate.ScheduleRelationship.SCHEDULED
+        );
+        stopTimeUpdateBuilder.setDeparture(
+          TripUpdate.StopTimeEvent.newBuilder().setDelay(10).build()
+        );
 
         TripUpdate tripUpdate = tripUpdateBuilder.build();
 
@@ -187,18 +217,25 @@ public class TimetableSnapshotTest {
 
   @Test
   public void testPurge() {
-    ServiceDate today = new ServiceDate();
-    ServiceDate yesterday = today.previous();
+    LocalDate today = LocalDate.now(timeZone);
+    LocalDate yesterday = today.minusDays(1);
     TripPattern pattern = patternIndex.get(new FeedScopedId(feedId, "1.1"));
 
     TripDescriptor.Builder tripDescriptorBuilder = TripDescriptor.newBuilder();
 
     tripDescriptorBuilder.setTripId("1.1");
-    tripDescriptorBuilder.setScheduleRelationship(ScheduleRelationship.CANCELED);
+    tripDescriptorBuilder.setScheduleRelationship(ScheduleRelationship.SCHEDULED);
 
     TripUpdate.Builder tripUpdateBuilder = TripUpdate.newBuilder();
 
     tripUpdateBuilder.setTrip(tripDescriptorBuilder);
+
+    var stopTimeUpdateBuilder = tripUpdateBuilder.addStopTimeUpdateBuilder(0);
+    stopTimeUpdateBuilder.setStopSequence(2);
+    stopTimeUpdateBuilder.setScheduleRelationship(
+      TripUpdate.StopTimeUpdate.ScheduleRelationship.SCHEDULED
+    );
+    stopTimeUpdateBuilder.setDeparture(TripUpdate.StopTimeEvent.newBuilder().setDelay(15).build());
 
     TripUpdate tripUpdate = tripUpdateBuilder.build();
 
@@ -226,11 +263,16 @@ public class TimetableSnapshotTest {
     TimetableSnapshot resolver,
     TripPattern pattern,
     TripUpdate tripUpdate,
-    ServiceDate serviceDate
+    LocalDate serviceDate
   ) {
     TripTimesPatch tripTimesPatch = pattern
       .getScheduledTimetable()
-      .createUpdatedTripTimes(tripUpdate, timeZone, serviceDate);
+      .createUpdatedTripTimes(
+        tripUpdate,
+        timeZone,
+        serviceDate,
+        BackwardsDelayPropagationType.REQUIRED_NO_DATA
+      );
     TripTimes updatedTripTimes = tripTimesPatch.getTripTimes();
     return resolver.update(pattern, updatedTripTimes, serviceDate);
   }

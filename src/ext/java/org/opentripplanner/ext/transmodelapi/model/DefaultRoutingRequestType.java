@@ -84,7 +84,7 @@ public class DefaultRoutingRequestType {
           .name("maxSlope")
           .description("The maximum slope of streets for wheelchair trips.")
           .type(Scalars.GraphQLFloat)
-          .dataFetcher(env -> request.maxWheelchairSlope)
+          .dataFetcher(env -> request.wheelchairAccessibility.maxSlope())
           .build()
       )
       .field(
@@ -138,14 +138,6 @@ public class DefaultRoutingRequestType {
           .dataFetcher(env -> request.turnReluctance)
           .build()
       )
-      /*
-                .field(GraphQLFieldDefinition.newFieldDefinition()
-                        .name("walkOnStreetReluctance")
-                        .description("How much more reluctant is the user to walk on streets with car traffic allowed.")
-                        .type(Scalars.GraphQLFloat)
-                        .dataFetcher(env -> defaults.walkOnStreetReluctance)
-                        .build())
-                 */
       .field(
         GraphQLFieldDefinition
           .newFieldDefinition()

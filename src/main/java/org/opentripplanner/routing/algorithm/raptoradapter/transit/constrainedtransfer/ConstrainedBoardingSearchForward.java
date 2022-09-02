@@ -4,6 +4,7 @@ import org.opentripplanner.routing.algorithm.raptoradapter.transit.TripSchedule;
 import org.opentripplanner.transit.raptor.api.transit.IntIterator;
 import org.opentripplanner.transit.raptor.api.transit.RaptorTimeTable;
 import org.opentripplanner.transit.raptor.api.transit.RaptorTripSchedule;
+import org.opentripplanner.transit.raptor.api.transit.SearchDirection;
 import org.opentripplanner.transit.raptor.util.IntIterators;
 
 final class ConstrainedBoardingSearchForward implements ConstrainedBoardingSearchStrategy {
@@ -26,5 +27,10 @@ final class ConstrainedBoardingSearchForward implements ConstrainedBoardingSearc
   @Override
   public int plus(int v, int u) {
     return v + u;
+  }
+
+  @Override
+  public SearchDirection direction() {
+    return SearchDirection.FORWARD;
   }
 }

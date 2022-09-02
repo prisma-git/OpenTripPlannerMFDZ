@@ -1,49 +1,50 @@
 package org.opentripplanner.routing.graphfinder;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.opentripplanner.model.FeedScopedId;
-import org.opentripplanner.model.Stop;
-import org.opentripplanner.model.TransitMode;
-import org.opentripplanner.model.TripPattern;
-import org.opentripplanner.routing.RoutingService;
 import org.opentripplanner.routing.algorithm.astar.TraverseVisitor;
 import org.opentripplanner.routing.algorithm.astar.strategies.SkipEdgeStrategy;
 import org.opentripplanner.routing.core.State;
 import org.opentripplanner.routing.graph.Edge;
 import org.opentripplanner.routing.graph.Vertex;
+import org.opentripplanner.routing.vehicle_parking.VehicleParking;
 import org.opentripplanner.routing.vehicle_rental.VehicleRentalPlace;
 import org.opentripplanner.routing.vertextype.TransitStopVertex;
-import org.opentripplanner.routing.vertextype.VehicleRentalStationVertex;
+import org.opentripplanner.routing.vertextype.VehicleParkingEntranceVertex;
+import org.opentripplanner.routing.vertextype.VehicleRentalPlaceVertex;
+import org.opentripplanner.transit.model.basic.TransitMode;
+import org.opentripplanner.transit.model.framework.FeedScopedId;
+import org.opentripplanner.transit.model.network.TripPattern;
+import org.opentripplanner.transit.model.site.RegularStop;
+import org.opentripplanner.transit.service.TransitService;
 
 /**
  * A TraverseVisitor used in finding various types of places while walking the street graph.
- * <p>
- * TODO Add car and bike parks
  */
 public class PlaceFinderTraverseVisitor implements TraverseVisitor {
 
   public final List<PlaceAtDistance> placesFound = new ArrayList<>();
-  private final RoutingService routingService;
+  private final TransitService transitService;
   private final Set<TransitMode> filterByModes;
   private final Set<FeedScopedId> filterByStops;
   private final Set<FeedScopedId> filterByRoutes;
-  private final Set<String> filterByBikeRentalStation;
+  private final Set<String> filterByVehicleRental;
   private final Set<String> seenPatternAtStops = new HashSet<>();
   private final Set<FeedScopedId> seenStops = new HashSet<>();
-  private final Set<FeedScopedId> seenBicycleRentalStations = new HashSet<>();
+  private final Set<FeedScopedId> seenVehicleRentalPlaces = new HashSet<>();
+  private final Set<FeedScopedId> seenParkingLots = new HashSet<>();
   private final boolean includeStops;
   private final boolean includePatternAtStops;
-  private final boolean includeBikeShares;
+  private final boolean includeVehicleRentals;
+  private final boolean includeCarParking;
+  private final boolean includeBikeParking;
   private final int maxResults;
   private final double radiusMeters;
 
   /**
-   * @param routingService             A RoutingService used in finding information about the
+   * @param transitService             A TransitService used in finding information about the
    *                                   various places.
    * @param filterByModes              A list of TransitModes for which to find Stops and
    *                                   PatternAtStops. Use null to disable the filtering.
@@ -59,7 +60,7 @@ public class PlaceFinderTraverseVisitor implements TraverseVisitor {
    * @param maxResults                 Maximum number of results to return.
    */
   public PlaceFinderTraverseVisitor(
-    RoutingService routingService,
+    TransitService transitService,
     List<TransitMode> filterByModes,
     List<PlaceType> filterByPlaceTypes,
     List<FeedScopedId> filterByStops,
@@ -68,17 +69,17 @@ public class PlaceFinderTraverseVisitor implements TraverseVisitor {
     int maxResults,
     double radiusMeters
   ) {
-    this.routingService = routingService;
+    this.transitService = transitService;
     this.filterByModes = toSet(filterByModes);
     this.filterByStops = toSet(filterByStops);
     this.filterByRoutes = toSet(filterByRoutes);
-    this.filterByBikeRentalStation = toSet(filterByBikeRentalStations);
+    this.filterByVehicleRental = toSet(filterByBikeRentalStations);
 
-    includeStops = filterByPlaceTypes == null || filterByPlaceTypes.contains(PlaceType.STOP);
-    includePatternAtStops =
-      filterByPlaceTypes == null || filterByPlaceTypes.contains(PlaceType.PATTERN_AT_STOP);
-    includeBikeShares =
-      filterByPlaceTypes == null || filterByPlaceTypes.contains(PlaceType.BICYCLE_RENT);
+    includeStops = shouldInclude(filterByPlaceTypes, PlaceType.STOP);
+    includePatternAtStops = shouldInclude(filterByPlaceTypes, PlaceType.PATTERN_AT_STOP);
+    includeVehicleRentals = shouldInclude(filterByPlaceTypes, PlaceType.VEHICLE_RENT);
+    includeCarParking = shouldInclude(filterByPlaceTypes, PlaceType.CAR_PARK);
+    includeBikeParking = shouldInclude(filterByPlaceTypes, PlaceType.BIKE_PARK);
     this.maxResults = maxResults;
     this.radiusMeters = radiusMeters;
   }
@@ -90,12 +91,14 @@ public class PlaceFinderTraverseVisitor implements TraverseVisitor {
   public void visitVertex(State state) {
     Vertex vertex = state.getVertex();
     double distance = state.getWalkDistance();
-    if (vertex instanceof TransitStopVertex) {
-      Stop stop = ((TransitStopVertex) vertex).getStop();
+    if (vertex instanceof TransitStopVertex transitVertex) {
+      RegularStop stop = transitVertex.getStop();
       handleStop(stop, distance);
       handlePatternsAtStop(stop, distance);
-    } else if (vertex instanceof VehicleRentalStationVertex) {
-      handleBikeRentalStation(((VehicleRentalStationVertex) vertex).getStation(), distance);
+    } else if (vertex instanceof VehicleRentalPlaceVertex rentalVertex) {
+      handleVehicleRental(rentalVertex.getStation(), distance);
+    } else if (vertex instanceof VehicleParkingEntranceVertex parkingVertex) {
+      handleParking(parkingVertex.getVehicleParking(), distance);
     }
   }
 
@@ -119,8 +122,8 @@ public class PlaceFinderTraverseVisitor implements TraverseVisitor {
       ) {
         furthestDistance = 0;
         for (PlaceAtDistance pad : PlaceFinderTraverseVisitor.this.placesFound) {
-          if (pad.distance > furthestDistance) {
-            furthestDistance = pad.distance;
+          if (pad.distance() > furthestDistance) {
+            furthestDistance = pad.distance();
           }
         }
       }
@@ -136,15 +139,35 @@ public class PlaceFinderTraverseVisitor implements TraverseVisitor {
     return Set.copyOf(list);
   }
 
-  private boolean stopHasRoutesWithMode(Stop stop, Set<TransitMode> modes) {
-    return routingService
+  private void handleParking(VehicleParking parking, double distance) {
+    if (!seenParkingLots.contains(parking.getId())) {
+      if (includeBikeParking && parking.hasBicyclePlaces()) {
+        placesFound.add(new PlaceAtDistance(parking, distance));
+        seenParkingLots.add(parking.getId());
+      }
+      // make sure that we don't add the same place twice if it has bike and car parking spaces
+      if (
+        includeCarParking && parking.hasAnyCarPlaces() && !seenParkingLots.contains(parking.getId())
+      ) {
+        placesFound.add(new PlaceAtDistance(parking, distance));
+        seenParkingLots.add(parking.getId());
+      }
+    }
+  }
+
+  private boolean shouldInclude(List<PlaceType> filterByPlaceTypes, PlaceType type) {
+    return filterByPlaceTypes == null || filterByPlaceTypes.contains(type);
+  }
+
+  private boolean stopHasRoutesWithMode(RegularStop stop, Set<TransitMode> modes) {
+    return transitService
       .getPatternsForStop(stop)
       .stream()
       .map(TripPattern::getMode)
       .anyMatch(modes::contains);
   }
 
-  private void handleStop(Stop stop, double distance) {
+  private void handleStop(RegularStop stop, double distance) {
     if (filterByStops != null && !filterByStops.contains(stop.getId())) {
       return;
     }
@@ -158,9 +181,9 @@ public class PlaceFinderTraverseVisitor implements TraverseVisitor {
     }
   }
 
-  private void handlePatternsAtStop(Stop stop, double distance) {
+  private void handlePatternsAtStop(RegularStop stop, double distance) {
     if (includePatternAtStops) {
-      List<TripPattern> patterns = routingService
+      List<TripPattern> patterns = transitService
         .getPatternsForStop(stop)
         .stream()
         .filter(pattern -> filterByModes == null || filterByModes.contains(pattern.getMode()))
@@ -168,7 +191,7 @@ public class PlaceFinderTraverseVisitor implements TraverseVisitor {
           filterByRoutes == null || filterByRoutes.contains(pattern.getRoute().getId())
         )
         .filter(pattern -> pattern.canBoard(stop))
-        .collect(toList());
+        .toList();
 
       for (TripPattern pattern : patterns) {
         String seenKey = pattern.getRoute().getId().toString() + ":" + pattern.getId().toString();
@@ -182,20 +205,17 @@ public class PlaceFinderTraverseVisitor implements TraverseVisitor {
     }
   }
 
-  private void handleBikeRentalStation(VehicleRentalPlace station, double distance) {
-    if (!includeBikeShares) {
+  private void handleVehicleRental(VehicleRentalPlace station, double distance) {
+    if (!includeVehicleRentals) {
       return;
     }
-    if (
-      filterByBikeRentalStation != null &&
-      !filterByBikeRentalStation.contains(station.getStationId())
-    ) {
+    if (filterByVehicleRental != null && !filterByVehicleRental.contains(station.getStationId())) {
       return;
     }
-    if (seenBicycleRentalStations.contains(station.getId())) {
+    if (seenVehicleRentalPlaces.contains(station.getId())) {
       return;
     }
-    seenBicycleRentalStations.add(station.getId());
+    seenVehicleRentalPlaces.add(station.getId());
     placesFound.add(new PlaceAtDistance(station, distance));
   }
 }

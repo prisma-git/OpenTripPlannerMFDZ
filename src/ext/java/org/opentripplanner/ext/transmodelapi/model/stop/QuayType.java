@@ -11,20 +11,24 @@ import graphql.schema.GraphQLNonNull;
 import graphql.schema.GraphQLObjectType;
 import graphql.schema.GraphQLOutputType;
 import graphql.schema.GraphQLTypeReference;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.opentripplanner.ext.transmodelapi.TransmodelGraphQLUtils;
 import org.opentripplanner.ext.transmodelapi.model.EnumTypes;
 import org.opentripplanner.ext.transmodelapi.model.plan.JourneyWhiteListed;
 import org.opentripplanner.ext.transmodelapi.support.GqlUtil;
-import org.opentripplanner.model.Station;
-import org.opentripplanner.model.Stop;
-import org.opentripplanner.model.StopLocation;
-import org.opentripplanner.model.TransitMode;
 import org.opentripplanner.model.TripTimeOnDate;
-import org.opentripplanner.model.WheelChairBoarding;
 import org.opentripplanner.routing.stoptimes.ArrivalDeparture;
+import org.opentripplanner.transit.model.basic.I18NString;
+import org.opentripplanner.transit.model.basic.TransitMode;
+import org.opentripplanner.transit.model.basic.WheelchairAccessibility;
+import org.opentripplanner.transit.model.site.RegularStop;
+import org.opentripplanner.transit.model.site.Station;
+import org.opentripplanner.transit.model.site.StopLocation;
 
 public class QuayType {
 
@@ -92,7 +96,14 @@ public class QuayType {
           .newFieldDefinition()
           .name("description")
           .type(Scalars.GraphQLString)
-          .dataFetcher(environment -> (((StopLocation) environment.getSource()).getDescription()))
+          .dataFetcher(environment -> {
+            I18NString description = (((StopLocation) environment.getSource()).getDescription());
+            if (description != null) {
+              Locale locale = TransmodelGraphQLUtils.getLocale(environment);
+              return description.toString(locale);
+            }
+            return null;
+          })
           .build()
       )
       .field(
@@ -106,10 +117,7 @@ public class QuayType {
             if (station != null) {
               return new MonoOrMultiModalStation(
                 station,
-                GqlUtil
-                  .getRoutingService(environment)
-                  .getMultiModalStationForStations()
-                  .get(station)
+                GqlUtil.getTransitService(environment).getMultiModalStationForStation(station)
               );
             } else {
               return null;
@@ -123,13 +131,12 @@ public class QuayType {
           .name("wheelchairAccessible")
           .type(EnumTypes.WHEELCHAIR_BOARDING)
           .description("Whether this quay is suitable for wheelchair boarding.")
-          .dataFetcher(environment -> {
-            var wheelChairBoarding =
-              (((StopLocation) environment.getSource()).getWheelchairBoarding());
-
-            return Objects.requireNonNullElse(wheelChairBoarding, WheelChairBoarding.NO_INFORMATION)
-              .gtfsCode;
-          })
+          .dataFetcher(environment ->
+            Objects.requireNonNullElse(
+              (((StopLocation) environment.getSource()).getWheelchairAccessibility()),
+              WheelchairAccessibility.NO_INFORMATION
+            )
+          )
           .build()
       )
       .field(
@@ -140,7 +147,7 @@ public class QuayType {
           .description(
             "Public code used to identify this quay within the stop place. For instance a platform code."
           )
-          .dataFetcher(environment -> (((StopLocation) environment.getSource()).getCode()))
+          .dataFetcher(environment -> (((StopLocation) environment.getSource()).getPlatformCode()))
           .build()
       )
       .field(
@@ -152,7 +159,7 @@ public class QuayType {
           .type(new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(lineType))))
           .dataFetcher(environment -> {
             return GqlUtil
-              .getRoutingService(environment)
+              .getTransitService(environment)
               .getPatternsForStop(environment.getSource(), true)
               .stream()
               .map(pattern -> pattern.getRoute())
@@ -170,7 +177,7 @@ public class QuayType {
           .type(new GraphQLNonNull(new GraphQLList(journeyPatternType)))
           .dataFetcher(environment -> {
             return GqlUtil
-              .getRoutingService(environment)
+              .getTransitService(environment)
               .getPatternsForStop(environment.getSource(), true);
           })
           .build()
@@ -283,21 +290,21 @@ public class QuayType {
             Integer departuresPerLineAndDestinationDisplay = environment.getArgument(
               "numberOfDeparturesPerLineAndDestinationDisplay"
             );
-            int timeRange = environment.getArgument("timeRange");
-            Stop stop = environment.getSource();
+            Integer timeRangeInput = environment.getArgument("timeRange");
+            Duration timeRange = Duration.ofSeconds(timeRangeInput.longValue());
+            RegularStop stop = environment.getSource();
 
             JourneyWhiteListed whiteListed = new JourneyWhiteListed(environment);
             Collection<TransitMode> transitModes = environment.getArgument("whiteListedModes");
 
-            Long startTimeMs = environment.getArgument("startTime") == null
-              ? 0L
-              : environment.getArgument("startTime");
-            Long startTimeSeconds = startTimeMs / 1000;
+            Instant startTime = environment.containsArgument("startTime")
+              ? Instant.ofEpochMilli(environment.getArgument("startTime"))
+              : Instant.now();
 
             return StopPlaceType
               .getTripTimesForStop(
                 stop,
-                startTimeSeconds,
+                startTime,
                 timeRange,
                 arrivalDeparture,
                 includeCancelledTrips,
@@ -323,7 +330,7 @@ public class QuayType {
           .type(new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(ptSituationElementType))))
           .dataFetcher(env -> {
             return GqlUtil
-              .getRoutingService(env)
+              .getTransitService(env)
               .getTransitAlertService()
               .getStopAlerts(((StopLocation) env.getSource()).getId());
           })

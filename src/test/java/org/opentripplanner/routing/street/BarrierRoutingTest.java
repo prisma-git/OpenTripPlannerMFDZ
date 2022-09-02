@@ -6,8 +6,9 @@ import static org.opentripplanner.routing.core.TraverseMode.BICYCLE;
 import static org.opentripplanner.routing.core.TraverseMode.CAR;
 import static org.opentripplanner.test.support.PolylineAssert.assertThatPolylinesAreEqual;
 
-import io.micrometer.core.instrument.Metrics;
+import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -18,9 +19,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.locationtech.jts.geom.Geometry;
 import org.opentripplanner.ConstantsForTests;
+import org.opentripplanner.TestOtpModel;
 import org.opentripplanner.model.GenericLocation;
 import org.opentripplanner.model.plan.Itinerary;
-import org.opentripplanner.routing.algorithm.mapping.AlertToLegMapper;
+import org.opentripplanner.model.plan.WalkStep;
 import org.opentripplanner.routing.algorithm.mapping.GraphPathToItineraryMapper;
 import org.opentripplanner.routing.api.request.RoutingRequest;
 import org.opentripplanner.routing.core.RoutingContext;
@@ -29,8 +31,6 @@ import org.opentripplanner.routing.core.TraverseMode;
 import org.opentripplanner.routing.core.TraverseModeSet;
 import org.opentripplanner.routing.graph.Graph;
 import org.opentripplanner.routing.impl.GraphPathFinder;
-import org.opentripplanner.standalone.config.RouterConfig;
-import org.opentripplanner.standalone.server.Router;
 import org.opentripplanner.util.PolylineEncoder;
 
 public class BarrierRoutingTest {
@@ -41,7 +41,11 @@ public class BarrierRoutingTest {
 
   @BeforeAll
   public static void createGraph() {
-    graph = ConstantsForTests.buildOsmGraph(ConstantsForTests.HERRENBERG_BARRIER_GATES_OSM);
+    TestOtpModel model = ConstantsForTests.buildOsmGraph(
+      ConstantsForTests.HERRENBERG_BARRIER_GATES_OSM
+    );
+    graph = model.graph();
+    graph.index(model.transitModel().getStopModel());
   }
 
   /**
@@ -68,16 +72,17 @@ public class BarrierRoutingTest {
           .stream()
           .flatMap(i ->
             Stream.of(
-              () -> assertEquals(1, i.legs.size()),
-              () -> assertEquals(BICYCLE, i.legs.get(0).getMode()),
+              () -> assertEquals(1, i.getLegs().size()),
+              () -> assertEquals(BICYCLE, i.getLegs().get(0).getMode()),
               () ->
                 assertEquals(
                   List.of(false, true, false, true, false),
-                  i.legs
+                  i
+                    .getLegs()
                     .get(0)
                     .getWalkSteps()
                     .stream()
-                    .map(step -> step.walkingBike)
+                    .map(WalkStep::isWalkingBike)
                     .collect(Collectors.toList())
                 )
             )
@@ -134,7 +139,7 @@ public class BarrierRoutingTest {
       itineraries ->
         itineraries
           .stream()
-          .flatMap(i -> i.legs.stream())
+          .flatMap(i -> i.getLegs().stream())
           .map(l ->
             () -> assertEquals(traverseMode, l.getMode(), "Allow only " + traverseMode + " legs")
           )
@@ -160,12 +165,11 @@ public class BarrierRoutingTest {
     var temporaryVertices = new TemporaryVerticesContainer(graph, request);
     RoutingContext routingContext = new RoutingContext(request, graph, temporaryVertices);
 
-    var gpf = new GraphPathFinder(new Router(graph, RouterConfig.DEFAULT, Metrics.globalRegistry));
+    var gpf = new GraphPathFinder(null, Duration.ofSeconds(5));
     var paths = gpf.graphPathFinderEntryPoint(routingContext);
 
     GraphPathToItineraryMapper graphPathToItineraryMapper = new GraphPathToItineraryMapper(
-      graph.getTimeZone(),
-      new AlertToLegMapper(graph.getTransitAlertService()),
+      ZoneId.of("Europe/Berlin"),
       graph.streetNotesService,
       graph.ellipsoidToGeoidDifference
     );
@@ -174,7 +178,7 @@ public class BarrierRoutingTest {
 
     assertAll(assertions.apply(itineraries));
 
-    Geometry legGeometry = itineraries.get(0).legs.get(0).getLegGeometry();
+    Geometry legGeometry = itineraries.get(0).getLegs().get(0).getLegGeometry();
     temporaryVertices.close();
 
     return PolylineEncoder.encodeGeometry(legGeometry).points();

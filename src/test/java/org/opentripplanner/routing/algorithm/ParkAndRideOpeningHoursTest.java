@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Stack;
 import org.junit.jupiter.api.Test;
 import org.opentripplanner.routing.algorithm.astar.AStarBuilder;
 import org.opentripplanner.routing.algorithm.raptoradapter.router.street.AccessEgressRouter;
@@ -17,10 +18,14 @@ import org.opentripplanner.routing.api.request.RoutingRequest;
 import org.opentripplanner.routing.api.request.StreetMode;
 import org.opentripplanner.routing.core.OsmOpeningHours;
 import org.opentripplanner.routing.core.RoutingContext;
+import org.opentripplanner.routing.core.State;
 import org.opentripplanner.routing.core.TimeRestriction;
 import org.opentripplanner.routing.graph.Graph;
 import org.opentripplanner.routing.vertextype.StreetVertex;
 import org.opentripplanner.routing.vertextype.TransitStopVertex;
+import org.opentripplanner.transit.service.DefaultTransitService;
+import org.opentripplanner.transit.service.TransitModel;
+import org.opentripplanner.transit.service.TransitService;
 
 public class ParkAndRideOpeningHoursTest extends GraphRoutingTest {
 
@@ -33,42 +38,42 @@ public class ParkAndRideOpeningHoursTest extends GraphRoutingTest {
     0,
     0,
     0,
-    ZoneId.of("GMT")
+    State.BERLIN_TIMEZONE
   );
   private static final int CAR_PARK_TIME = 180;
 
   private Graph graph;
+  private TransitModel transitModel;
   private StreetVertex A;
   private TransitStopVertex S;
 
   public void createGraph(TimeRestriction openingHours) {
-    graph =
-      graphOf(
-        new Builder() {
-          @Override
-          public void build() {
-            A = intersection("A", 47.500, 19.000);
+    var model = modelOf(
+      new Builder() {
+        @Override
+        public void build() {
+          A = intersection("A", 47.500, 19.000);
 
-            S = stop("S1", 47.500, 18.999);
+          S = stop("S1", 47.500, 18.999);
 
-            biLink(A, S);
+          biLink(A, S);
 
-            vehicleParking(
-              "CarPark #1",
-              47.500,
-              19.001,
-              false,
-              true,
-              false,
-              openingHours,
-              List.of(vehicleParkingEntrance(A, "CarPark #1 Entrance A", true, true))
-            );
-          }
+          vehicleParking(
+            "CarPark #1",
+            47.500,
+            19.001,
+            false,
+            true,
+            false,
+            openingHours,
+            List.of(vehicleParkingEntrance(A, "CarPark #1 Entrance A", true, true))
+          );
         }
-      );
+      }
+    );
 
-    graph.index();
-    graph.setTransitLayer(TransitLayerMapper.map(TransitTuningParameters.FOR_TEST, graph));
+    graph = model.graph();
+    transitModel = model.transitModel();
   }
 
   @Test
@@ -104,10 +109,11 @@ public class ParkAndRideOpeningHoursTest extends GraphRoutingTest {
     rr.carParkTime = 60;
     var context = new RoutingContext(rr, graph, A, null);
 
-    var stops = AccessEgressRouter.streetSearch(context, StreetMode.CAR_TO_PARK, false);
+    var service = new DefaultTransitService(transitModel);
+    var stops = AccessEgressRouter.streetSearch(context, service, StreetMode.CAR_TO_PARK, false);
     assertEquals(1, stops.size(), "nearby access stops");
 
-    var accessEgress = new AccessEgressMapper(graph.getTransitLayer().getStopIndex())
+    var accessEgress = new AccessEgressMapper()
       .mapNearbyStop(stops.iterator().next(), START_OF_TIME, false);
 
     assertEquals(

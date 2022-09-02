@@ -7,15 +7,11 @@ import org.opentripplanner.openstreetmap.model.OSMWay;
 import org.opentripplanner.openstreetmap.model.OSMWithTags;
 import org.opentripplanner.routing.edgetype.StreetEdge;
 import org.opentripplanner.routing.edgetype.StreetTraversalPermission;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  */
 public class OSMFilter {
-
-  private static final Logger LOG = LoggerFactory.getLogger(OSMFilter.class);
 
   /**
    * Determines whether this OSM way is considered routable. The majority of routable ways are those
@@ -29,7 +25,7 @@ public class OSMFilter {
     if (osmEntity.hasTag("highway")) {
       return true;
     }
-    if (osmEntity.isTag("public_transport", "platform") || osmEntity.isTag("railway", "platform")) {
+    if (osmEntity.isPlatform()) {
       return !("tourism".equals(osmEntity.getTag("usage")));
     }
     return false;
@@ -156,7 +152,7 @@ public class OSMFilter {
     OSMWay way,
     StreetTraversalPermission def
   ) {
-    return getPermissionsForWay(way, def, false, false, new DataImportIssueStore(false));
+    return getPermissionsForWay(way, def, false, false, DataImportIssueStore.noopIssueStore());
   }
 
   /**

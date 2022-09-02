@@ -9,15 +9,17 @@ import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
+import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -25,7 +27,6 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 import org.opentripplanner.common.RepeatingTimePeriod;
 import org.opentripplanner.common.TurnRestrictionType;
-import org.opentripplanner.common.geometry.GeometryUtils;
 import org.opentripplanner.common.geometry.HashGridSpatialIndex;
 import org.opentripplanner.common.model.P2;
 import org.opentripplanner.graph_builder.DataImportIssueStore;
@@ -48,6 +49,7 @@ import org.opentripplanner.routing.core.TraverseMode;
 import org.opentripplanner.routing.core.TraverseModeSet;
 import org.opentripplanner.routing.edgetype.StreetTraversalPermission;
 import org.opentripplanner.util.MapUtils;
+import org.opentripplanner.util.geometry.GeometryUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,9 +129,21 @@ public class OSMDatabase {
    * the United States. This does not affect floor names from level maps.
    */
   public boolean noZeroLevels = true;
+  private final Set<String> boardingAreaRefTags;
+  private final Supplier<ZoneId> timeZone;
 
-  public OSMDatabase(DataImportIssueStore issueStore) {
+  public OSMDatabase(
+    DataImportIssueStore issueStore,
+    Set<String> boardingAreaRefTags,
+    Supplier<ZoneId> timeZoneId
+  ) {
     this.issueStore = issueStore;
+    this.boardingAreaRefTags = boardingAreaRefTags;
+    this.timeZone = timeZoneId;
+  }
+
+  public OSMDatabase(DataImportIssueStore issueStore, Set<String> boardingAreaRefTags) {
+    this(issueStore, boardingAreaRefTags, () -> ZoneId.of("UTC"));
   }
 
   public OSMNode getNode(Long nodeId) {
@@ -193,8 +207,7 @@ public class OSMDatabase {
   }
 
   public OSMLevel getLevelForWay(OSMWithTags way) {
-    OSMLevel level = wayLevels.get(way);
-    return level != null ? level : OSMLevel.DEFAULT;
+    return Objects.requireNonNullElse(wayLevels.get(way), OSMLevel.DEFAULT);
   }
 
   public Set<OSMWay> getAreasForNode(Long nodeId) {
@@ -217,7 +230,11 @@ public class OSMDatabase {
       carParkingNodes.put(node.getId(), node);
     }
     if (
-      !(waysNodeIds.contains(node.getId()) || areaNodeIds.contains(node.getId()) || node.isStop())
+      !(
+        waysNodeIds.contains(node.getId()) ||
+        areaNodeIds.contains(node.getId()) ||
+        node.isBoardingLocation()
+      )
     ) {
       return;
     }
@@ -225,12 +242,7 @@ public class OSMDatabase {
     if (nodesById.containsKey(node.getId())) {
       return;
     }
-
     nodesById.put(node.getId(), node);
-
-    if (nodesById.size() % 100000 == 0) {
-      LOG.debug("nodes=" + nodesById.size());
-    }
   }
 
   public void addWay(OSMWay way) {
@@ -245,7 +257,14 @@ public class OSMDatabase {
     }
 
     /* filter out ways that are not relevant for routing */
-    if (!(OSMFilter.isWayRoutable(way) || way.isParkAndRide() || way.isBikeParking())) {
+    if (
+      !(
+        OSMFilter.isWayRoutable(way) ||
+        way.isParkAndRide() ||
+        way.isBikeParking() ||
+        way.isBoardingLocation()
+      )
+    ) {
       return;
     }
 
@@ -256,7 +275,8 @@ public class OSMDatabase {
       (
         way.isTag("area", "yes") ||
         way.isTag("amenity", "parking") ||
-        way.isTag("amenity", "bicycle_parking")
+        way.isTag("amenity", "bicycle_parking") ||
+        way.isBoardingArea()
       ) &&
       way.getNodeRefs().size() > 2
     ) {
@@ -277,10 +297,6 @@ public class OSMDatabase {
     }
 
     waysById.put(wayId, way);
-
-    if (waysById.size() % 10000 == 0) {
-      LOG.debug("ways=" + waysById.size());
-    }
   }
 
   public void addRelation(OSMRelation relation) {
@@ -324,10 +340,6 @@ public class OSMDatabase {
     }
 
     relationsById.put(relation.getId(), relation);
-
-    if (relationsById.size() % 100 == 0) {
-      LOG.debug("relations=" + relationsById.size());
-    }
   }
 
   /**
@@ -506,8 +518,9 @@ public class OSMDatabase {
               checkDistanceWithin(ringSegment.nA, nA, epsilon) ||
               checkDistanceWithin(ringSegment.nB, nA, epsilon)
             ) {
-              LOG.info(
-                "Node {} in way {} is coincident but disconnected with area {}",
+              issueStore.add(
+                "DisconnectedOsmNode",
+                "Node %s in way %s is coincident but disconnected with area %s",
                 nA.getId(),
                 way.getId(),
                 ringSegment.area.parent.getId()
@@ -525,8 +538,9 @@ public class OSMDatabase {
               checkDistanceWithin(ringSegment.nA, nB, epsilon) ||
               checkDistanceWithin(ringSegment.nB, nB, epsilon)
             ) {
-              LOG.info(
-                "Node {} in way {} is coincident but disconnected with area {}",
+              issueStore.add(
+                "DisconnectedOsmNode",
+                "Node %s in way %s is coincident but disconnected with area %s",
                 nB.getId(),
                 way.getId(),
                 ringSegment.area.parent.getId()
@@ -545,8 +559,9 @@ public class OSMDatabase {
               checkDistanceWithin(ringSegment.nA, nA, epsilon) ||
               checkDistanceWithin(ringSegment.nA, nB, epsilon)
             ) {
-              LOG.info(
-                "Node {} in area {} is coincident but disconnected with way {}",
+              issueStore.add(
+                "DisconnectedOsmNode",
+                "Node %s in area %s is coincident but disconnected with way %s",
                 ringSegment.nA.getId(),
                 ringSegment.area.parent.getId(),
                 way.getId()
@@ -567,8 +582,9 @@ public class OSMDatabase {
               checkDistanceWithin(ringSegment.nB, nA, epsilon) ||
               checkDistanceWithin(ringSegment.nB, nB, epsilon)
             ) {
-              LOG.info(
-                "Node {} in area {} is coincident but disconnected with way {}",
+              issueStore.add(
+                "DisconnectedOsmNode",
+                "Node %s in area %s is coincident but disconnected with way %s",
                 ringSegment.nB.getId(),
                 ringSegment.area.parent.getId(),
                 way.getId()
@@ -738,7 +754,7 @@ public class OSMDatabase {
         }
       }
       try {
-        newArea(new Area(way, Arrays.asList(way), Collections.emptyList(), nodesById));
+        newArea(new Area(way, List.of(way), Collections.emptyList(), nodesById));
       } catch (Area.AreaConstructionException | Ring.RingConstructionException e) {
         // this area cannot be constructed, but we already have all the
         // necessary nodes to construct it. So, something must be wrong with
@@ -831,7 +847,7 @@ public class OSMDatabase {
         if (relation.isTag("railway", "platform") && !way.hasTag("railway")) {
           way.addTag("railway", "platform");
         }
-        if (relation.isTag("public_transport", "platform") && !way.hasTag("public_transport")) {
+        if (relation.isPlatform() && !way.hasTag("public_transport")) {
           way.addTag("public_transport", "platform");
         }
       }
@@ -1023,7 +1039,8 @@ public class OSMDatabase {
             relation.getTag("day_on"),
             relation.getTag("day_off"),
             relation.getTag("hour_on"),
-            relation.getTag("hour_off")
+            relation.getTag("hour_off"),
+            timeZone
           );
       } catch (NumberFormatException e) {
         LOG.info("Unparseable turn restriction: " + relation.getId());

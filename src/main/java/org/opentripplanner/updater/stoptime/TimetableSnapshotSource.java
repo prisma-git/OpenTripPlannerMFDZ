@@ -7,35 +7,42 @@ import com.google.transit.realtime.GtfsRealtime.TripDescriptor;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate.StopTimeUpdate;
 import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
-import java.util.TimeZone;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
 import org.opentripplanner.gtfs.mapping.TransitModeMapper;
-import org.opentripplanner.model.Agency;
-import org.opentripplanner.model.FeedScopedId;
-import org.opentripplanner.model.Route;
-import org.opentripplanner.model.StopLocation;
-import org.opentripplanner.model.StopPattern;
 import org.opentripplanner.model.StopTime;
 import org.opentripplanner.model.Timetable;
 import org.opentripplanner.model.TimetableSnapshot;
 import org.opentripplanner.model.TimetableSnapshotProvider;
-import org.opentripplanner.model.Trip;
-import org.opentripplanner.model.TripPattern;
 import org.opentripplanner.model.TripTimesPatch;
-import org.opentripplanner.model.calendar.ServiceDate;
-import org.opentripplanner.routing.RoutingService;
 import org.opentripplanner.routing.algorithm.raptoradapter.transit.mappers.TransitLayerUpdater;
-import org.opentripplanner.routing.graph.Graph;
-import org.opentripplanner.routing.trippattern.Deduplicator;
-import org.opentripplanner.routing.trippattern.RealTimeState;
-import org.opentripplanner.routing.trippattern.TripTimes;
+import org.opentripplanner.transit.model.basic.NonLocalizedString;
+import org.opentripplanner.transit.model.framework.Deduplicator;
+import org.opentripplanner.transit.model.framework.FeedScopedId;
+import org.opentripplanner.transit.model.network.Route;
+import org.opentripplanner.transit.model.network.RouteBuilder;
+import org.opentripplanner.transit.model.network.StopPattern;
+import org.opentripplanner.transit.model.network.TripPattern;
+import org.opentripplanner.transit.model.organization.Agency;
+import org.opentripplanner.transit.model.site.StopLocation;
+import org.opentripplanner.transit.model.timetable.RealTimeState;
+import org.opentripplanner.transit.model.timetable.Trip;
+import org.opentripplanner.transit.model.timetable.TripTimes;
+import org.opentripplanner.transit.service.DefaultTransitService;
+import org.opentripplanner.transit.service.TransitModel;
+import org.opentripplanner.transit.service.TransitService;
 import org.opentripplanner.updater.GtfsRealtimeFuzzyTripMatcher;
+import org.opentripplanner.updater.GtfsRealtimeMapper;
+import org.opentripplanner.updater.TimetableSnapshotSourceParameters;
+import org.opentripplanner.util.time.ServiceDateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,77 +56,95 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
   private static final Logger LOG = LoggerFactory.getLogger(TimetableSnapshotSource.class);
 
   /**
-   * Number of milliseconds per second
-   */
-  private static final int MILLIS_PER_SECOND = 1000;
-
-  /**
    * Maximum time in seconds since midnight for arrivals and departures
    */
   private static final long MAX_ARRIVAL_DEPARTURE_TIME = 48 * 60 * 60;
+
   /**
    * The working copy of the timetable snapshot. Should not be visible to routing threads. Should
    * only be modified by a thread that holds a lock on {@link #bufferLock}. All public methods that
    * might modify this buffer will correctly acquire the lock.
    */
   private final TimetableSnapshot buffer = new TimetableSnapshot();
+
   /**
    * Lock to indicate that buffer is in use
    */
   private final ReentrantLock bufferLock = new ReentrantLock(true);
+
   /**
    * A synchronized cache of trip patterns that are added to the graph due to GTFS-realtime
    * messages.
    */
+
   private final TripPatternCache tripPatternCache = new TripPatternCache();
-  private final TimeZone timeZone;
-  private final RoutingService routingService;
+
+  private final ZoneId timeZone;
+  private final TransitService transitService;
   private final TransitLayerUpdater transitLayerUpdater;
 
-  public int logFrequency = 2000;
+  private final int logFrequency;
   private int totalSuccessfullyApplied = 0;
+
   /**
    * If a timetable snapshot is requested less than this number of milliseconds after the previous
    * snapshot, just return the same one. Throttles the potentially resource-consuming task of
    * duplicating a TripPattern → Timetable map and indexing the new Timetables.
    */
-  public int maxSnapshotFrequency = 1000; // msec
+  private final int maxSnapshotFrequencyMs;
+
   /**
    * The last committed snapshot that was handed off to a routing thread. This snapshot may be given
    * to more than one routing thread if the maximum snapshot frequency is exceeded.
    */
   private volatile TimetableSnapshot snapshot = null;
+
   /** Should expired realtime data be purged from the graph. */
-  public boolean purgeExpiredData = true;
-  protected ServiceDate lastPurgeDate = null;
+  private final boolean purgeExpiredData;
+
+  protected LocalDate lastPurgeDate = null;
+
   /** Epoch time in milliseconds at which the last snapshot was generated. */
   protected long lastSnapshotTime = -1;
-  public GtfsRealtimeFuzzyTripMatcher fuzzyTripMatcher;
+
   private final Deduplicator deduplicator;
+
   private final Map<FeedScopedId, Integer> serviceCodes;
 
-  public static TimetableSnapshotSource ofGraph(final Graph graph) {
-    return new TimetableSnapshotSource(
-      graph.getTimeZone(),
-      new RoutingService(graph),
-      graph.transitLayerUpdater,
-      graph.deduplicator,
-      graph.getServiceCodes()
-    );
-  }
+  /**
+   * We inject a provider to retrieve the current service-date(now). This enables us to unit-test
+   * the purgeExpiredData feature.
+   */
+  private final Supplier<LocalDate> localDateNow;
 
   public TimetableSnapshotSource(
-    TimeZone timeZone,
-    RoutingService routingService,
-    TransitLayerUpdater transitLayerUpdater,
-    Deduplicator deduplicator,
-    Map<FeedScopedId, Integer> serviceCodes
+    TimetableSnapshotSourceParameters parameters,
+    TransitModel transitModel
   ) {
-    this.timeZone = timeZone;
-    this.routingService = routingService;
-    this.transitLayerUpdater = transitLayerUpdater;
-    this.deduplicator = deduplicator;
-    this.serviceCodes = serviceCodes;
+    this(parameters, transitModel, () -> LocalDate.now(transitModel.getTimeZone()));
+  }
+
+  /**
+   * Constructor is package local to allow unit-tests to provide their own clock, not using
+   * system time.
+   */
+  TimetableSnapshotSource(
+    TimetableSnapshotSourceParameters parameters,
+    TransitModel transitModel,
+    Supplier<LocalDate> localDateNow
+  ) {
+    this.timeZone = transitModel.getTimeZone();
+    this.transitService = new DefaultTransitService(transitModel);
+    this.transitLayerUpdater = transitModel.getTransitLayerUpdater();
+    this.deduplicator = transitModel.getDeduplicator();
+    this.serviceCodes = transitModel.getServiceCodes();
+    this.logFrequency = parameters.logFrequency();
+    this.maxSnapshotFrequencyMs = parameters.maxSnapshotFrequencyMs();
+    this.purgeExpiredData = parameters.purgeExpiredData();
+    this.localDateNow = localDateNow;
+
+    // Inject this into the transit model
+    transitModel.initTimetableSnapshotProvider(this);
   }
 
   /**
@@ -155,14 +180,18 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
    * However, multi-feed support is not completed and we currently assume there is only one static
    * feed when matching IDs.
    *
+   * @param backwardsDelayPropagationType Defines when delays are propagated to previous stops and
+   *                                     if these stops are given the NO_DATA flag.
    * @param fullDataset true if the list with updates represent all updates that are active right
    *                    now, i.e. all previous updates should be disregarded
    * @param updates     GTFS-RT TripUpdate's that should be applied atomically
    */
   public void applyTripUpdates(
-    final boolean fullDataset,
-    final List<TripUpdate> updates,
-    final String feedId
+    GtfsRealtimeFuzzyTripMatcher fuzzyTripMatcher,
+    BackwardsDelayPropagationType backwardsDelayPropagationType,
+    boolean fullDataset,
+    List<TripUpdate> updates,
+    String feedId
   ) {
     if (updates == null) {
       LOG.warn("updates is null");
@@ -203,10 +232,10 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
 
         FeedScopedId tripId = new FeedScopedId(feedId, tripUpdate.getTrip().getTripId());
 
-        ServiceDate serviceDate = new ServiceDate();
+        LocalDate serviceDate = LocalDate.now(timeZone);
         if (tripDescriptor.hasStartDate()) {
           try {
-            serviceDate = ServiceDate.parseString(tripDescriptor.getStartDate());
+            serviceDate = ServiceDateUtils.parseString(tripDescriptor.getStartDate());
           } catch (final ParseException e) {
             warn(
               tripId,
@@ -231,7 +260,12 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
 
         boolean applied =
           switch (tripScheduleRelationship) {
-            case SCHEDULED -> handleScheduledTrip(tripUpdate, tripId, serviceDate);
+            case SCHEDULED -> handleScheduledTrip(
+              tripUpdate,
+              tripId,
+              serviceDate,
+              backwardsDelayPropagationType
+            );
             case ADDED -> validateAndHandleAddedTrip(
               tripUpdate,
               tripDescriptor,
@@ -301,9 +335,9 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
 
   private TimetableSnapshot getTimetableSnapshot(final boolean force) {
     final long now = System.currentTimeMillis();
-    if (force || now - lastSnapshotTime > maxSnapshotFrequency) {
+    if (force || now - lastSnapshotTime > maxSnapshotFrequencyMs) {
       if (force || buffer.isDirty()) {
-        LOG.debug("Committing {}", buffer.toString());
+        LOG.debug("Committing {}", buffer);
         snapshot = buffer.commit(transitLayerUpdater, force);
       } else {
         LOG.debug("Buffer was unchanged, keeping old snapshot.");
@@ -337,9 +371,10 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
   }
 
   private boolean handleScheduledTrip(
-    final TripUpdate tripUpdate,
-    final FeedScopedId tripId,
-    final ServiceDate serviceDate
+    TripUpdate tripUpdate,
+    FeedScopedId tripId,
+    LocalDate serviceDate,
+    BackwardsDelayPropagationType backwardsDelayPropagationType
   ) {
     final TripPattern pattern = getPatternForTripId(tripId);
 
@@ -360,7 +395,7 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
     // Get new TripTimes based on scheduled timetable
     final TripTimesPatch tripTimesPatch = pattern
       .getScheduledTimetable()
-      .createUpdatedTripTimes(tripUpdate, timeZone, serviceDate);
+      .createUpdatedTripTimes(tripUpdate, timeZone, serviceDate, backwardsDelayPropagationType);
 
     if (tripTimesPatch == null) {
       return false;
@@ -386,13 +421,8 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
       final TripPattern newPattern = tripPatternCache.getOrCreateTripPattern(
         newStopPattern,
         trip,
-        serviceCodes,
         pattern
       );
-
-      // Add service code to bitset of pattern if needed (using copy on write)
-      final int serviceCode = serviceCodes.get(trip.getServiceId());
-      newPattern.setServiceCode(serviceCode);
 
       cancelScheduledTrip(tripId, serviceDate);
       return buffer.update(newPattern, updatedTripTimes, serviceDate);
@@ -413,11 +443,11 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
     final TripUpdate tripUpdate,
     final TripDescriptor tripDescriptor,
     final FeedScopedId tripId,
-    final ServiceDate serviceDate
+    final LocalDate serviceDate
   ) {
     // Preconditions
-    Preconditions.checkNotNull(tripUpdate);
-    Preconditions.checkNotNull(serviceDate);
+    Objects.requireNonNull(tripUpdate);
+    Objects.requireNonNull(serviceDate);
 
     //
     // Validate added trip
@@ -481,7 +511,7 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
     //
     // Handle added trip
     //
-    return handleAddedTrip(stopTimeUpdates, tripDescriptor, stops, tripId, serviceDate);
+    return handleAddedTrip(stopTimeUpdates, tripDescriptor, tripUpdate, stops, tripId, serviceDate);
   }
 
   /**
@@ -587,12 +617,13 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
   private boolean handleAddedTrip(
     final List<StopTimeUpdate> stopTimeUpdates,
     final TripDescriptor tripDescriptor,
+    final TripUpdate tripUpdate,
     final List<StopLocation> stops,
     final FeedScopedId tripId,
-    final ServiceDate serviceDate
+    final LocalDate serviceDate
   ) {
     // Preconditions
-    Preconditions.checkNotNull(stops);
+    Objects.requireNonNull(stops);
     Preconditions.checkArgument(
       stopTimeUpdates.size() == stops.size(),
       "number of stop should match the number of stop time updates"
@@ -606,13 +637,15 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
     // Create added trip
     //
 
-    Route route = null;
+    RouteBuilder routeBuilder = null;
     if (tripDescriptor.hasRouteId()) {
       // Try to find route
-      route = getRouteForRouteId(new FeedScopedId(tripId.getFeedId(), tripDescriptor.getRouteId()));
+      routeBuilder =
+        getRouteForRouteId(new FeedScopedId(tripId.getFeedId(), tripDescriptor.getRouteId()))
+          .copy();
     }
 
-    if (route == null) {
+    if (routeBuilder == null) {
       // Create new Route
       // Use route id of trip descriptor if available
       FeedScopedId id = tripDescriptor.hasRouteId()
@@ -621,45 +654,46 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
 
       var ext = MfdzTripExtension.ofTripDescriptor(tripDescriptor);
 
-      route = new Route(id);
+      routeBuilder = Route.of(id);
 
       // Create dummy agency for added trips
-      var dummyAgency = new Agency(
-        new FeedScopedId(tripId.getFeedId(), "Dummy"),
-        "Dummy",
-        timeZone.toString()
-      );
-      var agency = routingService
+      var dummyAgency = Agency
+        .of(new FeedScopedId(tripId.getFeedId(), "Dummy"))
+        .withName("Dummy")
+        .withTimezone(timeZone.toString());
+
+      var agency = transitService
         .getAgencies()
         .stream()
         .filter(a -> a.getId().getFeedId().equals(tripId.getFeedId()))
         .filter(a -> ext.agencyId().stream().toList().contains(a.getId().getId()))
         .findFirst()
-        .orElse(dummyAgency);
-      route.setAgency(agency);
+        .orElse(dummyAgency.build());
+
+      routeBuilder.withAgency(agency);
       // Guess the route type as it doesn't exist yet in the specifications
       // Bus. Used for short- and long-distance bus routes.
       //var type = ext.routeType().orElse(1700);
       int type = 1700;
       var mode = TransitModeMapper.mapMode(type);
-      route.setGtfsType(type);
-      route.setMode(mode);
+      routeBuilder.withGtfsType(type);
+      routeBuilder.withMode(mode);
 
       // Create route name
-      var name = ext.routeLongName().orElse(null);
-      route.setLongName(name);
-      route.setShortName(name);
-      route.setUrl(ext.routeUrl().orElse(null));
+      var name = ext.routeLongName().orElse("unnamed");
+      routeBuilder.withShortName(name);
+      routeBuilder.withLongName(NonLocalizedString.ofNullable(name));
+      routeBuilder.withUrl(ext.routeUrl().orElse(null));
     }
 
     // Create new Trip
 
     // TODO: which Agency ID to use? Currently use feed id.
-    final Trip trip = new Trip(tripId);
-    trip.setRoute(route);
+    var tripBuilder = Trip.of(tripId);
+    tripBuilder.withRoute(routeBuilder.build());
 
     // Find service ID running on this service date
-    final Set<FeedScopedId> serviceIds = routingService
+    final Set<FeedScopedId> serviceIds = transitService
       .getCalendarService()
       .getServiceIdsOnDate(serviceDate);
     if (serviceIds.isEmpty()) {
@@ -667,15 +701,22 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
       warn(
         tripId,
         "ADDED trip has service date {} for which no service id is available, skipping.",
-        serviceDate.asISO8601()
+        serviceDate.toString()
       );
       return false;
     } else {
       // Just use first service id of set
-      trip.setServiceId(serviceIds.iterator().next());
+      tripBuilder.withServiceId(serviceIds.iterator().next());
     }
 
-    return addTripToGraphAndBuffer(trip, stopTimeUpdates, stops, serviceDate, RealTimeState.ADDED);
+    return addTripToGraphAndBuffer(
+      tripBuilder.build(),
+      tripUpdate,
+      stopTimeUpdates,
+      stops,
+      serviceDate,
+      RealTimeState.ADDED
+    );
   }
 
   /**
@@ -690,21 +731,23 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
    */
   private boolean addTripToGraphAndBuffer(
     final Trip trip,
+    final TripUpdate tripUpdate,
     final List<StopTimeUpdate> stopTimeUpdates,
     final List<StopLocation> stops,
-    final ServiceDate serviceDate,
+    final LocalDate serviceDate,
     final RealTimeState realTimeState
   ) {
     // Preconditions
-    Preconditions.checkNotNull(stops);
+    Objects.requireNonNull(stops);
     Preconditions.checkArgument(
       stopTimeUpdates.size() == stops.size(),
       "number of stop should match the number of stop time updates"
     );
 
     // Calculate seconds since epoch on GTFS midnight (noon minus 12h) of service date
-    final Calendar serviceCalendar = serviceDate.getAsCalendar(timeZone);
-    final long midnightSecondsSinceEpoch = serviceCalendar.getTimeInMillis() / MILLIS_PER_SECOND;
+    final long midnightSecondsSinceEpoch = ServiceDateUtils
+      .asStartOfService(serviceDate, timeZone)
+      .toEpochSecond();
 
     // Create StopTimes
     final List<StopTime> stopTimes = new ArrayList<>(stopTimeUpdates.size());
@@ -760,18 +803,13 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
     // Create StopPattern
     final StopPattern stopPattern = new StopPattern(stopTimes);
 
-    final TripPattern originalTripPattern = routingService.getPatternForTrip().get(trip);
+    final TripPattern originalTripPattern = transitService.getPatternForTrip(trip);
     // Get cached trip pattern or create one if it doesn't exist yet
     final TripPattern pattern = tripPatternCache.getOrCreateTripPattern(
       stopPattern,
       trip,
-      serviceCodes,
       originalTripPattern
     );
-
-    // Add service code to bitset of pattern if needed (using copy on write)
-    final int serviceCode = serviceCodes.get(trip.getServiceId());
-    pattern.setServiceCode(serviceCode);
 
     // Create new trip times
     final TripTimes newTripTimes = new TripTimes(trip, stopTimes, deduplicator);
@@ -787,6 +825,7 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
     }
 
     // Set service code of new trip times
+    final int serviceCode = serviceCodes.get(trip.getServiceId());
     newTripTimes.setServiceCode(serviceCode);
 
     // Make sure that updated trip times have the correct real time state
@@ -796,10 +835,19 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
     LOG.trace(
       "New pattern with mode {} on {} from {} to {}",
       trip.getRoute().getMode(),
-      serviceDate.asISO8601(),
+      serviceDate,
       stops1.get(1).getName(),
       stops1.get(stops1.size() - 1).getName()
     );
+    if (tripUpdate.hasVehicle()) {
+      var vehicleDescriptor = tripUpdate.getVehicle();
+      if (vehicleDescriptor.hasWheelchairAccessible()) {
+        GtfsRealtimeMapper
+          .mapWheelchairAccessible(vehicleDescriptor.getWheelchairAccessible())
+          .ifPresent(newTripTimes::updateWheelchairAccessibility);
+      }
+    }
+
     // Add new trip times to the buffer
     return buffer.update(pattern, newTripTimes, serviceDate);
   }
@@ -811,7 +859,7 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
    * @param serviceDate service date
    * @return true if scheduled trip was cancelled
    */
-  private boolean cancelScheduledTrip(final FeedScopedId tripId, final ServiceDate serviceDate) {
+  private boolean cancelScheduledTrip(final FeedScopedId tripId, final LocalDate serviceDate) {
     boolean success = false;
 
     final TripPattern pattern = getPatternForTripId(tripId);
@@ -847,11 +895,11 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
    */
   private boolean cancelPreviouslyAddedTrip(
     final FeedScopedId tripId,
-    final ServiceDate serviceDate
+    final LocalDate serviceDate
   ) {
     boolean success = false;
 
-    final TripPattern pattern = buffer.getLastAddedTripPattern(tripId, serviceDate);
+    final TripPattern pattern = buffer.getRealtimeAddedTripPattern(tripId, serviceDate);
     if (pattern != null) {
       // Cancel trip times for this trip in this pattern
       final Timetable timetable = buffer.resolve(pattern, serviceDate);
@@ -886,11 +934,11 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
     final TripUpdate tripUpdate,
     final TripDescriptor tripDescriptor,
     final FeedScopedId tripId,
-    final ServiceDate serviceDate
+    final LocalDate serviceDate
   ) {
     // Preconditions
-    Preconditions.checkNotNull(tripUpdate);
-    Preconditions.checkNotNull(serviceDate);
+    Objects.requireNonNull(tripUpdate);
+    Objects.requireNonNull(serviceDate);
 
     //
     // Validate modified trip
@@ -912,7 +960,7 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
       return false;
     } else {
       // Check whether service date is served by trip
-      final Set<FeedScopedId> serviceIds = routingService
+      final Set<FeedScopedId> serviceIds = transitService
         .getCalendarService()
         .getServiceIdsOnDate(serviceDate);
       if (!serviceIds.contains(trip.getServiceId())) {
@@ -958,10 +1006,10 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
     final Trip trip,
     final TripUpdate tripUpdate,
     final List<StopLocation> stops,
-    final ServiceDate serviceDate
+    final LocalDate serviceDate
   ) {
     // Preconditions
-    Preconditions.checkNotNull(stops);
+    Objects.requireNonNull(stops);
     Preconditions.checkArgument(
       tripUpdate.getStopTimeUpdateCount() == stops.size(),
       "number of stop should match the number of stop time updates"
@@ -978,6 +1026,7 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
     // Add new trip
     return addTripToGraphAndBuffer(
       trip,
+      tripUpdate,
       tripUpdate.getStopTimeUpdateList(),
       stops,
       serviceDate,
@@ -985,7 +1034,7 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
     );
   }
 
-  private boolean handleCanceledTrip(FeedScopedId tripId, final ServiceDate serviceDate) {
+  private boolean handleCanceledTrip(FeedScopedId tripId, final LocalDate serviceDate) {
     // Try to cancel scheduled trip
     final boolean cancelScheduledSuccess = cancelScheduledTrip(tripId, serviceDate);
 
@@ -1000,9 +1049,9 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
   }
 
   private boolean purgeExpiredData() {
-    final ServiceDate today = new ServiceDate();
+    final LocalDate today = localDateNow.get();
     // TODO: Base this on numberOfDaysOfLongestTrip for tripPatterns
-    final ServiceDate previously = today.previous().previous(); // Just to be safe...
+    final LocalDate previously = today.minusDays(2); // Just to be safe...
 
     // Purge data only if we have changed date
     if (lastPurgeDate != null && lastPurgeDate.compareTo(previously) >= 0) {
@@ -1023,8 +1072,8 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
    * @return trip pattern or null if no trip pattern was found
    */
   private TripPattern getPatternForTripId(FeedScopedId tripId) {
-    Trip trip = routingService.getTripForId().get(tripId);
-    return routingService.getPatternForTrip().get(trip);
+    Trip trip = transitService.getTripForId(tripId);
+    return transitService.getPatternForTrip(trip);
   }
 
   /**
@@ -1033,7 +1082,7 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
    * @return route or null if route can't be found in graph index
    */
   private Route getRouteForRouteId(FeedScopedId routeId) {
-    return routingService.getRouteForId(routeId);
+    return transitService.getRouteForId(routeId);
   }
 
   /**
@@ -1042,7 +1091,7 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
    * @return trip or null if trip can't be found in graph index
    */
   private Trip getTripForTripId(FeedScopedId tripId) {
-    return routingService.getTripForId().get(tripId);
+    return transitService.getTripForId(tripId);
   }
 
   /**
@@ -1051,7 +1100,7 @@ public class TimetableSnapshotSource implements TimetableSnapshotProvider {
    * @return stop or null if stop doesn't exist
    */
   private StopLocation getStopForStopId(FeedScopedId stopId) {
-    return routingService.getStopForId(stopId);
+    return transitService.getRegularStop(stopId);
   }
 
   private static void warn(FeedScopedId id, String message, Object... params) {

@@ -1,17 +1,22 @@
 package org.opentripplanner.graph_builder.module.osm;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import org.junit.Test;
+import java.util.List;
+import java.util.Set;
+import org.junit.jupiter.api.Test;
+import org.opentripplanner.graph_builder.DataImportIssueStore;
 import org.opentripplanner.graph_builder.module.FakeGraph;
-import org.opentripplanner.openstreetmap.BinaryOpenStreetMapProvider;
+import org.opentripplanner.openstreetmap.OpenStreetMapProvider;
 import org.opentripplanner.routing.edgetype.AreaEdge;
 import org.opentripplanner.routing.graph.Graph;
 import org.opentripplanner.routing.graph.Vertex;
+import org.opentripplanner.transit.model.framework.Deduplicator;
+import org.opentripplanner.transit.service.StopModel;
+import org.opentripplanner.transit.service.TransitModel;
 
 public class PlatformLinkerTest {
 
@@ -20,14 +25,13 @@ public class PlatformLinkerTest {
    * data is from Skøyen station, Norway
    */
   @Test
-  public void testLinkEntriesToPlatforms() throws Exception {
+  public void testLinkEntriesToPlatforms() {
     String stairsEndpointLabel = "osm:node:1028861028";
 
-    Graph gg = new Graph();
-    OpenStreetMapModule loader = new OpenStreetMapModule();
-    loader.platformEntriesLinking = true;
-    loader.skipVisibility = false;
-    loader.setDefaultWayPropertySetSource(new DefaultWayPropertySetSource());
+    var deduplicator = new Deduplicator();
+    var stopModel = new StopModel();
+    var gg = new Graph(deduplicator);
+    var transitModel = new TransitModel(stopModel, deduplicator);
 
     File file = new File(
       URLDecoder.decode(
@@ -36,10 +40,20 @@ public class PlatformLinkerTest {
       )
     );
 
-    BinaryOpenStreetMapProvider provider = new BinaryOpenStreetMapProvider(file, false);
+    OpenStreetMapProvider provider = new OpenStreetMapProvider(file, false);
 
-    loader.setProvider(provider);
-    loader.buildGraph(gg, new HashMap<>());
+    OpenStreetMapModule osmModule = new OpenStreetMapModule(
+      List.of(provider),
+      Set.of(),
+      gg,
+      transitModel.getTimeZone(),
+      DataImportIssueStore.noopIssueStore()
+    );
+    osmModule.platformEntriesLinking = true;
+    osmModule.skipVisibility = false;
+    osmModule.setDefaultWayPropertySetSource(new DefaultWayPropertySetSource());
+
+    osmModule.buildGraph();
 
     Vertex stairsEndpoint = gg.getVertex(stairsEndpointLabel);
 
