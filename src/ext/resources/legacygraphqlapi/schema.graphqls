@@ -2694,12 +2694,6 @@ type QueryType {
         allowedVehicleRentalNetworks: [String]
 
         """
-        Which vehicle rental networks cannot be used. By default, all networks are allowed.
-        Which vehicle rental networks can be used. By default, all networks are allowed.
-        """
-        allowedVehicleRentalNetworks: [String]
-
-        """
         If the visiting time for a VehicleParking is inside this interval,
         the ApiVehicleParkingWithEntrance#closesSoon flag will be marked true.
         """
@@ -2726,7 +2720,6 @@ type QueryType {
         Whether or not vehicle parking availability information will be used to plan park and ride trips
         """
         useVehicleParkingAvailabilityInformation: Boolean
-        bannedVehicleRentalNetworks: [String]
 
         """
         Factor for how much the walk safety is considered in routing. Value should be between 0 and 1.

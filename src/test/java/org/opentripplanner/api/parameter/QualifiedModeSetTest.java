@@ -123,16 +123,17 @@ public class QualifiedModeSetTest {
       modeSet.qModes
     );
     assertEquals(
+      modeSet.getRequestModes().toString(),
       RequestModes
         .of()
         .withAccessMode(BIKE_TO_PARK)
-        .withDirectMode(WALK)
-        .withAccessMode(BIKE_TO_PARK)
-        .withTransferMode(BIKE)
+        .withDirectMode(BIKE)
+        .withEgressMode(BIKE_RENTAL)
+        .withTransferMode(WALK)
+        .clearTransitModes()
         .withTransitMode(TransitMode.RAIL)
         .build()
-        .toString(),
-      modeSet.getRequestModes().toString()
+        .toString()
     );
   }
 

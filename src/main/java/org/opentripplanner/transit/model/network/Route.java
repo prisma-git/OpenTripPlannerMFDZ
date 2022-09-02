@@ -4,11 +4,14 @@ package org.opentripplanner.transit.model.network;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.opentripplanner.api.common.Crypto;
+import org.opentripplanner.api.resource.EncryptedRedirect;
 import org.opentripplanner.transit.model.basic.I18NString;
 import org.opentripplanner.transit.model.basic.SubMode;
 import org.opentripplanner.transit.model.basic.TransitMode;
@@ -160,6 +163,10 @@ public final class Route extends AbstractTransitEntity<Route, RouteBuilder> impl
 
   @Nullable
   public String getUrl() {
+    if (url != null) {
+      String cipherText = Crypto.encryptWithExpiry(url, OffsetDateTime.now().plusMinutes(15));
+      return EncryptedRedirect.REDIRECT_PREFIX + cipherText;
+    }
     return url;
   }
 

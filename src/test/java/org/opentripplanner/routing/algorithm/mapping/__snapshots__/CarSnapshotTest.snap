@@ -111,7 +111,7 @@ org.opentripplanner.routing.algorithm.mapping.CarSnapshotTest.directCarPark=[
                 "osm:amenity=parking"
               ]
             },
-            "vertexType": "BIKEPARK"
+            "vertexType": "VEHICLEPARKING"
           },
           "transitLeg": false,
           "walkingBike": false
@@ -142,7 +142,7 @@ org.opentripplanner.routing.algorithm.mapping.CarSnapshotTest.directCarPark=[
                 "osm:amenity=parking"
               ]
             },
-            "vertexType": "BIKEPARK"
+            "vertexType": "VEHICLEPARKING"
           },
           "generalizedCost": 285,
           "interlineWithPreviousLeg": false,
