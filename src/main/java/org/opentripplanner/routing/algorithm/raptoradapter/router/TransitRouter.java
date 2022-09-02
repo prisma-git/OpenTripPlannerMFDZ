@@ -96,7 +96,9 @@ public class TransitRouter {
 
     debugTimingAggregator.finishedPatternFiltering();
 
-    var accessEgresses = getAccessEgresses();
+    var accessEgresses = getAccessEgresses(
+      request.getDateTime().atZone(transitSearchTimeZero.getZone())
+    );
 
     debugTimingAggregator.finishedAccessEgress(
       accessEgresses.getAccesses().size(),
@@ -155,20 +157,20 @@ public class TransitRouter {
     return new TransitRouterResult(itineraries, transitResponse.requestUsed().searchParams());
   }
 
-  private AccessEgresses getAccessEgresses() {
+  private AccessEgresses getAccessEgresses(ZonedDateTime time) {
     var accessEgressMapper = new AccessEgressMapper();
     var accessList = new ArrayList<AccessEgress>();
     var egressList = new ArrayList<AccessEgress>();
 
     var accessCalculator = (Runnable) () -> {
       debugTimingAggregator.startedAccessCalculating();
-      accessList.addAll(getAccessEgresses(accessEgressMapper, false));
+      accessList.addAll(getAccessEgresses(accessEgressMapper, time, false));
       debugTimingAggregator.finishedAccessCalculating();
     };
 
     var egressCalculator = (Runnable) () -> {
       debugTimingAggregator.startedEgressCalculating();
-      egressList.addAll(getAccessEgresses(accessEgressMapper, true));
+      egressList.addAll(getAccessEgresses(accessEgressMapper, time, true));
       debugTimingAggregator.finishedEgressCalculating();
     };
 
@@ -195,6 +197,7 @@ public class TransitRouter {
 
   private Collection<AccessEgress> getAccessEgresses(
     AccessEgressMapper accessEgressMapper,
+    ZonedDateTime time,
     boolean isEgress
   ) {
     var results = new ArrayList<AccessEgress>();
@@ -222,7 +225,7 @@ public class TransitRouter {
         isEgress
       );
 
-      results.addAll(accessEgressMapper.mapNearbyStops(nearbyStops, isEgress));
+      results.addAll(accessEgressMapper.mapNearbyStops(nearbyStops, time, isEgress));
 
       // Special handling of flex accesses
       if (OTPFeature.FlexRouting.isOn() && mode == StreetMode.FLEXIBLE) {
@@ -234,7 +237,7 @@ public class TransitRouter {
           isEgress
         );
 
-        results.addAll(accessEgressMapper.mapFlexAccessEgresses(flexAccessList, isEgress));
+        results.addAll(accessEgressMapper.mapFlexAccessEgresses(flexAccessList, time, isEgress));
       }
     }
 

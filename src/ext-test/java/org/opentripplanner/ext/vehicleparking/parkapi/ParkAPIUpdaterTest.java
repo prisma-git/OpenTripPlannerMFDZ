@@ -10,6 +10,7 @@ import java.time.Month;
 import java.time.ZoneId;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.opentripplanner.model.calendar.ServiceDateInterval;
 import org.opentripplanner.model.calendar.openinghours.OpeningHoursCalendarService;
 import org.opentripplanner.routing.core.OsmOpeningHours;
 import org.opentripplanner.transit.model.framework.Deduplicator;
@@ -64,7 +65,11 @@ public class ParkAPIUpdaterTest {
     var url = "file:src/ext-test/resources/vehicleparking/parkapi/ludwigsburg.json";
 
     var parameters = new ParkAPIUpdaterParameters("", url, "park-api", 30, null, List.of(), null);
-    var updater = new CarParkAPIUpdater(parameters);
+    var updater = new CarParkAPIUpdater(
+      parameters,
+      new OpeningHoursCalendarService(new Deduplicator(), ServiceDateInterval.unbounded()),
+      ZoneId.of("Europe/Berlin")
+    );
 
     assertTrue(updater.update());
     var parkingLots = updater.getUpdates();
@@ -87,7 +92,11 @@ public class ParkAPIUpdaterTest {
     var url = "file:src/ext-test/resources/vehicleparking/parkapi/ludwigsburg-across-midnight.json";
 
     var parameters = new ParkAPIUpdaterParameters("", url, "park-api", 30, null, List.of(), null);
-    var updater = new CarParkAPIUpdater(parameters);
+    var updater = new CarParkAPIUpdater(
+      parameters,
+      new OpeningHoursCalendarService(new Deduplicator(), ServiceDateInterval.unbounded()),
+      ZoneId.of("Europe/Berlin")
+    );
 
     assertTrue(updater.update());
     var parkingLots = updater.getUpdates();

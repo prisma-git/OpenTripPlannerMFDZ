@@ -117,7 +117,6 @@ public class HslParkToVehicleParkingMapper {
         .carPlaces(carPlaces)
         .wheelchairAccessibleCarPlaces(wheelChairAccessiblePlaces)
         .tags(tags)
-        .openingHoursCalendar(openingHoursCalendar)
         .entrance(builder ->
           builder
             .entranceId(new FeedScopedId(feedId, vehicleParkId.getId() + "/entrance"))

@@ -12,10 +12,9 @@ import java.util.Set;
 import javax.ws.rs.BadRequestException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Test;
-import org.opentripplanner.model.TransitMode;
-import org.opentripplanner.model.modes.AllowedTransitMode;
 import org.opentripplanner.routing.api.request.RequestModes;
+import org.opentripplanner.transit.model.basic.MainAndSubMode;
+import org.opentripplanner.transit.model.basic.TransitMode;
 
 public class QualifiedModeSetTest {
 
@@ -124,13 +123,14 @@ public class QualifiedModeSetTest {
       modeSet.qModes
     );
     assertEquals(
-      new RequestModes(
-        BIKE_TO_PARK,
-        WALK,
-        BIKE_RENTAL,
-        BIKE,
-        Set.of(AllowedTransitMode.fromMainModeEnum(TransitMode.RAIL))
-      )
+      RequestModes
+        .of()
+        .withAccessMode(BIKE_TO_PARK)
+        .withDirectMode(WALK)
+        .withAccessMode(BIKE_TO_PARK)
+        .withTransferMode(BIKE)
+        .withTransitMode(TransitMode.RAIL)
+        .build()
         .toString(),
       modeSet.getRequestModes().toString()
     );

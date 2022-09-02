@@ -26,6 +26,9 @@ import org.opentripplanner.routing.graph.Graph;
 import org.opentripplanner.routing.graph.Vertex;
 import org.opentripplanner.routing.vertextype.StreetVertex;
 import org.opentripplanner.routing.vertextype.TransitStopVertex;
+import org.opentripplanner.transit.service.DefaultTransitService;
+import org.opentripplanner.transit.service.TransitModel;
+import org.opentripplanner.transit.service.TransitService;
 
 /**
  * This tests the four ways time restrictions may be used on edges: 1. normal departAt searches 2.
@@ -50,32 +53,32 @@ public class TimeRestrictedEdgeTest extends GraphRoutingTest {
   private Graph graph;
   private StreetVertex A, B, C;
   private TransitStopVertex S;
+  private TransitService transitService;
 
   public void createGraph(TimeRestriction a_b, TimeRestriction b_c) {
-    graph =
-      graphOf(
-        new Builder() {
-          @Override
-          public void build() {
-            A = intersection("A", 47.500, 19.000);
-            B = intersection("B", 47.510, 19.000);
-            C = intersection("C", 47.520, 19.000);
+    var model = modelOf(
+      new Builder() {
+        @Override
+        public void build() {
+          A = intersection("A", 47.500, 19.000);
+          B = intersection("B", 47.510, 19.000);
+          C = intersection("C", 47.520, 19.000);
 
-            S = stop("S", 47.520, 19.001);
+          S = stop("S", 47.520, 19.001);
 
-            biLink(C, S);
+          biLink(C, S);
 
-            new TimeRestrictedTestEdge(A, B, 60, a_b, true, true);
-            new TimeRestrictedTestEdge(B, C, 120, b_c, false, false);
+          new TimeRestrictedTestEdge(A, B, 60, a_b, true, true);
+          new TimeRestrictedTestEdge(B, C, 120, b_c, false, false);
 
-            new TimeRestrictedTestEdge(B, A, 60, a_b, false, true);
-            new TimeRestrictedTestEdge(C, B, 120, b_c, true, false);
-          }
+          new TimeRestrictedTestEdge(B, A, 60, a_b, false, true);
+          new TimeRestrictedTestEdge(C, B, 120, b_c, true, false);
         }
-      );
+      }
+    );
 
-    graph.index();
-    graph.setTransitLayer(TransitLayerMapper.map(TransitTuningParameters.FOR_TEST, graph));
+    graph = model.graph();
+    transitService = new DefaultTransitService(model.transitModel());
   }
 
   @Test
@@ -205,10 +208,10 @@ public class TimeRestrictedEdgeTest extends GraphRoutingTest {
     var rr = new RoutingRequest().getStreetSearchRequest(StreetMode.WALK);
     var context = new RoutingContext(rr, graph, A, null);
 
-    var stops = AccessEgressRouter.streetSearch(context, StreetMode.WALK, false);
+    var stops = AccessEgressRouter.streetSearch(context, transitService, StreetMode.WALK, false);
     assertEquals(1, stops.size(), "nearby access stops");
 
-    var accessEgress = new AccessEgressMapper(graph.getTransitLayer().getStopIndex())
+    var accessEgress = new AccessEgressMapper()
       .mapNearbyStop(stops.iterator().next(), START_OF_TIME, false);
 
     assertEquals(
@@ -223,10 +226,10 @@ public class TimeRestrictedEdgeTest extends GraphRoutingTest {
     var rr = new RoutingRequest().getStreetSearchRequest(StreetMode.WALK);
     var context = new RoutingContext(rr, graph, null, A);
 
-    var stops = AccessEgressRouter.streetSearch(context, StreetMode.WALK, true);
+    var stops = AccessEgressRouter.streetSearch(context, transitService, StreetMode.WALK, true);
     assertEquals(1, stops.size(), "nearby egress stops");
 
-    var accessEgress = new AccessEgressMapper(graph.getTransitLayer().getStopIndex())
+    var accessEgress = new AccessEgressMapper()
       .mapNearbyStop(stops.iterator().next(), START_OF_TIME, true);
 
     assertEquals(

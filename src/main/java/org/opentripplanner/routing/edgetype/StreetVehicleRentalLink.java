@@ -44,9 +44,7 @@ public class StreetVehicleRentalLink extends Edge {
       return null;
     }
 
-    if (
-      networkIsNotAllowed(s0.getOptions(), vehicleRentalStationVertex.getStation().getNetwork())
-    ) {
+    if (networkIsNotAllowed(s0.getOptions(), vehicleRentalPlaceVertex.getStation().getNetwork())) {
       return null;
     }
 

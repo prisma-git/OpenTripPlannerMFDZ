@@ -1,13 +1,5 @@
 package org.opentripplanner.gtfs.mapping;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -25,7 +17,6 @@ import org.opentripplanner.graph_builder.DataImportIssueStore;
 import org.opentripplanner.transit.model._data.TransitModelForTest;
 import org.opentripplanner.transit.model.basic.TransitMode;
 import org.opentripplanner.transit.model.network.BikeAccess;
-import org.opentripplanner.transit.model.network.GroupOfRoutes;
 import org.opentripplanner.transit.model.organization.Branding;
 
 public class RouteMapperTest {
@@ -98,7 +89,7 @@ public class RouteMapperTest {
     assertEquals(DESC, result.getDescription());
     assertEquals(ROUTE_TYPE, result.getGtfsType());
     assertEquals(TRANSIT_MODE, result.getMode());
-    assertThat(result.getUrl(), startsWith("https://secret.org/api/redirect/EofieChH7Rc0IBy1S"));
+    assertTrue(result.getUrl().startsWith("https://secret.org/api/redirect/EofieChH7Rc0IBy1S"));
     assertEquals(COLOR, result.getColor());
     assertEquals(TEXT_COLOR, result.getTextColor());
     assertEquals(BikeAccess.ALLOWED, result.getBikesAllowed());

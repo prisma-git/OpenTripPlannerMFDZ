@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import org.opentripplanner.GtfsTest;
-import org.opentripplanner.model.FeedScopedId;
-import org.opentripplanner.model.TransitMode;
+import org.opentripplanner.transit.model.basic.TransitMode;
+import org.opentripplanner.transit.model.framework.FeedScopedId;
 
 public class CarpoolTest extends GtfsTest {
 
@@ -18,7 +18,7 @@ public class CarpoolTest extends GtfsTest {
   @Test
   public void testImport() {
     var routeId = FeedScopedId.parseId("FEED:3");
-    var route = router.graph.index.getRouteForId(routeId);
+    var route = transitModel.getTransitModelIndex().getRouteForId(routeId);
 
     assertNotNull(route);
 

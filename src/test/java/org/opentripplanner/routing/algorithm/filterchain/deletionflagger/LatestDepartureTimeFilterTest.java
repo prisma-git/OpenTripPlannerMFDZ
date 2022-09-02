@@ -6,7 +6,6 @@ import static org.opentripplanner.model.plan.TestItineraryBuilder.newItinerary;
 
 import java.time.Instant;
 import java.util.List;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.opentripplanner.model.plan.Itinerary;
 import org.opentripplanner.model.plan.PlanTestConstants;
@@ -14,7 +13,6 @@ import org.opentripplanner.model.plan.PlanTestConstants;
 public class LatestDepartureTimeFilterTest implements PlanTestConstants {
 
   @Test
-  @Ignore
   public void filterOnLatestDepartureTime() {
     // Given:
     Itinerary it = newItinerary(A).bus(32, 0, 60, E).build();

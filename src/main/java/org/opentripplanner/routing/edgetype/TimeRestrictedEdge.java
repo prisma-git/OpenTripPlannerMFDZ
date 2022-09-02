@@ -2,6 +2,7 @@ package org.opentripplanner.routing.edgetype;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import org.opentripplanner.routing.core.State;
 import org.opentripplanner.routing.core.StateEditor;
 import org.opentripplanner.routing.core.TimeRestriction;
@@ -73,14 +74,13 @@ public interface TimeRestrictedEdge {
     if (s0.getOptions().ignoreAndCollectTimeRestrictions) {
       s1.addTimeRestriction(TimeRestrictionWithOffset.of(timeRestriction, offset), source);
     } else {
-      var zoneId = s0.getRoutingContext().graph.getTimeZone().toZoneId();
       var now = s1.getZonedDateTime();
       var time = s0.getOptions().arriveBy
         ? timeRestriction.latestArrivalTime(now.toLocalDateTime())
         : timeRestriction.earliestDepartureTime(now.toLocalDateTime());
       if (time.isPresent()) {
         var waitTime = (int) Math.abs(
-          Duration.between(now, time.get().atZone(zoneId)).getSeconds()
+          Duration.between(now, time.get().atZone(now.getZone())).getSeconds()
         );
         s1.incrementWeight(waitTime * s0.getOptions().waitReluctance);
         s1.incrementTimeInSeconds(waitTime);

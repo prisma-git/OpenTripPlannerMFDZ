@@ -1,7 +1,7 @@
 package org.opentripplanner.api.common;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.OffsetDateTime;
 import org.junit.jupiter.api.Test;
@@ -16,33 +16,31 @@ public class CryptoTest {
   public void shouldEncryptAndDecrypt() throws Exception {
     String cipherText = Crypto.encrypt(plainText);
 
-    assertThat(
+    assertEquals(
       cipherText,
-      is("zal31JId-7PA4zSWSlhququ6b5jogbdqUHE1-QTaCdeuONKTo4Zj8-fmvNPTKcdW4Dv1KYDQuNsq6OI3abC8SA")
+      "zal31JId-7PA4zSWSlhququ6b5jogbdqUHE1-QTaCdeuONKTo4Zj8-fmvNPTKcdW4Dv1KYDQuNsq6OI3abC8SA"
     );
 
-    assertThat(Crypto.decrypt(cipherText), is(plainText));
+    assertEquals(Crypto.decrypt(cipherText), plainText);
   }
 
   @Test
   public void shouldEncryptAndDecryptWithExpiry() throws Exception {
     String cipherText = Crypto.encryptWithExpiry(plainText, expiry);
 
-    assertThat(
+    assertEquals(
       cipherText,
-      is(
-        "zal31JId-7PA4zSWSlhququ6b5jogbdqUHE1-QTaCdeuONKTo4Zj8-fmvNPTKcdW0vBJuQgEn_U-nn0E0HpnzewlNqjOsEQTBMKJDPRqW1w"
-      )
+      "zal31JId-7PA4zSWSlhququ6b5jogbdqUHE1-QTaCdeuONKTo4Zj8-fmvNPTKcdW0vBJuQgEn_U-nn0E0HpnzewlNqjOsEQTBMKJDPRqW1w"
     );
-    assertThat(
+    assertEquals(
       Crypto.decrypt(cipherText),
-      is("Roxanne! You don't need to put out the red light!___-___1581955495")
+      "Roxanne! You don't need to put out the red light!___-___1581955495"
     );
 
     Crypto.DecryptionResult result = Crypto.decryptWithExpiry(cipherText);
 
-    assertThat(result.expiry.isEqual(expiry), is(true));
-    assertThat(result.plainText, is(plainText));
+    assertTrue(result.expiry.isEqual(expiry));
+    assertEquals(result.plainText, plainText);
   }
 
   @Test
@@ -52,7 +50,7 @@ public class CryptoTest {
 
     Crypto.DecryptionResult result = Crypto.decryptWithExpiry(cipherText);
 
-    assertThat(result.expiry.toString(), is("2020-02-17T17:48:08Z"));
-    assertThat(result.plainText, is("https://de.wikipedia.org/wiki/Mitfahrzentrale"));
+    assertEquals(result.expiry.toString(), "2020-02-17T17:48:08Z");
+    assertEquals(result.plainText, "https://de.wikipedia.org/wiki/Mitfahrzentrale");
   }
 }

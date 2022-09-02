@@ -188,11 +188,6 @@ public class VehicleParking implements Serializable {
       return this;
     }
 
-    public VehicleParkingBuilder openingHoursCalendar(OHCalendar calendar) {
-      this.ohCalendar = calendar;
-      return this;
-    }
-
     public VehicleParkingBuilder entrance(VehicleParkingEntranceCreator creator) {
       this.entranceCreators.add(creator);
       return this;

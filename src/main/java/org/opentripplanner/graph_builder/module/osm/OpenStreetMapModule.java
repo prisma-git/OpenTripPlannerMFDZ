@@ -30,6 +30,7 @@ import org.opentripplanner.graph_builder.DataImportIssueStore;
 import org.opentripplanner.graph_builder.Issue;
 import org.opentripplanner.graph_builder.issues.Graphwide;
 import org.opentripplanner.graph_builder.issues.InvalidVehicleParkingCapacity;
+import org.opentripplanner.graph_builder.issues.ParkAndRideOpeningHoursUnparsed;
 import org.opentripplanner.graph_builder.issues.ParkAndRideUnlinked;
 import org.opentripplanner.graph_builder.issues.StreetCarSpeedZero;
 import org.opentripplanner.graph_builder.issues.TurnRestrictionBad;
@@ -44,6 +45,8 @@ import org.opentripplanner.openstreetmap.model.OSMNode;
 import org.opentripplanner.openstreetmap.model.OSMWay;
 import org.opentripplanner.openstreetmap.model.OSMWithTags;
 import org.opentripplanner.routing.api.request.RoutingRequest;
+import org.opentripplanner.routing.core.OsmOpeningHours;
+import org.opentripplanner.routing.core.TimeRestriction;
 import org.opentripplanner.routing.core.TraverseMode;
 import org.opentripplanner.routing.edgetype.AreaEdge;
 import org.opentripplanner.routing.edgetype.AreaEdgeList;
@@ -785,7 +788,6 @@ public class OpenStreetMapModule implements GraphBuilderModule {
         .openingHours(openingHours)
         .tags(tags)
         .detailsUrl(entity.getTag("website"))
-        .openingHoursCalendar(openingHours)
         .bicyclePlaces(bicyclePlaces)
         .carPlaces(carPlaces)
         .wheelchairAccessibleCarPlaces(wheelchairAccessibleCarPlaces)
@@ -831,6 +833,23 @@ public class OpenStreetMapModule implements GraphBuilderModule {
           );
       }
       return creativeName;
+    }
+
+    private TimeRestriction parseVehicleParkingOpeningHours(
+      OSMWithTags entity,
+      I18NString creativeName
+    ) {
+      final var openingHoursTag = entity.getTag("opening_hours");
+      if (openingHoursTag != null) {
+        try {
+          return OsmOpeningHours.parseFromOsm(openingHoursTag);
+        } catch (OpeningHoursParseException e) {
+          issueStore.add(
+            new ParkAndRideOpeningHoursUnparsed(creativeName.toString(), entity, openingHoursTag)
+          );
+        }
+      }
+      return null;
     }
 
     private List<VertexAndName> processVehicleParkingArea(Area area, Envelope envelope) {

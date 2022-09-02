@@ -20,6 +20,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.opentripplanner.common.model.T2;
 import org.opentripplanner.ext.vectortiles.layers.vehicleparkings.DigitransitVehicleParkingPropertyMapper;
 import org.opentripplanner.ext.vectortiles.layers.vehicleparkings.VehicleParkingsLayerBuilder;
+import org.opentripplanner.routing.core.OsmOpeningHours;
 import org.opentripplanner.routing.graph.Graph;
 import org.opentripplanner.routing.vehicle_parking.VehicleParking;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingService;
