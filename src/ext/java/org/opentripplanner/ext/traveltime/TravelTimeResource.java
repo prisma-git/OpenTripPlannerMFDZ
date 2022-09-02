@@ -245,7 +245,12 @@ public class TravelTimeResource {
       routingRequest.modes.accessMode,
       false
     );
-    return new AccessEgressMapper().mapNearbyStops(accessStops, false);
+    return new AccessEgressMapper()
+      .mapNearbyStops(
+        accessStops,
+        accessRequest.getDateTime().atZone(ZoneId.of("Europe/Berlin")),
+        false
+      );
   }
 
   private List<State> getInitialStates(

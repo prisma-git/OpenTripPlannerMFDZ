@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.opentripplanner.routing.api.request.RequestModes;
 import org.opentripplanner.routing.api.request.RequestModesBuilder;
 import org.opentripplanner.routing.api.request.StreetMode;
@@ -44,6 +45,11 @@ public class QualifiedModeSet implements Serializable {
     RequestModesBuilder mBuilder = RequestModes.of().clearTransitModes();
 
     // Set transit modes
+    var transitModes = qModes
+      .stream()
+      .flatMap(q -> q.mode.getTransitModes().stream())
+      .collect(Collectors.toSet());
+
     for (QualifiedMode qMode : qModes) {
       for (TransitMode mainMode : qMode.mode.getTransitModes()) {
         mBuilder.withTransitMode(mainMode);
@@ -92,13 +98,13 @@ public class QualifiedModeSet implements Serializable {
           if (requestMode.qualifiers.contains(Qualifier.RENT)) {
             mBuilder.withAllStreetModes(StreetMode.BIKE_RENTAL);
           } else if (requestMode.qualifiers.contains(Qualifier.PARK)) {
-            accessMode = StreetMode.BIKE_TO_PARK;
-            transferMode = StreetMode.WALK;
-            egressMode = StreetMode.WALK;
+            mBuilder.withAccessMode(StreetMode.BIKE_TO_PARK);
+            mBuilder.withTransferMode(StreetMode.WALK);
+            mBuilder.withEgressMode(StreetMode.WALK);
             if (transitModes.isEmpty()) {
-              directMode = StreetMode.BIKE_TO_PARK;
+              mBuilder.withDirectMode(StreetMode.BIKE_TO_PARK);
             } else {
-              directMode = StreetMode.BIKE;
+              mBuilder.withDirectMode(StreetMode.BIKE);
             }
           } else {
             mBuilder.withAllStreetModes(StreetMode.BIKE);
@@ -116,13 +122,13 @@ public class QualifiedModeSet implements Serializable {
           if (requestMode.qualifiers.contains(Qualifier.RENT)) {
             mBuilder.withAllStreetModes(StreetMode.CAR_RENTAL);
           } else if (requestMode.qualifiers.contains(Qualifier.PARK)) {
-            accessMode = StreetMode.CAR_TO_PARK;
-            transferMode = StreetMode.WALK;
-            egressMode = StreetMode.WALK;
+            mBuilder.withAccessMode(StreetMode.CAR_TO_PARK);
+            mBuilder.withTransferMode(StreetMode.WALK);
+            mBuilder.withEgressMode(StreetMode.WALK);
             if (transitModes.isEmpty()) {
-              directMode = StreetMode.CAR_TO_PARK;
+              mBuilder.withDirectMode(StreetMode.CAR_TO_PARK);
             } else {
-              directMode = StreetMode.BIKE;
+              mBuilder.withDirectMode(StreetMode.BIKE);
             }
           } else if (requestMode.qualifiers.contains(Qualifier.PICKUP)) {
             mBuilder.withAccessMode(StreetMode.WALK);
@@ -152,13 +158,13 @@ public class QualifiedModeSet implements Serializable {
 
     // stadtnavi enhancement: BIKE_RENT,BIKE_PARK means cycling to the station and renting a bike at the end
     if (bikeQualifiers.containsAll(Set.of(Qualifier.PARK, Qualifier.RENT))) {
-      accessMode = StreetMode.BIKE_TO_PARK;
-      transferMode = StreetMode.WALK;
-      egressMode = StreetMode.BIKE_RENTAL;
+      mBuilder.withAccessMode(StreetMode.BIKE_TO_PARK);
+      mBuilder.withTransferMode(StreetMode.WALK);
+      mBuilder.withEgressMode(StreetMode.BIKE_RENTAL);
       if (transitModes.isEmpty()) {
-        directMode = StreetMode.BIKE_TO_PARK;
+        mBuilder.withDirectMode(StreetMode.BIKE_TO_PARK);
       } else {
-        directMode = StreetMode.BIKE;
+        mBuilder.withDirectMode(StreetMode.BIKE);
       }
     }
 

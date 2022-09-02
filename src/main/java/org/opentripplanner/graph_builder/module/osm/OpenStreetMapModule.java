@@ -747,8 +747,6 @@ public class OpenStreetMapModule implements GraphBuilderModule {
 
       var openingHours = parseVehicleParkingOpeningHours(entity, creativeName);
 
-      var openingHours = parseOpeningHours(entity);
-
       var id = new FeedScopedId(
         VEHICLE_PARKING_OSM_FEED_ID,
         String.format("%s/%d", entity.getClass().getSimpleName(), entity.getId())

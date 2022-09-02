@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.opentripplanner.model.calendar.openinghours.OHCalendar;
 import org.opentripplanner.routing.core.TimeRestriction;
 import org.opentripplanner.routing.core.TraverseMode;
 import org.opentripplanner.routing.vehicle_parking.VehicleParkingEntrance.VehicleParkingEntranceBuilder;
@@ -175,6 +176,7 @@ public class VehicleParking implements Serializable {
 
     private List<String> tags = new ArrayList<>();
     private final List<VehicleParkingEntranceCreator> entranceCreators = new ArrayList<>();
+    private OHCalendar ohCalendar;
 
     public VehicleParkingBuilder tags(Collection<String> tags) {
       this.tags = new ArrayList<>(tags);
@@ -183,6 +185,11 @@ public class VehicleParking implements Serializable {
 
     public VehicleParkingBuilder entrances(Collection<VehicleParkingEntranceCreator> creators) {
       this.entranceCreators.addAll(creators);
+      return this;
+    }
+
+    public VehicleParkingBuilder openingHoursCalendar(OHCalendar calendar) {
+      this.ohCalendar = calendar;
       return this;
     }
 
