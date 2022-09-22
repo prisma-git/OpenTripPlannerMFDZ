@@ -10,6 +10,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import javax.media.jai.RasterFactory;
@@ -59,6 +60,8 @@ import org.opentripplanner.routing.core.RoutingContext;
 import org.opentripplanner.routing.core.State;
 import org.opentripplanner.routing.core.StateData;
 import org.opentripplanner.routing.core.TemporaryVerticesContainer;
+import org.opentripplanner.routing.core.TraverseMode;
+import org.opentripplanner.routing.core.TraverseModeSet;
 import org.opentripplanner.routing.graph.Graph;
 import org.opentripplanner.routing.graph.Vertex;
 import org.opentripplanner.routing.graphfinder.NearbyStop;
@@ -90,17 +93,28 @@ public class TravelTimeResource {
   private final RaptorService<TripSchedule> raptorService;
   private final Graph graph;
   private final TransitService transitService;
+  private final boolean withPublicTransit;
 
   public TravelTimeResource(
     @Context OtpServerRequestContext serverContext,
     @QueryParam("location") String location,
     @QueryParam("time") String time,
     @QueryParam("cutoff") @DefaultValue("60m") List<String> cutoffs,
-    @QueryParam("modes") String modes
+    @QueryParam("modes") String modes,
+    @QueryParam("streetSubRequestModes") String streetSubRequestModes,
+    @QueryParam("precisionMeters") @DefaultValue("200") int precisionMeters,
+    @QueryParam("withPublicTransit") @DefaultValue("true") boolean withPublicTransit
   ) {
     this.graph = serverContext.graph();
     this.transitService = serverContext.transitService();
+    this.withPublicTransit = withPublicTransit;
     routingRequest = serverContext.defaultRoutingRequest();
+    
+    if (streetSubRequestModes != null)
+    {
+    	List<TraverseMode> mode = Arrays.stream(streetSubRequestModes.split(",")).map(s -> TraverseMode.valueOf(s)).toList();
+    	routingRequest.streetSubRequestModes = new TraverseModeSet(mode);
+    }
     routingRequest.from = LocationStringParser.fromOldStyleString(location);
     if (modes != null) {
       routingRequest.modes = new QualifiedModeSet(modes).getRequestModes();
@@ -108,7 +122,8 @@ public class TravelTimeResource {
     traveltimeRequest =
       new TravelTimeRequest(
         cutoffs.stream().map(DurationUtils::duration).toList(),
-        routingRequest.getMaxAccessEgressDuration(routingRequest.modes.accessMode)
+        routingRequest.getMaxAccessEgressDuration(routingRequest.modes.accessMode),
+        precisionMeters
       );
 
     if (time != null) {
@@ -124,19 +139,27 @@ public class TravelTimeResource {
     LocalDate endDate = LocalDate.ofInstant(endTime, zoneId);
     startOfTime = ServiceDateUtils.asStartOfService(startDate, zoneId);
 
-    RoutingRequest transferRoutingRequest = Transfer.prepareTransferRoutingRequest(routingRequest);
+    if (withPublicTransit)
+    {
+    	RoutingRequest transferRoutingRequest = Transfer.prepareTransferRoutingRequest(routingRequest);
 
-    requestTransitDataProvider =
-      new RaptorRoutingRequestTransitData(
-        transitService.getRealtimeTransitLayer(),
-        startOfTime,
-        0,
-        (int) Period.between(startDate, endDate).get(ChronoUnit.DAYS),
-        new RoutingRequestTransitDataProviderFilter(routingRequest, transitService),
-        new RoutingContext(transferRoutingRequest, graph, (Vertex) null, null)
-      );
+    	requestTransitDataProvider =
+    			new RaptorRoutingRequestTransitData(
+    					transitService.getRealtimeTransitLayer(),
+    					startOfTime,
+    					0,
+    					(int) Period.between(startDate, endDate).get(ChronoUnit.DAYS),
+    					new RoutingRequestTransitDataProviderFilter(routingRequest, transitService),
+    					new RoutingContext(transferRoutingRequest, graph, (Vertex) null, null)
+    					);
 
-    raptorService = new RaptorService<>(serverContext.raptorConfig());
+    	raptorService = new RaptorService<>(serverContext.raptorConfig());
+    }
+    else
+    {
+    	requestTransitDataProvider = null;
+    	raptorService = null;
+    }
   }
 
   @GET
@@ -220,8 +243,42 @@ public class TravelTimeResource {
     try (var temporaryVertices = new TemporaryVerticesContainer(graph, accessRequest)) {
       final Collection<AccessEgress> accessList = getAccess(accessRequest, temporaryVertices);
 
-      var arrivals = route(accessList).getArrivals();
+      StopArrivals arrivals;
+      if (withPublicTransit)
+      {
+    	  arrivals = route(accessList).getArrivals();
+      }
+      else      
+      {
+    	  arrivals = new StopArrivals() {
 
+    		  @Override
+    		  public boolean reached(int stopIndex) {
+    			  return false;
+    		  }
+
+    		  @Override
+    		  public int bestArrivalTime(int stopIndex) {
+    			  return 0;
+    		  }
+
+    		  @Override
+    		  public boolean reachedByTransit(int stopIndex) {
+    			  return false;
+    		  }
+
+    		  @Override
+    		  public int bestTransitArrivalTime(int stopIndex) {
+    			  return 0;
+    		  }
+
+    		  @Override
+    		  public int smallestNumberOfTransfers(int stopIndex) {
+    			  return 0;
+    		  }}; 
+
+      }
+		
       RoutingContext routingContext = new RoutingContext(routingRequest, graph, temporaryVertices);
 
       var spt = AStarBuilder

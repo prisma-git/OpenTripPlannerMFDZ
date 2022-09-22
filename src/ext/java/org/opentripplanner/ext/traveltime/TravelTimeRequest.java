@@ -15,7 +15,7 @@ public class TravelTimeRequest {
 
   public final boolean includeDebugGeometry = false;
 
-  public final int precisionMeters = 200;
+  public final int precisionMeters;
 
   public final int offRoadDistanceMeters = 150;
 
@@ -23,7 +23,7 @@ public class TravelTimeRequest {
 
   public final Duration maxAccessDuration;
 
-  public TravelTimeRequest(List<Duration> cutoffList, Duration defaultAccessDuration) {
+  public TravelTimeRequest(List<Duration> cutoffList, Duration defaultAccessDuration, int precisionMeters) {
     this.cutoffs = cutoffList;
     this.maxCutoff = cutoffs.stream().max(Duration::compareTo).orElseThrow();
     if (maxCutoff.compareTo(defaultAccessDuration) < 0) {
@@ -31,6 +31,7 @@ public class TravelTimeRequest {
     } else {
       maxAccessDuration = defaultAccessDuration;
     }
+   	this.precisionMeters = precisionMeters;
   }
 
   @Override
